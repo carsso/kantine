@@ -1,0 +1,38 @@
+@import url('https://fonts.bunny.net/css?family=Nunito');
+
+@import 'variables';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+$fa-font-path: '~fontawesome/webfonts';
+@import "~fontawesome/scss/fontawesome";
+@import "~fontawesome/scss/solid";
+@import "~fontawesome/scss/regular";
+@import "~fontawesome/scss/brands";
+
+html {
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+#app {
+    min-height: 100%;
+}
+
+main {
+    min-height: 400px;
+}
+
+.overflow-y-auto {
+    overflow-y: auto;
+}

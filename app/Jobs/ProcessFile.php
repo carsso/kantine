@@ -1,0 +1,177 @@
+<?php
+
+namespace App\Jobs;
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use App\Models\File;
+use Symfony\Component\Process\Process;
+use Symfony\Component\Process\Exception\ProcessFailedException;
+use App\Models\Menu;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
+
+class ProcessFile implements ShouldQueue
+{
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    /**
+     * The number of times the job may be attempted.
+     *
+     * @var int
+     */
+    public $tries = 3;
+
+    /**
+     * Create a new job instance.
+     */
+    public function __construct(
+        public File $file,
+    ) {
+        $this->file = $file;
+    }
+
+    /**
+     * Execute the job.
+     */
+    public function handle(): void
+    {
+        $this->file->state = 'doing';
+        $this->file->message = null;
+        $this->file->save();
+
+        $csvFilePath = $this->checkAndConvertPdf();
+
+        $file = fopen($csvFilePath, 'r');
+        $all_data = [];
+        $currentKey = null;
+        $keyMappings = [
+            'ENTRÉE' => 'starters',
+            'PLAT' => 'mains',
+            'GARNITURES' => 'sides',
+            'FROMAGE / LAITAGE' => 'cheeses',
+            'DESSERT' => 'desserts',
+        ];
+        while(($data = fgetcsv($file, 200, ",")) !== FALSE) {
+            $skipLine = false;
+            $str = join(',', $data);
+            if(str_contains($str, 'lundi')) {
+                foreach($data as $key => $value) {
+                    $all_data[$key] = [
+                        'date' => $value,
+                        'event_name' => '',
+                        'starters' => [],
+                        'mains' => [],
+                        'sides' => [],
+                        'cheeses' => [],
+                        'desserts' => [],
+                    ];
+                }
+            }
+            if(str_contains($str, 'ENTRÉE')) {
+                foreach($data as $key => $value) {
+                    if($value != 'ENTRÉE') {
+                       $all_data[$key]['event_name'] = $value;
+                    }
+                }
+            }
+            foreach($keyMappings as $name => $keyName) {
+                if(str_contains($str, $name)) {
+                    $currentKey = $keyName;
+                    $skipLine = true;
+                }
+            }
+            if($currentKey && !$skipLine) {
+                foreach($data as $key => $value) {
+                    if($value && $value != $currentKey) {
+                        array_push($all_data[$key][$currentKey], $value);
+                    }
+                }
+            }
+        }
+        fclose($file);
+
+        Carbon::setLocale(config('app.locale'));
+        Log::info('all_data', $all_data);
+        foreach($all_data as $data) {
+            # guess year from date
+            $yearFound = false;
+            foreach([date('Y')+1, date('Y'), date('Y')-1] as $year) {
+                $date = Carbon::createFromLocaleFormat('l d F Y', 'fr',  $data['date'].' '.$year);
+                if($date->translatedFormat('l d F') == $data['date']) {
+                    $yearFound = true;
+                    break;
+                }
+            }
+            if(!$yearFound) {
+                throw new \Exception('Année non trouvée');
+            }
+            $dateStr = $date->format('Y-m-d');
+            # year found
+            $menu = Menu::where('date', $dateStr)->first();
+            if(!$menu) {
+                $menu = new Menu;
+            }
+            $menu->date = $dateStr;
+            $menu->event_name = $data['event_name'];
+            $menu->starters = $data['starters'];
+            $menu->mains = $data['mains'];
+            $menu->sides = $data['sides'];
+            $menu->cheeses = $data['cheeses'];
+            $menu->desserts = $data['desserts'];
+            $menu->file_id = $this->file->id;
+            $menu->save();
+        }
+
+        $this->file->state = 'done';
+        $this->file->save();
+    }
+
+    public function checkAndConvertPdf(): string
+    {
+        $parser = new \Smalot\PdfParser\Parser();
+        $filePath = public_path() . $this->file->file_path;
+        $pdf = $parser->parseFile($filePath);
+
+        $text = $pdf->getText();
+        $details = $pdf->getDetails();
+
+        if ($details['Producer'] != 'PDF Architect' || $details['Creator'] != 'PDF Architect' || $details['Title'] != '' || $details['Pages'] != 1) {
+            throw new \Exception('Fichier invalide, métadonnées incorrectes');
+        }
+        $wordsToCheck = ['GARNITURES', 'ENTRÉE', 'PLAT', 'FROMAGE', 'DESSERT', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi'];
+        foreach ($wordsToCheck as $string) {
+            if (!preg_match('/' . $string . '/', $text)) {
+                throw new \Exception('Fichier '.$this->file->file_path.' invalide, ' . $string . ' non trouvé');
+            }
+        }
+
+        $csvFilePath = $filePath . '.csv';
+        $process = new Process(['python3', base_path('scripts/') . 'pdf2csv.py', $filePath, $csvFilePath]);
+        $process->run();
+        if (!$process->isSuccessful()) {
+            throw new ProcessFailedException($process);
+        }
+        $data = file_get_contents($csvFilePath);
+        foreach ($wordsToCheck as $string) {
+            if (!preg_match('/' . $string . '/', $data)) {
+                throw new \Exception('Fichier '.$this->file->file_path.'.csv invalide, ' . $string . ' non trouvé après conversion.');
+            }
+        }
+
+        return $csvFilePath;
+    }
+
+    /**
+     * Handle a job failure.
+     */
+    public function failed(\Exception $exception): void
+    {
+        $this->file->state = 'error';
+        $this->file->message = $exception->getMessage();
+        $this->file->save();
+    }
+}
