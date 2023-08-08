@@ -25,5 +25,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/today', [ApiController::class, 'today'])
     ->name('api.today');
 
+Route::get('/day/{day}', [ApiController::class, 'day'])
+    ->name('api.day');
+
 Route::get('/week', [ApiController::class, 'week'])
     ->name('api.week');
