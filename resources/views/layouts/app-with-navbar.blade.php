@@ -10,6 +10,11 @@
                 'active' => request()->routeIs('menu.*') || request()->routeIs('menu') || request()->routeIs('home'),
             ],
             [
+                'name' => 'Notifications',
+                'route' => route('notifications'),
+                'active' => request()->routeIs('notifications.*') || request()->routeIs('notifications'),
+            ],
+            [
                 'name' => 'API',
                 'route' => route('api.home'),
                 'active' => request()->routeIs('api.*') || request()->routeIs('api'),

@@ -33,6 +33,7 @@ return [
 
     'webex' => [
         'bearer_token' => env('WEBEX_BOT_TOKEN'),
+        'bot_name' => env('WEBEX_BOT_NAME', 'kantine.menu@webex.bot'),
     ],
 
 ];

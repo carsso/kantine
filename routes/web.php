@@ -31,6 +31,10 @@ Route::post('/upload', [MenuController::class, 'upload'])
     ->middleware('guest')
     ->name('upload');
 
+Route::get('/notifications', [MenuController::class, 'notifications'])
+    ->middleware('guest')
+    ->name('notifications');
+
 Route::get('/file', [MenuController::class, 'files'])
     ->middleware('guest')
     ->name('files');

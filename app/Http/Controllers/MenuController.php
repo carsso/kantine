@@ -111,4 +111,9 @@ class MenuController extends Controller
         $files = File::all()->sortDesc();
         return view('files', ['files' => $files]);
    }
+
+   public function notifications()
+   {
+        return view('notifications');
+   }
 }
