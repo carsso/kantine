@@ -95,7 +95,6 @@ class ProcessFile implements ShouldQueue
         fclose($file);
 
         Carbon::setLocale(config('app.locale'));
-        Log::info('all_data', $all_data);
         foreach($all_data as $data) {
             # guess year from date
             $yearFound = false;
@@ -170,6 +169,7 @@ class ProcessFile implements ShouldQueue
      */
     public function failed(\Exception $exception): void
     {
+        Log::error($exception);
         $this->file->state = 'error';
         $this->file->message = $exception->getMessage();
         $this->file->save();

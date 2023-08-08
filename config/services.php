@@ -31,4 +31,8 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'webex' => [
+        'bearer_token' => env('WEBEX_BOT_TOKEN'),
+    ],
+
 ];
