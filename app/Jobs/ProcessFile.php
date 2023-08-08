@@ -98,7 +98,7 @@ class ProcessFile implements ShouldQueue
         foreach($all_data as $data) {
             # guess year from date
             $yearFound = false;
-            foreach([date('Y')+1, date('Y'), date('Y')-1] as $year) {
+            foreach([date('Y'), date('Y')+1, date('Y')-1] as $year) {
                 $date = Carbon::createFromLocaleFormat('l d F Y', 'fr',  $data['date'].' '.$year);
                 if($date->translatedFormat('l d F') == $data['date']) {
                     $yearFound = true;
