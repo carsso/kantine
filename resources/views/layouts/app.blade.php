@@ -32,6 +32,8 @@
                 <small>
                     {{ config('app.name') }}
                     -
+                    <a href="{{ route('legal') }}" class="underline hover:text-indigo-600">Legal notices</a>
+                    -
                     <a href="https://github.com/carsso/kantine" target="_blank"
                         class="underline hover:text-indigo-600"><i class="fab fa-github"></i> Source code available on
                         GitHub</a>

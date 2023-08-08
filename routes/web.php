@@ -35,6 +35,10 @@ Route::get('/notifications', [MenuController::class, 'notifications'])
     ->middleware('guest')
     ->name('notifications');
 
+Route::get('/legal', [MenuController::class, 'legal'])
+    ->middleware('guest')
+    ->name('legal');
+
 Route::get('/file', [MenuController::class, 'files'])
     ->middleware('guest')
     ->name('files');

@@ -116,4 +116,9 @@ class MenuController extends Controller
    {
         return view('notifications');
    }
+
+   public function legal()
+   {
+       return view('legal');
+   }
 }
