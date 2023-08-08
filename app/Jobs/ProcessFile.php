@@ -43,6 +43,11 @@ class ProcessFile implements ShouldQueue
         $this->file->message = null;
         $this->file->save();
 
+        if(!preg_match('/^S[0-9]+-([0-9]{4})\.pdf$/', $this->file->name, $matches)) {
+            throw new \Exception('Fichier invalide, nom incorrect, format attendu : SXX-XXXX.pdf');
+        }
+        $yearFromFilename = $matches[1];
+
         $csvFilePath = $this->checkAndConvertPdf();
 
         $file = fopen($csvFilePath, 'r');
@@ -98,7 +103,7 @@ class ProcessFile implements ShouldQueue
         foreach($all_data as $data) {
             # guess year from date
             $yearFound = false;
-            foreach([date('Y'), date('Y')+1, date('Y')-1] as $year) {
+            foreach([$yearFromFilename, $yearFromFilename+1, $yearFromFilename-1] as $year) {
                 $date = Carbon::createFromLocaleFormat('l d F Y', 'fr',  $data['date'].' '.$year);
                 if($date->translatedFormat('l d F') == $data['date']) {
                     $yearFound = true;
