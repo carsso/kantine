@@ -1,6 +1,7 @@
 @extends('layouts.app-with-navbar')
 
 @section('content')
+@include('includes.upload', ['errors' => $errors])
 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
     @if(count($files))
         <div class="grid 2xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-4 mb-8">
@@ -14,5 +15,4 @@
         </div>
     @endif
 </div>
-@include('includes.upload', ['errors' => $errors])
 @endsection

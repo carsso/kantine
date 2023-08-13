@@ -42,7 +42,7 @@
             <small>{{ $file->message }}</small>
         @endif
     </p>
-    @if($displayMenus ?? false)
+    @if($displayDetails ?? false)
         @if(count($file->menus))
             <p class="mt-2">
                 Menus importés :<br />
@@ -59,14 +59,12 @@
     <p class="mt-2 text-gray-500"><small><small>SHA1 : {{ $file->hash }}</small></small></p>
     <p class="text-gray-500"><small title="{{ $file->updated_at }}">Dernière modification : {{ $file->updated_at->translatedFormat('d F Y à H:i') }}</small></p>
     <p class="mt-2">
-        <a href="{{ url($file->file_path) }}" target="_blank" class="inline-flex items-center mx-2 px-2 py-1 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-            <i class="fas fa-file-pdf mr-2"></i>
-            PDF
-        </a>
-        <a href="{{ url($file->file_path_csv) }}" target="_blank" class="inline-flex items-center mx-2 px-2 py-1 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-            <i class="fas fa-file-csv mr-2"></i>
-            CSV
-        </a>
+        @if($displayDetails ?? false)
+            <a href="{{ url($file->file_path_csv) }}" target="_blank" class="inline-flex items-center mx-2 px-2 py-1 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                <i class="fas fa-file-csv mr-2"></i>
+                CSV
+            </a>
+        @endif
         @if($file->state == 'error')
             <a href="{{ route('file.delete', $file->hash) }}" class="ml-2 inline-flex items-center mx-2 px-2 py-1 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
                 <i class="fas fa-trash-can mr-2"></i>

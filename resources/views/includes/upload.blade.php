@@ -23,6 +23,13 @@
                     file:py-3 file:px-4
                     dark:file:bg-gray-800 dark:file:text-gray-400">
             </div>
+            <p class="mt-2 text-gray-500">
+                <small>
+                    <small>
+                        Ces fichiers sont stockés de manière permanente sur le serveur. Veuillez vous assurer qu'ils ne contiennent pas de données personnelles.
+                    </small>
+                </small>
+            </p>
             <div class="mt-2">
                 <button type="submit" name="submit" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                     Envoyer

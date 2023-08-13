@@ -19,6 +19,11 @@
                 'route' => route('api.home'),
                 'active' => request()->routeIs('api.*') || request()->routeIs('api'),
             ],
+            [
+                'name' => 'Uploader un menu',
+                'route' => route('files'),
+                'active' => request()->routeIs('file.*') || request()->routeIs('file') || request()->routeIs('files'),
+            ],
         ];
         $authRoutes = [
             [
