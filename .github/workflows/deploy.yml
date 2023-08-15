@@ -15,4 +15,4 @@ jobs:
           username: ${{ vars.DEPLOY_BASTION_USER }}
           host: ${{ vars.DEPLOY_BASTION_HOST }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
-          script: '-- ${{ vars.DEPLOY_USER }}@${{ vars.DEPLOY_HOST }} -- deploy'
+          script: '${{ vars.DEPLOY_USER }}@${{ vars.DEPLOY_HOST }} -- deploy'
