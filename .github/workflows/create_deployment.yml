@@ -5,7 +5,7 @@ on:
     branches: [ deploy ]
 
 jobs:
-  deploy-dev:
+  create-prod-deployment:
     runs-on: ubuntu-latest
     steps:
       - name: Create prod deployment
@@ -18,4 +18,4 @@ jobs:
           environment: production
           required_contexts: "[]"
         env:
-          GITHUB_TOKEN: ${{ secrets.PUSH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
