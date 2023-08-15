@@ -10,7 +10,7 @@
 
     <strong>🥗 Entrées :</strong><br />
     @if(!$menu->starters)
-        <i>Pas d'entrées</i>
+        <i>Pas d'entrées</i><br />
     @endif
     @foreach($menu->starters as $starter)
         - {{ $starter }} <br />
@@ -18,7 +18,7 @@
 
     <strong>🍗 Plats :</strong><br />
     @if(!$menu->mains)
-        <i>Pas de plats</i>
+        <i>Pas de plats</i><br />
     @endif
     @foreach($menu->mains as $main)
         - {{ $main }} <br />
@@ -26,7 +26,7 @@
 
     <strong>🥬 Accompagnements :</strong><br />
     @if(!$menu->sides)
-        <i>Pas d'accompagnements</i>
+        <i>Pas d'accompagnements</i><br />
     @endif
     @foreach($menu->sides as $side)
         @if($side == 'Frites')
@@ -38,7 +38,7 @@
 
     <strong>🧀 Fromages / Laitages :</strong><br />
     @if(!$menu->cheeses)
-        <i>Pas de fromages / laitages</i>
+        <i>Pas de fromages / laitages</i><br />
     @endif
     @foreach($menu->cheeses as $cheese)
         - {{ $cheese }} <br />
@@ -46,7 +46,7 @@
 
     <strong>🍨 Desserts :</strong><br />
     @if(!$menu->desserts)
-        <i>Pas de desserts</i>
+        <i>Pas de desserts</i><br />
     @endif
     @foreach($menu->desserts as $dessert)
         - {{ $dessert }} <br />
