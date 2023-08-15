@@ -1,11 +1,13 @@
 name: Deploy
 
 on:
-  deployment
+    push:
+      branches: [ deploy ]
 
 jobs:
-  deploy:
+  deploy-prod:
     runs-on: ubuntu-latest
+    environment: production
     steps:
       - name: Deployment status in progress
         uses: rsotnychenko/deployment-status-update@0.2.0
