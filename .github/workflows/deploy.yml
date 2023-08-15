@@ -13,7 +13,7 @@ jobs:
           run_id: ${{ github.run_id }}
           status: in_progress
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PUSH_TOKEN }}
       - name: Deploy
         uses: appleboy/ssh-action@master
         with:
@@ -28,4 +28,4 @@ jobs:
           status: ${{ job.status }}
           run_id: ${{ github.run_id }}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PUSH_TOKEN }}
