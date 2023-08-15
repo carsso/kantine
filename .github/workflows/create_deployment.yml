@@ -1,0 +1,21 @@
+name: Create deployment
+
+on:
+  push:
+    branches: [ deploy ]
+
+jobs:
+  deploy-dev:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create prod deployment
+        id: create_deployment
+        uses: octokit/request-action@v2.x
+        with:
+          route: POST /repos/:repository/deployments
+          repository: ${{ github.repository }}
+          ref: deploy
+          environment: production
+          required_contexts: "[]"
+        env:
+          GITHUB_TOKEN: ${{ secrets.PUSH_TOKEN }}

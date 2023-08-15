@@ -1,0 +1,31 @@
+name: Deploy
+
+on:
+  deployment
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deployment status in progress
+        uses: rsotnychenko/deployment-status-update@0.2.0
+        with:
+          run_id: ${{ github.run_id }}
+          status: in_progress
+        env:
+          GITHUB_TOKEN: ${{ secrets.PUSH_TOKEN }}
+      - name: Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          username: ${{ env.DEPLOY_BASTION_USER }}
+          host: ${{ env.DEPLOY_BASTION_HOST }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: '-- ${{ env.DEPLOY_USER }}@${{ env.DEPLOY_HOST }} -- deploy'
+      - name: Deployment status final
+        if: always()
+        uses: rsotnychenko/deployment-status-update@0.2.0
+        with:
+          status: ${{ job.status }}
+          run_id: ${{ github.run_id }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.PUSH_TOKEN }}
