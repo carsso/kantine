@@ -56,6 +56,6 @@
 @else
     <h3>Aucun menu trouvé pour aujourd'hui</h3>
     <br />
-    Tu as le menu ? Viens l'ajouter sur le site !
+    Tu as le menu ? Viens l'ajouter sur le site !<br />
     <a href="{{ route('home') }}">{{ route('menu') }}</a>
 @endif
