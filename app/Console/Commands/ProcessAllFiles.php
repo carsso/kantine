@@ -31,7 +31,7 @@ class ProcessAllFiles extends Command
     public function handle()
     {
         Log::info('Launching process for all files');
-        $files = File::all();
+        $files = File::all()->sortBy('datetime')->sortBy('name');
         foreach($files as $file) {
             Log::info('Processing file ' . $file->name . ' ' . $file->hash);
             $file->state = 'todo';
