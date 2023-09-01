@@ -81,7 +81,7 @@
                 </a>
             @endif
         @else
-            <a href="{{ route('file', $file->hash) }}" target="_blank" class="inline-flex items-center mx-2 px-2 py-1 border border-transparent text-xs leading-4 font-medium rounded-md shadow-sm text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+            <a href="{{ route('file', $file->hash) }}" class="inline-flex items-center mx-2 px-2 py-1 border border-transparent text-xs leading-4 font-medium rounded-md shadow-sm text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                 <i class="fas fa-magnifying-glass mr-2"></i>
                 Détails
             </a>
