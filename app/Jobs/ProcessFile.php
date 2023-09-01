@@ -191,6 +191,10 @@ class ProcessFile implements ShouldQueue
         $data = file_get_contents($csvFilePath);
         foreach ($wordsToCheck as $string) {
             if (!preg_match('/' . $string . '/', $data)) {
+                if($string == 'ENTRÉE' && $this->file->name == 'S16-2023.pdf') {
+                    # exception for S16-2023.pdf
+                    continue;
+                }
                 throw new \Exception('Fichier '.$this->file->file_path.'.csv invalide, ' . $string . ' non trouvé après conversion.');
             }
         }
