@@ -11,5 +11,4 @@
         }, 5000);
     </script>
 @endif
-@include('includes.upload', ['errors' => $errors])
 @endsection

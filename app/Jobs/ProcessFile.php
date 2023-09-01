@@ -144,7 +144,7 @@ class ProcessFile implements ShouldQueue
         $details = $pdf->getDetails();
 
         if ($details['Producer'] != 'PDF Architect' || $details['Creator'] != 'PDF Architect' || $details['Title'] != '' || $details['Pages'] != 1) {
-            throw new \Exception('Fichier invalide, métadonnées incorrectes');
+            #throw new \Exception('Fichier invalide, métadonnées incorrectes'.json_encode($details));
         }
         $wordsToCheck = ['GARNITURES', 'ENTRÉE', 'PLAT', 'FROMAGE', 'DESSERT', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi'];
         foreach ($wordsToCheck as $string) {

@@ -69,7 +69,9 @@ class MenuController extends Controller
             return $this->redirectWithErrror('Fichier non trouvé', redirect()->route('home'));
         }
         if($file->state != 'error') {
-            return $this->redirectWithErrror('Fichier non en erreur', redirect()->route('file', $file->hash));
+            if(strtoupper(config('app.env')) == 'PRODUCTION') {
+                return $this->redirectWithErrror('Le fichier n\'est pas en erreur', redirect()->route('file', $file->hash));
+            }
         }
         $file->state = 'todo';
         $file->message = null;
@@ -85,7 +87,9 @@ class MenuController extends Controller
             return $this->redirectWithErrror('Fichier non trouvé', redirect()->route('home'));
         }
         if($file->state != 'error') {
-            return $this->redirectWithErrror('Fichier non en erreur', redirect()->route('file', $file->hash));
+            if(strtoupper(config('app.env')) == 'PRODUCTION') {
+                return $this->redirectWithErrror('Fichier non en erreur', redirect()->route('file', $file->hash));
+            }
         }
         if(is_file(public_path($file->file_path))) {
             unlink(public_path($file->file_path));
@@ -108,7 +112,7 @@ class MenuController extends Controller
 
    public function files()
    {
-        $files = File::all()->sortDesc();
+        $files = File::all()->sortByDesc('name');
         return view('files', ['files' => $files]);
    }
 
