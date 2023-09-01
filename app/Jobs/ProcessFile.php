@@ -174,6 +174,10 @@ class ProcessFile implements ShouldQueue
         $wordsToCheck = ['GARNITURES', 'ENTRÉE', 'PLAT', 'FROMAGE', 'DESSERT', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi'];
         foreach ($wordsToCheck as $string) {
             if (!preg_match('/' . $string . '/', $text)) {
+                if($string == 'ENTRÉE' && $this->file->name == 'S16-2023.pdf') {
+                    # exception for S16-2023.pdf
+                    continue;
+                }
                 throw new \Exception('Fichier '.$this->file->file_path.' invalide, ' . $string . ' non trouvé');
             }
         }
