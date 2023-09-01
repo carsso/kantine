@@ -25,7 +25,7 @@
                 @if($displayDetails ?? false)
                     @if($file->message)
                         <br />
-                        <small>{{ $file->message }}</small>
+                        <small><pre>{{ $file->message }}</pre></small>
                     @endif
                 @endif
             </span>
@@ -42,7 +42,7 @@
             @endif
             @if($file->message && $file->state != 'error')
                 <br />
-                <small>{{ $file->message }}</small>
+                <small><pre>{{ $file->message }}</pre></small>
             @endif
         @endif
     </p>

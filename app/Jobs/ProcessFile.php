@@ -128,7 +128,7 @@ class ProcessFile implements ShouldQueue
             $menu = Menu::where('date', $dateStr)->first();
             if($menu) {
                 if($menu->file->datetime_carbon && $menu->file->datetime_carbon->timestamp > $fileDate->timestamp) {
-                    $message .= 'Menu plus récent déjà enregistré pour le '.$dateStr.'. ';
+                    $message .= 'Menu plus récent déjà enregistré pour le '.$dateStr."\n";
                     continue;
                 }
             }

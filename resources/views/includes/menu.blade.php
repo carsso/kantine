@@ -58,8 +58,11 @@
     </p>
     <p class="mt-2">
         <small class="text-gray-500">
-            Généré le {{ $menu->created_at->translatedFormat('d F Y à H:i') }}
-                - <a href="{{ route('file', $menu->file->hash) }}" class="hover:text-indigo-500">Source</a>
+            Généré le {{ $menu->updated_at->translatedFormat('d F Y à H:i') }}<br />
+            <a href="{{ route('file', $menu->file->hash) }}" class="hover:text-indigo-500">
+                Source :
+                {{ $menu->file->name }} du {{ $menu->file->datetime_carbon->translatedFormat('d F Y') }}
+            </a>
         </small>
     </p>
 </div>
