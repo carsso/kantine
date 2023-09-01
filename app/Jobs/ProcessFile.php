@@ -50,6 +50,15 @@ class ProcessFile implements ShouldQueue
 
         $csvFilePath = $this->checkAndConvertPdf();
 
+        $parser = new \Smalot\PdfParser\Parser();
+        $filePath = public_path() . $this->file->file_path;
+        $pdf = $parser->parseFile($filePath);
+
+        $details = $pdf->getDetails();
+
+        Carbon::setLocale(config('app.locale'));
+        $fileDate = Carbon::parse($details['ModDate']);
+
         $file = fopen($csvFilePath, 'r');
         $all_data = [];
         $currentKey = null;
@@ -100,10 +109,12 @@ class ProcessFile implements ShouldQueue
         fclose($file);
 
         Carbon::setLocale(config('app.locale'));
+        $message = '';
         foreach($all_data as $data) {
             # guess year from date
             $yearFound = false;
             foreach([$yearFromFilename, $yearFromFilename+1, $yearFromFilename-1] as $year) {
+                Log::info('Trying to find year '.$year.' for date '.$data['date']);
                 $date = Carbon::createFromLocaleFormat('l d F Y', 'fr',  $data['date'].' '.$year);
                 if($date->translatedFormat('l d F') == $data['date']) {
                     $yearFound = true;
@@ -116,6 +127,12 @@ class ProcessFile implements ShouldQueue
             $dateStr = $date->format('Y-m-d');
             # year found
             $menu = Menu::where('date', $dateStr)->first();
+            if($menu) {
+                if($menu->file->datetime_carbon && $menu->file->datetime_carbon->timestamp > $fileDate->timestamp) {
+                    $message .= 'Menu plus récent déjà enregistré pour le '.$dateStr.'. ';
+                    continue;
+                }
+            }
             if(!$menu) {
                 $menu = new Menu;
             }
@@ -130,7 +147,13 @@ class ProcessFile implements ShouldQueue
             $menu->save();
         }
 
+        if(!$message) {
+            $message = null;
+        }
+
+        $this->file->datetime = $fileDate;
         $this->file->state = 'done';
+        $this->file->message = $message;
         $this->file->save();
     }
 
@@ -143,9 +166,11 @@ class ProcessFile implements ShouldQueue
         $text = $pdf->getText();
         $details = $pdf->getDetails();
 
-        if ($details['Producer'] != 'PDF Architect' || $details['Creator'] != 'PDF Architect' || $details['Title'] != '' || $details['Pages'] != 1) {
-            #throw new \Exception('Fichier invalide, métadonnées incorrectes'.json_encode($details));
+        if(!isset($details['ModDate']) || !$details['ModDate'] || !Carbon::parse($details['ModDate']))
+        {
+            throw new \Exception('Fichier invalide, métadonnées incorrectes');
         }
+
         $wordsToCheck = ['GARNITURES', 'ENTRÉE', 'PLAT', 'FROMAGE', 'DESSERT', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi'];
         foreach ($wordsToCheck as $string) {
             if (!preg_match('/' . $string . '/', $text)) {

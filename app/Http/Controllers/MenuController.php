@@ -112,7 +112,7 @@ class MenuController extends Controller
 
    public function files()
    {
-        $files = File::all()->sortByDesc('name');
+        $files = File::all()->sortByDesc('datetime')->sortByDesc('name');
         return view('files', ['files' => $files]);
    }
 

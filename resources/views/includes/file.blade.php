@@ -61,7 +61,9 @@
     @endif
 
     <p class="mt-2 text-gray-500"><small><small><small>SHA1 : {{ $file->hash }}</small></small></small></p>
-    <p class="text-gray-500"><small title="{{ $file->updated_at }}">Modification : {{ $file->updated_at->translatedFormat('d F Y à H:i') }}</small></p>
+    @if($file->datetime_carbon)
+        <p class="text-gray-500"><small title="{{ $file->datetime_carbon }}">Document du {{ $file->datetime_carbon->translatedFormat('d F Y à H:i') }}</small></p>
+    @endif
     <p class="mt-2">
         @if($displayDetails ?? false)
             <a href="{{ url($file->file_path_csv) }}" target="_blank" class="inline-flex items-center mx-2 px-2 py-1 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
