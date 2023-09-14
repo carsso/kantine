@@ -35,6 +35,9 @@ Route::get('/notifications', [MenuController::class, 'notifications'])
     ->middleware('guest')
     ->name('notifications');
 
+Route::get('/notifications/webex/{day}', [MenuController::class, 'webexMenu'])
+    ->name('notifications.webex.day');
+
 Route::get('/legal', [MenuController::class, 'legal'])
     ->middleware('guest')
     ->name('legal');

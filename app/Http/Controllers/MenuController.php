@@ -30,6 +30,16 @@ class MenuController extends Controller
         return view('index', ['menus' => $weekMenus, 'prevWeek' => $prevWeek, 'nextWeek' => $nextWeek]);
     }
 
+    public function webexMenu($dateString)
+    {
+        $date = time();
+        if(preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateString)) {
+            $date = strtotime($dateString);
+        }
+        $menu = Menu::where('date', date('Y-m-d', $date))->first();
+         return view('webex.menu', ['menu' => $menu]);
+    }
+
     public function upload(UploadFormRequest $request)
     {
         $validated = $request->validated();

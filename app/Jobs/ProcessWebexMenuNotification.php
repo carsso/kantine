@@ -42,7 +42,6 @@ class ProcessWebexMenuNotification implements ShouldQueue
         }
         $api = new WebexApi;
         $html = view('webex.menu', ['menu' => $this->menu])->render();
-        $html = preg_replace('/\s{2,}/', ' ', $html);
         Log::info('Posting message to Webex room "' . $this->room['title'] .'" ' . $this->room['id']);
         Log::info($html);
         $api->postMessage($this->room['id'], $html);

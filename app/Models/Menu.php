@@ -39,6 +39,7 @@ class Menu extends Model
         'sides' => 'array',
         'cheeses' => 'array',
         'desserts' => 'array',
+        'is_fries_day' => 'boolean',
     ];
 
     /**
@@ -47,6 +48,11 @@ class Menu extends Model
      * @var array
      */
     protected $hidden = ['id', 'file_id'];
+
+    public function getIsFriesDayAttribute()
+    {
+        return str_contains(join(', ', $this->sides), 'Frites');
+    }
 
     public function getDateCarbonAttribute()
     {
