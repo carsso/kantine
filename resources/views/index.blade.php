@@ -23,12 +23,17 @@
             @endforeach
         </div>
     @else
-        <div class="bg-white dark:bg-gray-700 rounded-lg shadow p-4 text-center mt-6">
-            <i class="text-2xl text-gray-500">Aucun menu pour cette semaine</i>
+        <div class="bg-white dark:bg-gray-700 rounded-lg shadow p-6 text-center mt-6">
+            <p class="text-2xl text-gray-500">
+                <i>Aucun menu pour cette semaine</i>
+            </p>
+            <p class="mt-8 text-xs">
+                Tu as le fichier du menu ?
+                <a href="{{ route('files') }}" class="leading-6 text-indigo-600 dark:text-indigo-500 hover:text-indigo-500 dark:hover:text-indigo-400">
+                    Envoyer le menu
+                </a>
+            </p>
         </div>
     @endif
 </div>
-@if(!count($menus))
-    @include('includes.upload', ['errors' => $errors])
-@endif
 @endsection

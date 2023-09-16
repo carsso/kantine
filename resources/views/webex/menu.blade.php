@@ -60,7 +60,7 @@
         <blockquote class="warning">
             <h3>Aucun menu trouvé pour aujourd'hui</h3>
             <span>Tu as le menu ? Viens l'ajouter sur le site !</span><br />
-            <a href="{{ route('home') }}">{{ route('menu') }}</a>
+            <a href="{{ route('home') }}">{{ route('home') }}</a>
         </blockquote>
     @endif
 @endspaceless
