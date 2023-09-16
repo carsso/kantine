@@ -96,7 +96,7 @@ return [
     |
     */
 
-    'fallback_locale' => 'fr',
+    'fallback_locale' => 'en',
 
     /*
     |--------------------------------------------------------------------------
@@ -125,6 +125,8 @@ return [
     'key' => env('APP_KEY'),
 
     'cipher' => 'AES-256-CBC',
+
+    'sentry_cdn' => env('SENTRY_CDN', 'https://browser.sentry-cdn.com'),
 
     /*
     |--------------------------------------------------------------------------

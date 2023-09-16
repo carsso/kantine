@@ -1,6 +1,13 @@
 <div class="bg-white dark:bg-gray-700 rounded-lg shadow p-4 text-center mt-6">
     <h1 class="text-2xl">Fichier : {{ $file->name }}</h1>
-    <p><small title="{{ $file->created_at }}" class="text-gray-500">Uploadé le {{ $file->created_at->translatedFormat('d F Y à H:i') }}</small></p>
+    <p>
+        <small title="{{ $file->created_at }}" class="text-gray-500">
+            Uploadé le {{ $file->created_at->translatedFormat('d F Y à H:i') }}
+            @if($file->user)
+                par {{ $file->user->name }}
+            @endif
+        </small>
+    </p>
     <p class="mt-2">
         Traitement du fichier :
         @if($file->state == 'todo')
@@ -70,12 +77,10 @@
                 <i class="fas fa-file-csv mr-2"></i>
                 CSV
             </a>
-            @if(strtoupper(config('app.env')) != 'PRODUCTION')
-                <a href="{{ url($file->file_path) }}" target="_blank" class="inline-flex items-center mx-2 px-2 py-1 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-                    <i class="fas fa-file-pdf mr-2"></i>
-                    PDF
-                </a>
-            @endif
+            <a href="{{ url($file->file_path) }}" target="_blank" class="inline-flex items-center mx-2 px-2 py-1 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                <i class="fas fa-file-pdf mr-2"></i>
+                PDF
+            </a>
             @if($file->state == 'error' || strtoupper(config('app.env')) != 'PRODUCTION')
                 <a href="{{ route('file.delete', $file->hash) }}" class="ml-2 inline-flex items-center mx-2 px-2 py-1 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
                     <i class="fas fa-trash-can mr-2"></i>

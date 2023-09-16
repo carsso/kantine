@@ -26,6 +26,35 @@
             }
         </style>
     @endif
+
+    @if (config('sentry.dsn'))
+        <script
+            src="{{ config('app.sentry_cdn') }}/7.69.0/bundle.tracing.replay.min.js"
+            integrity="sha384-6ZlY7nOHgnD0vXeSWEgeSHy/+WXQkLYa52vA7d20SFsyRhhCU9mGOIGSgNlbzdSS"
+            crossorigin="anonymous"></script>
+
+        <script>
+            Sentry.init({
+                dsn: "{{ config('sentry.dsn') }}",
+                tunnel: "/sentry",
+                integrations: [
+                    new Sentry.BrowserTracing(),
+                    new Sentry.Replay({
+                        maskAllText: false,
+                        maskAllInputs: false,
+                        blockAllMedia: false,
+                    })
+                ],
+                tracesSampleRate: 1.0,
+                replaysSessionSampleRate: 1.0,
+                replaysOnErrorSampleRate: 1.0,
+            });
+
+            @if (auth()->check())
+                Sentry.setTag("user_id", "{{ Auth::user()->id }}");
+            @endif
+        </script>
+    @endif
 </head>
 
 <body class="bg-gray-100 dark:bg-gray-900 dark:text-gray-300">
@@ -38,11 +67,12 @@
                 <small>
                     {{ config('app.name') }}
                     -
-                    <a href="{{ route('legal') }}" class="underline hover:text-indigo-600">Legal notices</a>
+                    <a href="{{ route('legal') }}" class="underline hover:text-indigo-600">Mentions légales</a>
                     -
-                    <a href="https://github.com/carsso/kantine" target="_blank"
-                        class="underline hover:text-indigo-600"><i class="fab fa-github"></i> Source code available on
-                        GitHub</a>
+                    <a href="https://github.com/carsso/kantine" target="_blank" class="underline hover:text-indigo-600">
+                        <i class="fab fa-github"></i>
+                        Code source disponible sur GitHub
+                    </a>
                 </small>
             </div>
         </main>

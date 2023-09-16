@@ -3,7 +3,7 @@
 
 @section('navbar')
     @php
-        $publicRoutes = [
+        $routes = [
             [
                 'name' => 'Menus',
                 'route' => route('home'),
@@ -20,16 +20,24 @@
                 'active' => request()->routeIs('api.*') || request()->routeIs('api'),
             ],
             [
-                'name' => 'Uploader un menu',
+                'name' => 'Envoyer un menu',
                 'route' => route('files'),
                 'active' => request()->routeIs('file.*') || request()->routeIs('file') || request()->routeIs('files'),
             ],
         ];
+        $publicRoutes = [
+            [
+                'name' => 'Connexion',
+                'route' => route('login'),
+                'active' => request()->routeIs('login.*') || request()->routeIs('login'),
+            ],
+        ];
         $authRoutes = [
             [
-                'name' => 'Files',
-                'route' => route('files'),
-                'active' => request()->routeIs('file.*') || request()->routeIs('file') || request()->routeIs('files'),
+                'name' => 'Compte',
+                'route' => route('account'),
+                'account' => auth()->check() ? auth()->user() : null,
+                'active' => request()->routeIs('account.*') || request()->routeIs('account')
             ],
         ];
     @endphp
@@ -37,8 +45,10 @@
         app-name="{{ config('app.name') }}"
         :is-dev="{{ strtoupper(config('app.env')) != 'PRODUCTION' ? 'true' : 'false' }}"
         home-route="{{ route('home') }}"
-        logout-route="{{ route('home') }}"
-        :routes='@json(auth()->check() ? $authRoutes : $publicRoutes)'
+        login-route="{{ route('login') }}"
+        account-route="{{ route('account') }}"
+        :routes='@json($routes)'
+        :routes-left='@json(auth()->check() ? $authRoutes : $publicRoutes)'
         :is-authenticated="{{ auth()->check() ? 'true' : 'false' }}">
     </Navbar>
 @endsection
