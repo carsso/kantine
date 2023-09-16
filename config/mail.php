@@ -99,7 +99,7 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'kantine-menu@germain.sh'),
+        'address' => env('MAIL_FROM_ADDRESS', 'kantine-menu@carsso.com'),
         'name' => env('MAIL_FROM_NAME', 'Kantine.menu'),
     ],
 
