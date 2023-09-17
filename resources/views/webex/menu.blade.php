@@ -1,7 +1,7 @@
 @spaceless
     @if($menu)
         <blockquote class="{{ $menu->is_fries_day ? 'danger' : ($menu->event_name ? 'success' : 'info') }}">
-            <h3>Menu du {{ $menu->date_carbon->translatedFormat('l d F Y') }}</h3>
+            <h3>Menu du {{ $menu->date_carbon->translatedFormat('l d F Y') }}</h3><br />
 
             @if($menu->event_name)
                 <strong>🎉 Événement {{ $menu->event_name }} 🎉</strong><br />
@@ -58,7 +58,7 @@
         </blockquote>
     @else
         <blockquote class="warning">
-            <h3>Aucun menu trouvé pour aujourd'hui</h3>
+            <h3>Aucun menu trouvé pour aujourd'hui</h3><br />
             <span>Tu as le menu ? Viens l'ajouter sur le site !</span><br />
             <a href="{{ route('home') }}">{{ route('home') }}</a>
         </blockquote>
