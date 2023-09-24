@@ -52,6 +52,10 @@
 
             @if (auth()->check())
                 Sentry.setTag("user_id", "{{ Auth::user()->id }}");
+                Sentry.setUser({
+                    id: "{{ Auth::user()->id ?? 0 }}",
+                    email: "{{ Auth::user()->email ?? '' }}",
+                });
             @endif
         </script>
     @endif

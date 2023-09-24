@@ -6,6 +6,7 @@ use App\Models\Menu;
 use App\Models\File;
 use App\Http\Requests\UploadFormRequest;
 use App\Jobs\ProcessFile;
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
@@ -143,6 +144,7 @@ class MenuController extends Controller
 
    public function sentry(Request $request)
    {
+       Debugbar::disable();
        if (!config('sentry.dsn')) {
            return response('Sentry is not configured', 500);
        }
@@ -159,6 +161,9 @@ class MenuController extends Controller
        $project_id = intval(trim($dsn['path'], '/'));
 
        return Http::withBody($envelope, 'application/x-sentry-envelope')
+           ->withHeaders([
+                'X-Forwarded-For' => $request->ip(),
+           ])
            ->post('https://'.$dsn['host'].'/api/'.$project_id.'/envelope/');
    }
 }
