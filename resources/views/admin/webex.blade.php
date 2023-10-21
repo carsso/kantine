@@ -21,7 +21,10 @@
                                 </span>
                             </span>
                             @if($membership['isModerator'])
-                                <span class="text-gray-400 text-xs">Moderator</span>
+                                <i>(modérateur)</i>
+                            @endif
+                            @if($membership['personId'] == $room['creatorId'])
+                                <i>(créateur)</i>
                             @endif
                         </li>
                     @endforeach
