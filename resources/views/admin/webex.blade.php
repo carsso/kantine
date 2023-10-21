@@ -8,9 +8,6 @@
             <h2 title="{{ $room['id'] }}" class="text-2xl mb-1">
                 <span class="text-gray-400">[{{ ucfirst($room['type']) }}]</span>
                 {{ $room['title'] }}
-                <span class="text-gray-400 text-xs" title="{{ $room['ownerId'] }}">
-                    {{ $room['owner']['displayName'] }}
-                </span>
             </h2>
             <p class="mt-3">
                 <span>Membres :</span><br />

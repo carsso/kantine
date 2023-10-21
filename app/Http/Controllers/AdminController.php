@@ -18,14 +18,9 @@ class AdminController extends Controller
         }
         $api = new WebexApi;
         $rooms = [];
-        $orgs = [];
         $webexRooms = $api->getRooms();
         foreach($webexRooms['items'] as $room) {
             $room['memberships'] = $api->getRoomMemberships($room['id'])['items'];
-            if(!isset($orgs[$room['ownerId']])) {
-                $orgs[$room['ownerId']] = $api->getOrganization($room['ownerId']);
-            }
-            $room['owner'] = $orgs[$room['ownerId']];
             $rooms[] = $room;
         }
         return view('admin.webex', ['rooms' => $rooms]);
