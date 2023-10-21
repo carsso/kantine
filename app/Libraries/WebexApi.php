@@ -29,9 +29,31 @@ class WebexApi
         return json_decode($json, true);
     }
 
-    public function getRooms()
+    public function getRooms($type = 'group')
     {
+        if(!empty($type)) {
+            return $this->get('v1/rooms?type='.$type);
+        }
         return $this->get('v1/rooms');
+    }
+
+    public function getRoom($roomId)
+    {
+        return $this->get('v1/rooms/' . $roomId);
+    }
+
+    public function getRoomMemberships($roomId)
+    {
+        return $this->get('v1/memberships?roomId=' . $roomId);
+    }
+
+    public function getPerson($personId)
+    {
+        return $this->get('v1/people/' . $personId);
+    }
+    public function getOrganization($organizationId)
+    {
+        return $this->get('v1/organizations/' . $organizationId);
     }
 
     public function postMessage($roomId, $message)

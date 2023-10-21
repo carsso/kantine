@@ -4,8 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\DarkmodeController;
-use App\Http\Controllers\Auth\VerificationController;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use App\Http\Controllers\AdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,6 +31,9 @@ Route::get('/notifications', [MenuController::class, 'notifications'])
 
 Route::get('/notifications/webex/{day}', [MenuController::class, 'webexMenu'])
     ->name('notifications.webex.day');
+
+Route::get('/admin/webex', [AdminController::class, 'webex'])
+    ->name('admin.webex');
 
 Route::get('/legal', [MenuController::class, 'legal'])
     ->name('legal');
