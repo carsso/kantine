@@ -14,27 +14,34 @@
             @if(!$menu->starters)
                 <i>Pas d'entrées</i><br />
             @endif
-            @foreach($menu->starters as $starter)
-                <span> - {{ $starter }}</span><br />
+            @foreach($menu->starters_without_usual as $dish)
+                <span> - {{ $dish }}</span><br />
+            @endforeach
+            @foreach($menu->starters_usual as $dish)
+                <span> - <i>{{ $dish }}</i></span><br />
             @endforeach
 
             <strong>🍗 Plats :</strong><br />
             @if(!$menu->mains)
                 <i>Pas de plats</i><br />
             @endif
-            @foreach($menu->mains as $main)
-                <span> - {{ $main }}</span><br />
+            @foreach($menu->mains as $idx => $dish)
+                <span> - {{ $dish }}
+                    @if($specialName = $menu->getMainSpecialName($idx))
+                        <i>({{ $specialName }})</i>
+                    @endif
+                </span><br />
             @endforeach
 
             <strong>🥬 Accompagnements :</strong><br />
             @if(!$menu->sides)
                 <i>Pas d'accompagnements</i><br />
             @endif
-            @foreach($menu->sides as $side)
-                @if($side == 'Frites')
-                    <span> - 🍟 {{ $side }} 🍟 <br />
+            @foreach($menu->sides as $dish)
+                @if($dish == 'Frites')
+                    <span> - 🍟 {{ $dish }} 🍟 <br />
                 @else
-                    <span> - {{ $side }}</span><br />
+                    <span> - {{ $dish }}</span><br />
                 @endif
             @endforeach
 
@@ -42,16 +49,22 @@
             @if(!$menu->cheeses)
                 <i>Pas de fromages / laitages</i><br />
             @endif
-            @foreach($menu->cheeses as $cheese)
-                <span> - {{ $cheese }}</span><br />
+            @foreach($menu->cheeses_without_usual as $dish)
+                <span> - {{ $dish }}</span><br />
+            @endforeach
+            @foreach($menu->cheeses_usual as $dish)
+                <span> - <i>{{ $dish }}</i></span><br />
             @endforeach
 
             <strong>🍨 Desserts :</strong><br />
             @if(!$menu->desserts)
                 <i>Pas de desserts</i><br />
             @endif
-            @foreach($menu->desserts as $dessert)
-                <span> - {{ $dessert }}</span><br />
+            @foreach($menu->desserts_without_usual as $dish)
+                <span> - {{ $dish }}</span><br />
+            @endforeach
+            @foreach($menu->desserts_usual as $dish)
+                <span> - <i>{{ $dish }}</i></span><br />
             @endforeach
 
             <a href="{{ route('menu.date', $menu->date) }}">{{ route('menu.date', $menu->date) }}</a>

@@ -101,6 +101,11 @@ class ProcessFile implements ShouldQueue
             if($currentKey && !$skipLine) {
                 foreach($data as $key => $value) {
                     if($value && $value != $currentKey) {
+                        # value does not start with uppercase letter
+                        if(preg_match('/^[a-z]/', $value)) {
+                            $value = $all_data[$key][$currentKey][count($all_data[$key][$currentKey])-1] . ' ' . $value;
+                            array_pop($all_data[$key][$currentKey]);
+                        }
                         array_push($all_data[$key][$currentKey], $value);
                     }
                 }

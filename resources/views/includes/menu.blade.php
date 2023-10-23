@@ -11,50 +11,64 @@
     <p class="mt-2">
         🥗 Entrées : <br />
         @if(!$menu->starters)
-            <i class="text-gray-500">Pas d'entrées</i>
+            <div class="text-gray-500 leading-snug">Pas d'entrées</div>
         @endif
-        @foreach($menu->starters as $starter)
-            {{ $starter }} <br />
+        @foreach($menu->starters_without_usual as $dish)
+            <div class="leading-snug">{{ $dish }}</div>
+        @endforeach
+        @foreach($menu->starters_usual as $dish)
+            <div class="text-gray-500 text-xs leading-snug">{{ $dish }}</div>
         @endforeach
     </p>
     <p class="mt-2">
         🍗 Plats : <br />
         @if(!$menu->mains)
-            <i class="text-gray-500">Pas de plats</i>
+            <div class="text-gray-500 leading-snug">Pas de plats</div>
         @endif
-        @foreach($menu->mains as $main)
-            {{ $main }} <br />
+        @foreach($menu->mains as $idx => $dish)
+            <div class="leading-snug">
+                {{ $dish }}
+                @if($specialName = $menu->getMainSpecialName($idx))
+                    <i class="text-gray-500 text-xs">({{ $specialName }})</i>
+                @endif
+            </div>
         @endforeach
     </p>
     <p class="mt-2">
         🥬 Accompagnements : <br />
         @if(!$menu->sides)
-            <i class="text-gray-500">Pas d'accompagnements</i>
+            <div class="text-gray-500 leading-snug">Pas d'accompagnements</div>
         @endif
-        @foreach($menu->sides as $side)
-            @if($side == 'Frites')
-                🍟 {{ $side }} 🍟 <br />
+        @foreach($menu->sides as $dish)
+            @if($dish == 'Frites')
+                <div class="leading-snug">🍟 {{ $dish }} 🍟</div>
             @else
-                {{ $side }} <br />
+                <div class="leading-snug">{{ $dish }}</div>
             @endif
         @endforeach
     </p>
     <p class="mt-2">
         🧀 Fromages / Laitages : <br />
         @if(!$menu->cheeses)
-            <i class="text-gray-500">Pas de fromages / laitages</i>
+            <div class="text-gray-500 leading-snug">Pas de fromages / laitages</div>
         @endif
-        @foreach($menu->cheeses as $cheese)
-            {{ $cheese }} <br />
+        @foreach($menu->cheeses_without_usual as $dish)
+            <div class="leading-snug">{{ $dish }}</div>
+        @endforeach
+        @foreach($menu->cheeses_usual as $dish)
+            <div class="text-gray-500 text-xs leading-snug">{{ $dish }}</div>
         @endforeach
     </p>
     <p class="mt-2">
         🍨 Desserts : <br />
         @if(!$menu->desserts)
-            <i class="text-gray-500">Pas de desserts</i>
+            <div class="text-gray-500 leading-snug">Pas de desserts</div>
         @endif
-        @foreach($menu->desserts as $dessert)
-            {{ $dessert }} <br />
+        @foreach($menu->desserts_without_usual as $dish)
+            <div class="leading-snug">{{ $dish }}</div>
+        @endforeach
+        @foreach($menu->desserts_usual as $dish)
+            <div class="text-gray-500 text-xs leading-snug">{{ $dish }}</div>
         @endforeach
     </p>
     @auth
