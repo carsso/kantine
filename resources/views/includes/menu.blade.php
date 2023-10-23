@@ -1,6 +1,7 @@
 
 <div class="bg-white dark:bg-gray-700 rounded-lg shadow p-4 text-center mt-6 border-t-4 {{ $menu->is_fries_day ? 'border-red-500' : ($menu->event_name ? 'border-green-500' : 'border-blue-500') }}">
-    <h1 class="text-2xl">{{ $menu->date_carbon->translatedFormat('l d F') }}</h1>
+    <h1 class="text-2xl xl:hidden 2xl:block">{{ $menu->date_carbon->translatedFormat('l d F') }}</h1>
+    <h1 class="text-2xl hidden xl:block 2xl:hidden">{{ $menu->date_carbon->translatedFormat('l d M') }}</h1>
     @if($menu->event_name)
         <p class="mt-2">🎉 Événement {{ $menu->event_name }} 🎉</p>
     @endif
@@ -56,13 +57,15 @@
             {{ $dessert }} <br />
         @endforeach
     </p>
-    <p class="mt-2">
-        <small class="text-gray-500">
-            Généré le {{ $menu->updated_at->translatedFormat('d F Y à H:i') }}<br />
-            <a href="{{ route('file', $menu->file->hash) }}" class="hover:text-indigo-500">
-                Source :
-                {{ $menu->file->name }} du {{ $menu->file->datetime_carbon->translatedFormat('d F Y') }}
-            </a>
-        </small>
-    </p>
+    @auth
+        <p class="mt-2">
+            <small class="text-gray-500">
+                Généré le {{ $menu->updated_at->translatedFormat('d F Y à H:i') }}<br />
+                <a href="{{ route('file', $menu->file->hash) }}" class="hover:text-indigo-500">
+                    Source :
+                    {{ $menu->file->name }} du {{ $menu->file->datetime_carbon->translatedFormat('d F Y') }}
+                </a>
+            </small>
+        </p>
+    @endauth
 </div>

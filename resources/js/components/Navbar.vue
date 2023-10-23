@@ -9,14 +9,14 @@
                             {{ appName }}
                         </a>
                     </div>
-                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                    <div class="hidden md:ml-6 md:flex md:space-x-8">
                         <a :href="route.route" v-for="(route, routeIdx) in routes" :key="routeIdx" class="border-indigo-500 text-gray-900 dark:text-white hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 text-sm font-medium" :class="route.active ? 'border-b-2' : 'hover:border-b-2'">
                             {{ route.name }}
                         </a>
                     </div>
                 </div>
-                <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-                    <span class="hidden sm:ml-6 sm:flex sm:items-center">
+                <div class="hidden md:ml-6 md:flex md:space-x-8">
+                    <span class="hidden md:ml-6 md:flex md:items-center">
                         <NavbarDarkmodeToggler :route="homeRoute"></NavbarDarkmodeToggler>
                     </span>
                     <a :href="route.route" v-for="(route, routeIdx) in routesLeft" :key="routeIdx" class="border-indigo-500 text-gray-900 dark:text-white hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 text-sm font-medium" :class="route.active ? 'border-b-2' : 'hover:border-b-2'">
@@ -32,7 +32,7 @@
                         <span v-else>{{ route.name }}</span>
                     </a>
                 </div>
-                <div class="-mr-2 flex items-center sm:hidden">
+                <div class="-mr-2 flex items-center md:hidden">
                     <!-- Mobile menu button -->
                     <DisclosureButton class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
                         <span class="sr-only">Open main menu</span>
@@ -43,7 +43,7 @@
             </div>
         </div>
 
-        <DisclosurePanel class="sm:hidden">
+        <DisclosurePanel class="md:hidden">
             <div class="pt-2 pb-3 space-y-1">
                 <DisclosureButton as="a" :href="route.route" v-for="(route, routeIdx) in routes" :key="routeIdx" class="border-indigo-500 text-indigo-700 dark:text-white hover:text-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white block pl-3 pr-4 py-2 text-base font-medium" :class="route.active ? 'border-l-4' : ''">
                     {{ route.name }}

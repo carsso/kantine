@@ -17,7 +17,7 @@
         </div>
     </div>
     @if(count($menus))
-        <div class="grid 2xl:grid-cols-5 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-4 mb-8">
+        <div class="grid xl:grid-cols-5 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-4 mb-8">
             @foreach($menus as $menu)
                 @include('includes.menu', ['menu' => $menu])
             @endforeach
