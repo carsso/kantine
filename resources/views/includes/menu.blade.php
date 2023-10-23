@@ -17,7 +17,7 @@
             <div class="leading-snug">{{ $dish }}</div>
         @endforeach
         @foreach($menu->starters_usual as $dish)
-            <div class="text-gray-500 text-xs leading-snug">{{ $dish }}</div>
+            <div class="text-gray-500 text-xs leading-normal">{{ $dish }}</div>
         @endforeach
     </div>
     <div class="mt-2">
@@ -56,7 +56,7 @@
             <div class="leading-snug">{{ $dish }}</div>
         @endforeach
         @foreach($menu->cheeses_usual as $dish)
-            <div class="text-gray-500 text-xs leading-snug">{{ $dish }}</div>
+            <div class="text-gray-500 text-xs leading-normal">{{ $dish }}</div>
         @endforeach
     </div>
     <div class="mt-2">
@@ -68,7 +68,7 @@
             <div class="leading-snug">{{ $dish }}</div>
         @endforeach
         @foreach($menu->desserts_usual as $dish)
-            <div class="text-gray-500 text-xs leading-snug">{{ $dish }}</div>
+            <div class="text-gray-500 text-xs leading-normal">{{ $dish }}</div>
         @endforeach
     </div>
     @auth
