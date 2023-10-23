@@ -1,6 +1,6 @@
 <template>
     <Disclosure as="nav" class="bg-white dark:bg-gray-800 shadow" v-slot="{ open }">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="container-2xl 2xl:container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex">
                     <div class="flex-shrink-0 flex items-center text-gray-900 dark:text-white">
