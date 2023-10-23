@@ -157,8 +157,8 @@ class Menu extends Model
     {
         # return associative array with hallal for last and vegetarian for second to last
         return [
-            'hallal' => $this->mains[count($this->mains) - 1] ? count($this->mains) - 1 : null,
-            'vegetarian' => $this->mains[count($this->mains) - 2] ? count($this->mains) - 2 : null,
+            'hallal' => count($this->mains) > 1 ? count($this->mains) - 1 : null,
+            'vegetarian' => count($this->mains) > 2 ? count($this->mains) - 2 : null,
         ];
     }
 
