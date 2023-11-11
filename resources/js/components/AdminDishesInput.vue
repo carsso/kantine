@@ -9,8 +9,10 @@
                 :name="name+'[]'"
                 v-model="inputDishes[index]"
                 v-on:input="updateInputs(index, true)"
+                v-on:keydown="updateInputs(index, true)"
                 v-on:focus="updateInputs(index, true)"
-                v-on:focusout="updateInputs(index, false, 300)"
+                v-on:change="updateInputs(index, true)"
+                v-on:blur="updateInputs(index, false, 300)"
                 class="block w-full py-0.5 my-2 border border-gray-200 shadow-sm rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-400">
 
             <aside 
@@ -72,7 +74,7 @@ export default {
 
     methods: {
         filterDishes: function (value) {
-            return this.autocompleteDishes.filter(item => item.toLowerCase().includes(value.toLowerCase())).slice(0, 10);
+            return this.autocompleteDishes.filter(item => item.toLowerCase().includes(value.toLowerCase().trim())).slice(0, 10);
         },
         
         setInput: function (index, value) {
