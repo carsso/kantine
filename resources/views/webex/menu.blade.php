@@ -67,7 +67,7 @@
                 <span> - <i>{{ $dish }}</i></span><br />
             @endforeach
 
-            <a href="{{ route('menu.date', $menu->date) }}">{{ route('menu.date', $menu->date) }}</a>
+            <a href="{{ route('menu', $menu->date) }}">{{ route('menu', $menu->date) }}</a>
         </blockquote>
     @else
         <blockquote class="warning">

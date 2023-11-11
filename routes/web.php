@@ -17,23 +17,17 @@ use App\Http\Controllers\AdminController;
 |
 */
 
-Route::get('/', [MenuController::class, 'index'])
+Route::get('/', [MenuController::class, 'menu'])
     ->name('home');
 
-Route::get('/menu', [MenuController::class, 'index'])
+Route::get('/menu/{date?}', [MenuController::class, 'menu'])
     ->name('menu');
-
-Route::get('/menu/{date}', [MenuController::class, 'menu'])
-    ->name('menu.date');
 
 Route::get('/notifications', [MenuController::class, 'notifications'])
     ->name('notifications');
 
 Route::get('/notifications/webex/{day}', [MenuController::class, 'webexMenu'])
     ->name('notifications.webex.day');
-
-Route::get('/admin/webex', [AdminController::class, 'webex'])
-    ->name('admin.webex');
 
 Route::get('/legal', [MenuController::class, 'legal'])
     ->name('legal');
@@ -64,4 +58,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('/upload', [MenuController::class, 'upload'])
         ->name('upload');
+});
+
+# admin route group with prefix
+Route::prefix('/admin')->group(function () {
+    Route::middleware(['auth', 'verified', 'role:Super Admin'])->group(function () {
+        Route::get('/', [AdminController::class, 'index'])
+            ->name('admin');
+
+        Route::get('/menu/{date?}', [AdminController::class, 'menu'])
+            ->name('admin.menu');
+
+        Route::post('/menu', [AdminController::class, 'updateMenu'])
+            ->name('admin.menu.update');
+
+        Route::get('/webex', [AdminController::class, 'webex'])
+            ->name('admin.webex');
+    });
 });

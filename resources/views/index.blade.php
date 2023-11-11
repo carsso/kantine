@@ -4,13 +4,13 @@
 <div class="container-2xl 2xl:container mx-auto px-4 sm:px-6 lg:px-8">
     <div class="grid grid-cols-2">
         <div class="text-left">
-            <a href="{{ route('menu.date', $prevWeek) }}" class="px-2 py-1 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+            <a href="{{ route('menu', $prevWeek) }}" class="px-2 py-1 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                 <i class="fas fa-circle-arrow-left mr-2"></i>
                 Semaine précédente
             </a>
         </div>
         <div class="text-right">
-            <a href="{{ route('menu.date', $nextWeek) }}" class="px-2 py-1 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+            <a href="{{ route('menu', $nextWeek) }}" class="px-2 py-1 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                 Semaine suivante
                 <i class="fas fa-circle-arrow-right ml-2"></i>
             </a>

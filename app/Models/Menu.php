@@ -74,6 +74,9 @@ class Menu extends Model
 
     public function getIsFriesDayAttribute()
     {
+        if (!$this->sides) {
+            return false;
+        }
         return str_contains(join(', ', $this->sides), 'Frites');
     }
 

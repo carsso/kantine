@@ -12,13 +12,11 @@ use Illuminate\Support\Facades\Http;
 
 class MenuController extends Controller
 {
-    public function index()
+    public function menu($dateString = null)
     {
-        return $this->menu(date('Y-m-d'));
-    }
-
-    public function menu($dateString)
-    {
+        if(!$dateString) {
+            $dateString = date('Y-m-d');
+        }
         $date = time();
         if(preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateString)) {
             $date = strtotime($dateString);

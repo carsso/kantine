@@ -59,7 +59,7 @@
                 Menus importés :<br />
                 <small>
                     @foreach($file->menus as $menu)
-                        - <a href="{{ route('menu.date', $menu->date) }}" class="hover:text-indigo-500">{{ $menu->date_carbon->translatedFormat('l d F') }}</a>
+                        - <a href="{{ route('menu', $menu->date) }}" class="hover:text-indigo-500">{{ $menu->date_carbon->translatedFormat('l d F') }}</a>
                         <br />
                     @endforeach
                 </small>
