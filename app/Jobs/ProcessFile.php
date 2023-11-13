@@ -167,7 +167,6 @@ class ProcessFile implements ShouldQueue
         $filePath = public_path() . $this->file->file_path;
         $pdf = $parser->parseFile($filePath);
 
-        $text = $pdf->getText();
         $details = $pdf->getDetails();
 
         if(!isset($details['ModDate']) || !$details['ModDate'] || !Carbon::parse($details['ModDate']))
@@ -176,16 +175,6 @@ class ProcessFile implements ShouldQueue
         }
 
         $wordsToCheck = ['GARNITURES', 'ENTRÉE', 'PLAT', 'FROMAGE', 'DESSERT', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi'];
-        foreach ($wordsToCheck as $string) {
-            if (!preg_match('/' . $string . '/', $text)) {
-                if($string == 'ENTRÉE' && $this->file->name == 'S16-2023.pdf') {
-                    # exception for S16-2023.pdf
-                    continue;
-                }
-                throw new \Exception('Fichier '.$this->file->file_path.' invalide, ' . $string . ' non trouvé');
-            }
-        }
-
         $csvFilePath = $filePath . '.csv';
         $process = new Process(['python3', base_path('scripts/') . 'pdf2csv.py', $filePath, $csvFilePath]);
         $process->run();
