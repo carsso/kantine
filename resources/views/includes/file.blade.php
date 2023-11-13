@@ -41,7 +41,7 @@
         @endif
         
         @if($displayDetails ?? false)
-            @if($file->state == 'error' || strtoupper(config('app.env')) != 'PRODUCTION')
+            @if($file->state == 'error' || auth()->user()->hasRole('Super Admin'))
                 <br />
                 <a href="{{ route('file.relaunch', $file->hash) }}" class="m-1 inline-flex items-center px-2 py-1 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                     Relancer le traitement
@@ -81,7 +81,7 @@
                 <i class="fas fa-file-pdf mr-2"></i>
                 PDF
             </a>
-            @if($file->state == 'error' || strtoupper(config('app.env')) != 'PRODUCTION')
+            @if($file->state == 'error' || auth()->user()->hasRole('Super Admin'))
                 <a href="{{ route('file.delete', $file->hash) }}" class="ml-2 inline-flex items-center mx-2 px-2 py-1 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
                     <i class="fas fa-trash-can mr-2"></i>
                     Supprimer

@@ -82,10 +82,8 @@ class MenuController extends Controller
         if(!$file) {
             return $this->redirectWithErrror('Fichier non trouvé', redirect()->route('home'));
         }
-        if($file->state != 'error') {
-            if(strtoupper(config('app.env')) == 'PRODUCTION') {
-                return $this->redirectWithErrror('Le fichier n\'est pas en erreur', redirect()->route('file', $file->hash));
-            }
+        if($file->state != 'error' && !auth()->user()->hasRole('Super Admin')) {
+            return $this->redirectWithErrror('Le fichier n\'est pas en erreur', redirect()->route('file', $file->hash));
         }
         $file->state = 'todo';
         $file->message = null;
@@ -100,10 +98,8 @@ class MenuController extends Controller
         if(!$file) {
             return $this->redirectWithErrror('Fichier non trouvé', redirect()->route('home'));
         }
-        if($file->state != 'error') {
-            if(strtoupper(config('app.env')) == 'PRODUCTION') {
-                return $this->redirectWithErrror('Fichier non en erreur', redirect()->route('file', $file->hash));
-            }
+        if($file->state != 'error' && !auth()->user()->hasRole('Super Admin')) {
+            return $this->redirectWithErrror('Fichier non en erreur', redirect()->route('file', $file->hash));
         }
         if(is_file(public_path($file->file_path))) {
             unlink(public_path($file->file_path));
