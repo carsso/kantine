@@ -48,7 +48,7 @@ class ProcessFile implements ShouldQueue
         }
         $yearFromFilename = $matches[1];
 
-        $csvFilePath = $this->checkAndConvertPdf();
+        [$csvFilePath, $process] = $this->checkAndConvertPdf();
 
         $parser = new \Smalot\PdfParser\Parser();
         $filePath = public_path() . $this->file->file_path;
@@ -154,6 +154,10 @@ class ProcessFile implements ShouldQueue
         if(!$message) {
             $message = null;
         }
+        $message .= sprintf("\n\nOutput:\n================\n%s\n\nError Output:\n================\n%s",
+            $process->getOutput(),
+            $process->getErrorOutput()
+        );
 
         $this->file->datetime = $fileDate;
         $this->file->state = 'done';
@@ -161,7 +165,7 @@ class ProcessFile implements ShouldQueue
         $this->file->save();
     }
 
-    public function checkAndConvertPdf(): string
+    public function checkAndConvertPdf(): array
     {
         $parser = new \Smalot\PdfParser\Parser();
         $filePath = public_path() . $this->file->file_path;
@@ -192,7 +196,7 @@ class ProcessFile implements ShouldQueue
             }
         }
 
-        return $csvFilePath;
+        return [$csvFilePath, $process];
     }
 
     /**

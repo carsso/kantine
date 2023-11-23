@@ -29,27 +29,16 @@
             <span class="text-red-700">
                 <i class="fas fa-times"></i>
                 Erreur
-                @if($displayDetails ?? false)
-                    @if($file->message)
-                        <br />
-                        <small><pre>{{ $file->message }}</pre></small>
-                    @endif
-                @endif
             </span>
         @else
             {{ $file->state }}
         @endif
-        
         @if($displayDetails ?? false)
             @if($file->state == 'error' || auth()->user()->hasRole('Super Admin'))
                 <br />
                 <a href="{{ route('file.relaunch', $file->hash) }}" class="m-1 inline-flex items-center px-2 py-1 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                     Relancer le traitement
                 </a>
-            @endif
-            @if($file->message && $file->state != 'error')
-                <br />
-                <small><pre>{{ $file->message }}</pre></small>
             @endif
         @endif
     </p>
@@ -95,3 +84,14 @@
         @endif
     </p>
 </div>
+        
+@if($displayDetails ?? false)
+    @if($file->message)
+        <div class="bg-white dark:bg-gray-700 rounded-lg shadow p-4 text-left mt-6">
+            <h3 class="text-2xl">Output log : </h3>
+            <p class="mt-2 text-left">
+                <small><pre>{{ $file->message }}</pre></small>
+            </p>
+        </div>
+    @endif
+@endif
