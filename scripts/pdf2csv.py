@@ -62,6 +62,9 @@ def check_and_export(df):
 
 def extract_pdf_camelot():
     tables = camelot.read_pdf(sys.argv[1], pages='1', flavor='stream')
+    if len(tables) == 0:
+        print('No DF found')
+        return
     table = tables[0]
     check_and_export(table.df)
 
@@ -69,6 +72,9 @@ def extract_pdf_tabula():
     for area in [[15,0,85,100], None]:
         print('Working on area: '+str(area))
         dfs = tabula.read_pdf(sys.argv[1], pages=[1], area=area, relative_area=True)
+        if len(dfs) == 0:
+            print('No DF found')
+            continue
         check_and_export(dfs[0])
 
 print('Trying tabula')
