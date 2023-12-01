@@ -100,7 +100,7 @@ class ProcessFile implements ShouldQueue
             }
             if($currentKey && !$skipLine) {
                 foreach($data as $key => $value) {
-                    if($value && $value != $currentKey) {
+                    if($value && $value != '0.0' && $value != $currentKey) {
                         # value does not start with uppercase letter
                         if(preg_match('/^[a-z]/', $value)) {
                             $value = $all_data[$key][$currentKey][count($all_data[$key][$currentKey])-1] . ' ' . $value;
