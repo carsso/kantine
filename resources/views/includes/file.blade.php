@@ -42,18 +42,16 @@
             @endif
         @endif
     </p>
-    @if($displayDetails ?? false)
-        @if(count($file->menus))
-            <p class="mt-2">
-                Menus importés :<br />
-                <small>
-                    @foreach($file->menus as $menu)
-                        - <a href="{{ route('menu', $menu->date) }}" class="hover:text-indigo-500">{{ $menu->date_carbon->translatedFormat('l d F') }}</a>
-                        <br />
-                    @endforeach
-                </small>
-            </p>
-        @endif
+    @if(count($file->menus))
+        <p class="mt-2">
+            Menus importés :<br />
+            <small>
+                @foreach($file->menus as $menu)
+                    - <a href="{{ route('menu', $menu->date) }}" class="hover:text-indigo-500">{{ $menu->date_carbon->translatedFormat('l d F Y') }}</a>
+                    <br />
+                @endforeach
+            </small>
+        </p>
     @endif
 
     <p class="mt-2 text-gray-500"><small><small><small>SHA1 : {{ $file->hash }}</small></small></small></p>

@@ -56,6 +56,9 @@ class MenuController extends Controller
                         continue;
                     }
                 }
+                if(!preg_match('/^S[0-9]+-([0-9]{4})\.pdf$/', $validatedFile->getClientOriginalName(), $matches)) {
+                    return $this->redirectWithErrror('Fichier '.$validatedFile->getClientOriginalName().' invalide, nom incorrect, format attendu : SXX-XXXX.pdf', redirect()->route('files'));
+                }
                 $fileName = $fileHash.'_'.$validatedFile->getClientOriginalName();
                 $filePath = $validatedFile->storeAs('uploads/menus', $fileName, 'public');
                 $file = new File;
@@ -122,7 +125,7 @@ class MenuController extends Controller
 
    public function files()
    {
-        $files = File::all()->sortByDesc('datetime')->sortByDesc('name');
+        $files = File::all()->sortByDesc('datetime')->sortByDesc('name')->sortByDesc('filenameWeek')->sortByDesc('filenameYear');
         return view('files', ['files' => $files]);
    }
 

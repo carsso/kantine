@@ -12,7 +12,7 @@ use Symfony\Component\Process\Process;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use App\Models\Menu;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class ProcessFile implements ShouldQueue
 {
@@ -23,13 +23,15 @@ class ProcessFile implements ShouldQueue
      *
      * @var int
      */
-    public $tries = 3;
+    public $tries = 1;
+
+    public $message = '';
 
     /**
      * Create a new job instance.
      */
     public function __construct(
-        public File $file,
+        public File $file
     ) {
         $this->file = $file;
     }
@@ -40,13 +42,15 @@ class ProcessFile implements ShouldQueue
     public function handle(): void
     {
         $this->file->state = 'doing';
-        $this->file->message = null;
+        $this->file->message = '';
         $this->file->save();
+        $this->message = 'Traitement du fichier '.$this->file->file_path."\n";
 
-        if(!preg_match('/^S[0-9]+-([0-9]{4})\.pdf$/', $this->file->name, $matches)) {
-            throw new \Exception('Fichier invalide, nom incorrect, format attendu : SXX-XXXX.pdf');
+        if(!preg_match('/^S([0-9]+)-([0-9]{4})\.pdf$/', $this->file->name, $matches)) {
+            throw new \Exception($this->message.'Fichier invalide, nom incorrect, format attendu : SXX-XXXX.pdf');
         }
-        $yearFromFilename = $matches[1];
+        $yearFromFilename = $matches[2];
+        $weekFromFilename = $matches[1];
 
         [$csvFilePath, $process] = $this->checkAndConvertPdf();
 
@@ -103,6 +107,9 @@ class ProcessFile implements ShouldQueue
                     if($value && $value != '0.0' && $value != $currentKey) {
                         # value does not start with uppercase letter
                         if(preg_match('/^[a-z]/', $value)) {
+                            if(count($all_data[$key][$currentKey]) == 0) {
+                                throw new \Exception($this->message.'Impossible de trouver début du nom du plat de type "'.$currentKey.'": "'.$value.'" pour la journée du '.$all_data[$key]['date']);
+                            }
                             $value = $all_data[$key][$currentKey][count($all_data[$key][$currentKey])-1] . ' ' . $value;
                             array_pop($all_data[$key][$currentKey]);
                         }
@@ -114,26 +121,24 @@ class ProcessFile implements ShouldQueue
         fclose($file);
 
         Carbon::setLocale(config('app.locale'));
-        $message = '';
         foreach($all_data as $data) {
             # guess year from date
-            $yearFound = false;
-            foreach([$yearFromFilename, $yearFromFilename+1, $yearFromFilename-1] as $year) {
-                $date = Carbon::createFromLocaleFormat('l d F Y', 'fr',  $data['date'].' '.$year);
-                if($date->translatedFormat('l d F') == $data['date']) {
-                    $yearFound = true;
-                    break;
-                }
+            $year = $yearFromFilename;
+            if($weekFromFilename > 50 && str_contains($data['date'], 'janvier')) {
+                $year++;
+            } else if($weekFromFilename < 3 && str_contains($data['date'], 'décembre')) {
+                $year--;
             }
-            if(!$yearFound) {
-                throw new \Exception('Année non trouvée');
+            $date = Carbon::createFromLocaleFormat('l d F Y', 'fr',  $data['date'].' '.$year);
+            if($date->translatedFormat('l d F') != $data['date']) {
+                throw new \Exception($this->message.'Impossible de trouver la journée du '.$data['date'].' en '.$year.' (semaine '.$weekFromFilename.', année '.$yearFromFilename.')');
             }
             $dateStr = $date->format('Y-m-d');
             # year found
             $menu = Menu::where('date', $dateStr)->first();
             if($menu && $menu->file) {
                 if($menu->file->datetime_carbon && $menu->file->datetime_carbon->timestamp > $fileDate->timestamp) {
-                    $message .= 'Menu plus récent déjà enregistré pour le '.$dateStr."\n";
+                    $this->message .= 'Menu plus récent déjà enregistré pour le '.$dateStr."\n";
                     continue;
                 }
             }
@@ -151,17 +156,9 @@ class ProcessFile implements ShouldQueue
             $menu->save();
         }
 
-        if(!$message) {
-            $message = null;
-        }
-        $message .= sprintf("\n\nOutput:\n================\n%s\n\nError Output:\n================\n%s",
-            $process->getOutput(),
-            $process->getErrorOutput()
-        );
-
         $this->file->datetime = $fileDate;
         $this->file->state = 'done';
-        $this->file->message = $message;
+        $this->file->message = $this->message;
         $this->file->save();
     }
 
@@ -175,7 +172,7 @@ class ProcessFile implements ShouldQueue
 
         if(!isset($details['ModDate']) || !$details['ModDate'] || !Carbon::parse($details['ModDate']))
         {
-            throw new \Exception('Fichier invalide, métadonnées incorrectes');
+            throw new \Exception($this->message.'Fichier invalide, métadonnées incorrectes');
         }
 
         $wordsToCheck = ['GARNITURES', 'ENTRÉE', 'PLAT', 'FROMAGE', 'DESSERT', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi'];
@@ -185,6 +182,14 @@ class ProcessFile implements ShouldQueue
         if (!$process->isSuccessful()) {
             throw new ProcessFailedException($process);
         }
+        $this->message .= sprintf('Command: "%s"'."\n\nExit Code: %s(%s)\n\nWorking directory: %s\n\nOutput:\n================\n%s\n\nError Output:\n================\n%s\n\n",
+            $process->getCommandLine(),
+            $process->getExitCode(),
+            $process->getExitCodeText(),
+            $process->getWorkingDirectory(),
+            $process->getOutput(),
+            $process->getErrorOutput()
+        );
         $data = file_get_contents($csvFilePath);
         foreach ($wordsToCheck as $string) {
             if (!preg_match('/' . $string . '/', $data)) {
@@ -192,7 +197,7 @@ class ProcessFile implements ShouldQueue
                     # exception for S16-2023.pdf
                     continue;
                 }
-                throw new \Exception('Fichier '.$this->file->file_path.'.csv invalide, ' . $string . ' non trouvé après conversion.');
+                throw new \Exception($this->message.'Fichier '.$this->file->file_path.'.csv invalide, ' . $string . ' non trouvé après conversion.');
             }
         }
 
@@ -202,11 +207,11 @@ class ProcessFile implements ShouldQueue
     /**
      * Handle a job failure.
      */
-    public function failed(\Exception $exception): void
+    public function failed(Throwable $exception): void
     {
-        Log::error($exception);
+        $message = $exception->getMessage() . "\n" . $exception->getTraceAsString();
         $this->file->state = 'error';
-        $this->file->message = $exception->getMessage();
+        $this->file->message = $message;
         $this->file->save();
     }
 }

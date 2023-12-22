@@ -1,7 +1,7 @@
 
 <div class="bg-white dark:bg-gray-700 rounded-lg shadow px-4 py-5 text-center mt-6 border-t-4 {{ $menu->is_fries_day ? 'border-red-500' : ($menu->event_name ? 'border-green-500' : 'border-blue-500') }}">
-    <h1 class="text-2xl xl:hidden 2xl:block mb-3">{{ $menu->date_carbon->translatedFormat('l d F') }}</h1>
-    <h1 class="text-2xl hidden xl:block 2xl:hidden mb-3" title="{{ $menu->date_carbon->translatedFormat('l d F') }}">{{ $menu->date_carbon->translatedFormat('l d M') }}</h1>
+    <h1 class="text-2xl xl:hidden 2xl:block mb-3">{{ $menu->date_carbon->translatedFormat('l d F Y') }}</h1>
+    <h1 class="text-2xl hidden xl:block 2xl:hidden mb-3">{{ $menu->date_carbon->translatedFormat('l d M Y') }}</h1>
     <input id="date[{{ $idx }}]" type="hidden" name="date[{{ $idx }}]" value="{{ $menu->date }}">
     <div class="mt-2">
         <label for="event_name" class="block font-semibold">🎉 Événement🎉</label>
