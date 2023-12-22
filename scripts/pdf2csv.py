@@ -2,6 +2,7 @@ import tabula
 import camelot
 import sys
 import re
+import pandas as pd
 from pprint import pprint
 if len(sys.argv) != 3:
     print("Usage: python3 pdf2csv.py <input.pdf> <output.csv>")
@@ -64,6 +65,15 @@ def check_and_export(df):
         else:
             if type(df.columns[0]) == str and type(df.columns[1]) == str and type(df.columns[2]) == str and type(df.columns[3]) == str and type(df.columns[4]) == str:
                 if "lundi" in df.columns[0].lower() and "mardi" in df.columns[1].lower() and "mercredi" in df.columns[2].lower() and "jeudi" in df.columns[3].lower() and "vendredi" in df.columns[4].lower():
+
+                    lines = df.values.tolist()
+                    for idx, line in enumerate(lines):
+                        for col_idx, col in enumerate(line):
+                            if type(col) == str and col and col != '0' and re.search(r'^[a-z]', col):
+                                if idx-1 >= 0 and pd.isna(lines[idx-1][col_idx]):
+                                    if idx-2 >= 0 and pd.isna(lines[idx-2][col_idx]):
+                                            print ("Found invalid export because cannot find start of value "+col+", skipping export\n\n")
+                                            return
                     print("Found valid export, exporting to CSV")
                     df.to_csv(sys.argv[2], index=False)
                     exit(0)
