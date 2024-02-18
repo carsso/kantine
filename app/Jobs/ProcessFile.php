@@ -88,11 +88,13 @@ class ProcessFile implements ShouldQueue
                         'desserts' => [],
                     ];
                 }
+                $currentKey = 'event_name';
+                $skipLine = true;
             }
             if(str_contains($str, 'ENTRÉE')) {
                 foreach($data as $key => $value) {
-                    if($value != 'ENTRÉE') {
-                       $all_data[$key]['event_name'] = $value;
+                    if($value && $value != 'ENTRÉE') {
+                        $all_data[$key]['event_name'] = $value;
                     }
                 }
             }
@@ -105,15 +107,19 @@ class ProcessFile implements ShouldQueue
             if($currentKey && !$skipLine) {
                 foreach($data as $key => $value) {
                     if($value && $value != '0.0' && $value != $currentKey) {
-                        # value does not start with uppercase letter
-                        if(preg_match('/^[a-z]/', $value)) {
-                            if(count($all_data[$key][$currentKey]) == 0) {
-                                throw new \Exception($this->message.'Impossible de trouver début du nom du plat de type "'.$currentKey.'": "'.$value.'" pour la journée du '.$all_data[$key]['date']);
+                        if($currentKey == 'event_name') {
+                            $all_data[$key][$currentKey] = $value;
+                        } else {
+                            # value does not start with uppercase letter
+                            if(preg_match('/^[a-z]/', $value)) {
+                                if(count($all_data[$key][$currentKey]) == 0) {
+                                    throw new \Exception($this->message.'Impossible de trouver début du nom du plat de type "'.$currentKey.'": "'.$value.'" pour la journée du '.$all_data[$key]['date']);
+                                }
+                                $value = $all_data[$key][$currentKey][count($all_data[$key][$currentKey])-1] . ' ' . $value;
+                                array_pop($all_data[$key][$currentKey]);
                             }
-                            $value = $all_data[$key][$currentKey][count($all_data[$key][$currentKey])-1] . ' ' . $value;
-                            array_pop($all_data[$key][$currentKey]);
+                            array_push($all_data[$key][$currentKey], $value);
                         }
-                        array_push($all_data[$key][$currentKey], $value);
                     }
                 }
             }

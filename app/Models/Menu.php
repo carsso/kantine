@@ -80,6 +80,28 @@ class Menu extends Model
         return str_contains(join(', ', $this->sides), 'Frites');
     }
 
+    public function getNextFriesDayAttribute()
+    {
+        $menus = Menu::where('date', '>', $this->date)->orderBy('date', 'asc')->limit(15)->get();
+        foreach ($menus as $menu) {
+            if ($menu->is_fries_day) {
+                return $menu;
+            }
+        }
+        return null;
+    }
+
+    public function getNextEventAttribute()
+    {
+        $menus = Menu::where('date', '>', $this->date)->orderBy('date', 'asc')->limit(15)->get();
+        foreach ($menus as $menu) {
+            if ($menu->event_name) {
+                return $menu;
+            }
+        }
+        return null;
+    }
+
     public function getDateCarbonAttribute()
     {
         return Carbon::parse($this->date);

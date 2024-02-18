@@ -25,7 +25,21 @@ def update_df(df):
         for idx, line in enumerate(lines):
             if type(line[0]) == str and "lundi" in line[0].lower():
                 new_header = df.iloc[idx] # grab the first row for the header
-                df = df[idx+1:] # take the data less the header row
+                print("Header found at index "+str(idx))
+                old_df = df.copy()
+                df = old_df[idx+1:] # take the data less the header row
+                if(idx == 0):
+                    if "Menus de la semaine" not in ','.join(old_df.columns.values.tolist()):
+                        print("Line to add is: "+str(old_df.columns.values.tolist()))
+                        df.loc[-1] = ["" if 'Unnamed:' in x else x for x in old_df.columns.values.tolist()]
+                        df.index = df.index + 1
+                        df.sort_index(inplace=True)
+                elif(idx > 0):
+                    if "Menus de la semaine" not in ','.join(old_df.loc[idx-1].tolist()):
+                        print("Line to add is: "+str(old_df.loc[idx-1].tolist()))
+                        df.loc[-1] = old_df.loc[idx-1].tolist()
+                        df.index = df.index + 1
+                        df.sort_index(inplace=True)
                 df.columns = new_header # set the header row as the df header
                 print("Columns changed: "+str(df.columns.values.tolist()))
                 break

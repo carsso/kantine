@@ -67,6 +67,26 @@
                 <span> - <i>{{ $dish }}</i></span><br />
             @endforeach
 
+            <br />
+
+            @if($menu->next_fries_day)
+                <i>
+                    <span>Prochain 🍟 Jour des Frites 🍟 : </span>
+                    <span>{{ $menu->next_fries_day->date_carbon->translatedFormat('l d F') }}</span>
+                </i>
+                <br />
+            @endif
+
+            @if($menu->next_event)
+                <i>
+                    <span>Prochain 🎉 Événement 🎉 : </span>
+                    <span>{{ $menu->next_event->event_name }}</span>
+                    -
+                    <span>{{ $menu->next_event->date_carbon->translatedFormat('l d F') }}</span>
+                </i>
+                <br />
+            @endif
+
             <a href="{{ route('menu', $menu->date) }}">{{ route('menu', $menu->date) }}</a>
         </blockquote>
     @else

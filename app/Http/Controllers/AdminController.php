@@ -26,6 +26,9 @@ class AdminController extends Controller
         if(preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateString)) {
             $date = strtotime($dateString);
         }
+        if(date('N', $date) >= 6) {
+            $date = strtotime('+1 week', $date);
+        }
         $mondayTime = strtotime('monday this week', $date);
         $sundayTime = strtotime('sunday this week', $date);
         $calendarWeekFirstDay = date('Y-m-d', $mondayTime);
