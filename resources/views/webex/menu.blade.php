@@ -1,13 +1,20 @@
 @spaceless
     @if($menu)
-        <blockquote class="{{ $menu->is_fries_day ? 'danger' : ($menu->event_name ? 'success' : 'info') }}">
+        <blockquote class="{{ $menu->is_fries_day || $menu->is_burgers_day ? 'danger' : ($menu->event_name ? 'success' : 'info') }}">
             <h3>Menu du {{ $menu->date_carbon->translatedFormat('l d F Y') }}</h3><br />
 
             @if($menu->event_name)
                 <strong>🎉 Événement {{ $menu->event_name }} 🎉</strong><br />
             @endif
-            @if($menu->is_fries_day)
+            @if($menu->is_fries_day && $menu->is_burgers_day)
+                <strong>🍔 🍟 Jour des Burgers et des Frites 🍟 🍔</strong><br />
+            @elseif($menu->is_fries_day)
                 <strong>🍟 Jour des Frites 🍟</strong><br />
+            @elseif($menu->is_burgers_day)
+                <strong>🍔 Jour des Burgers 🍔</strong><br />
+            @endif
+            @if($menu->is_antioxidants_day)
+                <strong>🏋️ Jour des Antioxydants 🏋️</strong><br />
             @endif
 
             <strong>🥗 Entrées :</strong><br />
@@ -26,7 +33,12 @@
                 <i>Pas de plats</i><br />
             @endif
             @foreach($menu->mains as $idx => $dish)
-                <span> - {{ $dish }}
+                <span>
+                    @if($dish == 'Burger' && !$menu->getMainSpecialName($idx))
+                        - 🍔 {{ $dish }} 🍔
+                    @else
+                        - {{ $dish }}
+                    @endif
                     @if($specialName = $menu->getMainSpecialName($idx))
                         <i>({{ $specialName }})</i>
                     @endif
@@ -69,12 +81,27 @@
 
             <br />
 
-            @if($menu->next_fries_day)
+            @if($menu->next_fries_day && $menu->next_fries_day->is_burgers_day)
                 <i>
-                    <span>Prochain 🍟 Jour des Frites 🍟 : </span>
+                    <span>Prochain 🍔 🍟 Jour des Burgers et des Frites 🍟 🍔 : </span>
                     <span>{{ $menu->next_fries_day->date_carbon->translatedFormat('l d F') }}</span>
                 </i>
                 <br />
+            @else
+                @if($menu->next_fries_day)
+                    <i>
+                        <span>Prochain 🍟 Jour des Frites 🍟 : </span>
+                        <span>{{ $menu->next_fries_day->date_carbon->translatedFormat('l d F') }}</span>
+                    </i>
+                    <br />
+                @endif
+                @if($menu->next_burgers_day)
+                    <i>
+                        <span>Prochain 🍔 Jour des Burgers 🍔 : </span>
+                        <span>{{ $menu->next_burgers_day->date_carbon->translatedFormat('l d F') }}</span>
+                    </i>
+                    <br />
+                @endif
             @endif
 
             @if($menu->next_event)
@@ -83,6 +110,14 @@
                     <span>{{ $menu->next_event->event_name }}</span>
                     -
                     <span>{{ $menu->next_event->date_carbon->translatedFormat('l d F') }}</span>
+                </i>
+                <br />
+            @endif
+
+            @if($menu->next_antioxidants_day)
+                <i>
+                    <span>Prochain 🏋️ Jour des Antioxydants 🏋️ : </span>
+                    <span>{{ $menu->next_antioxidants_day->date_carbon->translatedFormat('l d F') }}</span>
                 </i>
                 <br />
             @endif

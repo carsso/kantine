@@ -40,6 +40,8 @@ class Menu extends Model
         'cheeses' => 'array',
         'desserts' => 'array',
         'is_fries_day' => 'boolean',
+        'is_burgers_day' => 'boolean',
+        'is_antioxidants_day' => 'boolean',
         'starters_without_usual' => 'array',
         'starters_usual' => 'array',
         'cheeses_without_usual' => 'array',
@@ -63,6 +65,8 @@ class Menu extends Model
      */
     protected $appends = [
         'is_fries_day',
+        'is_burgers_day',
+        'is_antioxidants_day',
         'starters_without_usual',
         'starters_usual',
         'cheeses_without_usual',
@@ -71,6 +75,50 @@ class Menu extends Model
         'desserts_usual',
         'mains_special_indexes',
     ];
+
+    public function getIsAntioxidantsDayAttribute()
+    {
+        if (!$this->sides) {
+            return false;
+        }
+        $needles = ['Haricots rouges', 'Lentilles'];
+        foreach ($needles as $needle){
+            if (str_contains(join(', ', $this->sides), $needle)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function getNextAntioxidantsDayAttribute()
+    {
+        $menus = Menu::where('date', '>', $this->date)->orderBy('date', 'asc')->limit(30)->get();
+        foreach ($menus as $menu) {
+            if ($menu->is_antioxidants_day) {
+                return $menu;
+            }
+        }
+        return null;
+    }
+
+    public function getIsBurgersDayAttribute()
+    {
+        if (!$this->mains) {
+            return false;
+        }
+        return str_contains(join(', ', $this->mains), 'Burger');
+    }
+
+    public function getNextBurgersDayAttribute()
+    {
+        $menus = Menu::where('date', '>', $this->date)->orderBy('date', 'asc')->limit(30)->get();
+        foreach ($menus as $menu) {
+            if ($menu->is_burgers_day) {
+                return $menu;
+            }
+        }
+        return null;
+    }
 
     public function getIsFriesDayAttribute()
     {
@@ -82,7 +130,7 @@ class Menu extends Model
 
     public function getNextFriesDayAttribute()
     {
-        $menus = Menu::where('date', '>', $this->date)->orderBy('date', 'asc')->limit(15)->get();
+        $menus = Menu::where('date', '>', $this->date)->orderBy('date', 'asc')->limit(30)->get();
         foreach ($menus as $menu) {
             if ($menu->is_fries_day) {
                 return $menu;
@@ -93,7 +141,7 @@ class Menu extends Model
 
     public function getNextEventAttribute()
     {
-        $menus = Menu::where('date', '>', $this->date)->orderBy('date', 'asc')->limit(15)->get();
+        $menus = Menu::where('date', '>', $this->date)->orderBy('date', 'asc')->limit(30)->get();
         foreach ($menus as $menu) {
             if ($menu->event_name) {
                 return $menu;

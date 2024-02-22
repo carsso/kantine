@@ -5,8 +5,15 @@
     @if($menu->event_name)
         <div class="mt-2 font-semibold">🎉 Événement {{ $menu->event_name }} 🎉</div>
     @endif
-    @if($menu->is_fries_day)
+    @if($menu->is_fries_day && $menu->is_burgers_day)
+        <p class="mt-2 font-semibold">🍔 🍟 Jour des Burgers et des Frites 🍟 🍔</p>
+    @elseif($menu->is_fries_day)
         <p class="mt-2 font-semibold">🍟 Jour des Frites 🍟</p>
+    @elseif($menu->is_burgers_day)
+        <p class="mt-2 font-semibold">🍔 Jour des Burgers 🍔</p>
+    @endif
+    @if($menu->is_antioxidants_day)
+        <p class="mt-2 font-semibold">🏋️ Jour des Antioxydants 🏋️</p>
     @endif
     <div class="mt-2">
         <div class="font-semibold">🥗 Entrées :</div>
@@ -27,7 +34,11 @@
         @endif
         @foreach($menu->mains as $idx => $dish)
             <div class="leading-snug">
-                {{ $dish }}
+                @if($dish == 'Burger' && !$menu->getMainSpecialName($idx))
+                    🍔 {{ $dish }} 🍔
+                @else
+                    {{ $dish }}
+                @endif
                 @if($specialName = $menu->getMainSpecialName($idx))
                     <i class="text-gray-500 text-xs">({{ $specialName }})</i>
                 @endif
