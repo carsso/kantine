@@ -18,6 +18,7 @@
                 'name' => 'API',
                 'route' => route('api.home'),
                 'active' => request()->routeIs('api.*') || request()->routeIs('api'),
+                'target' => '_blank',
             ],
             [
                 'name' => 'Envoyer un menu',

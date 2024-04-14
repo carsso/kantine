@@ -13,6 +13,8 @@ class UpdateMenuFormRequest extends FormRequest
             'date.*' => 'required|date_format:Y-m-d',
             'event_name' => 'required|array',
             'event_name.*' => 'nullable',
+            'information' => 'required|array',
+            'information.*' => 'nullable',
             'starters' => 'required|array',
             'starters.*.*' => 'nullable',
             'mains' => 'required|array',

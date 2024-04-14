@@ -2,7 +2,7 @@
 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
     <div class="bg-white dark:bg-gray-700 rounded-lg shadow p-4 text-center mt-6">
         <form action="{{ route('upload') }}" method="post" enctype="multipart/form-data">
-            <h3 class="text-center mb-2">Envoyer un menu (PDF)</h3>
+            <h1 class="text-center text-2xl mb-2">Envoyer un menu (PDF)</h1>
             @csrf
             @if(count($errors) > 0)
                 <div class="rounded-md bg-red-50 dark:bg-red-800 p-4 mb-4">

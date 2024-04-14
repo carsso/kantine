@@ -10,7 +10,7 @@
                         </a>
                     </div>
                     <div class="hidden md:ml-6 md:flex md:space-x-8">
-                        <a :href="route.route" v-for="(route, routeIdx) in routes" :key="routeIdx" class="border-indigo-500 text-gray-900 dark:text-white hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 text-sm font-medium" :class="route.active ? 'border-b-2' : 'hover:border-b-2'">
+                        <a :href="route.route" v-for="(route, routeIdx) in routes" :key="routeIdx" :target="route.target" class="border-indigo-500 text-gray-900 dark:text-white hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 text-sm font-medium" :class="route.active ? 'border-b-2' : 'hover:border-b-2'">
                             {{ route.name }}
                         </a>
                     </div>
@@ -19,7 +19,7 @@
                     <span class="hidden md:ml-6 md:flex md:items-center">
                         <NavbarDarkmodeToggler :route="homeRoute"></NavbarDarkmodeToggler>
                     </span>
-                    <a :href="route.route" v-for="(route, routeIdx) in routesLeft" :key="routeIdx" class="border-indigo-500 text-gray-900 dark:text-white hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 text-sm font-medium" :class="route.active ? 'border-b-2' : 'hover:border-b-2'">
+                    <a :href="route.route" v-for="(route, routeIdx) in routesLeft" :key="routeIdx" :target="route.target" class="border-indigo-500 text-gray-900 dark:text-white hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 text-sm font-medium" :class="route.active ? 'border-b-2' : 'hover:border-b-2'">
                         <div class="flex items-center" v-if="route.account">
                             <div>
                                 <img class="inline-block h-8 w-8 rounded-full" :src="route.account.gravatar_url" alt="">
@@ -45,7 +45,7 @@
 
         <DisclosurePanel class="md:hidden">
             <div class="pt-2 pb-3 space-y-1">
-                <DisclosureButton as="a" :href="route.route" v-for="(route, routeIdx) in routes" :key="routeIdx" class="border-indigo-500 text-indigo-700 dark:text-white hover:text-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white block pl-3 pr-4 py-2 text-base font-medium" :class="route.active ? 'border-l-4' : ''">
+                <DisclosureButton as="a" :href="route.route" v-for="(route, routeIdx) in routes" :key="routeIdx" :target="route.target" class="border-indigo-500 text-indigo-700 dark:text-white hover:text-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white block pl-3 pr-4 py-2 text-base font-medium" :class="route.active ? 'border-l-4' : ''">
                     {{ route.name }}
                 </DisclosureButton>
             </div>
@@ -54,7 +54,7 @@
                     <NavbarDarkmodeToggler :route="homeRoute"></NavbarDarkmodeToggler>
                 </div>
                 <div class="mt-3 space-y-1">
-                    <DisclosureButton as="a" :href="route.route" v-for="(route, routeIdx) in routesLeft" :key="routeIdx" class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white" :class="route.active ? 'border-l-4' : ''">
+                    <DisclosureButton as="a" :href="route.route" v-for="(route, routeIdx) in routesLeft" :key="routeIdx" :target="route.target" class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white" :class="route.active ? 'border-l-4' : ''">
                         {{ route.name }}
                     </DisclosureButton>
                 </div>

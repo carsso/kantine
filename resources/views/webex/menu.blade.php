@@ -3,6 +3,10 @@
         <blockquote class="{{ $menu->is_fries_day || $menu->is_burgers_day ? 'danger' : ($menu->event_name ? 'success' : 'info') }}">
             <h3>Menu du {{ $menu->date_carbon->translatedFormat('l d F Y') }}</h3><br />
 
+            @if($menu->information)
+                ℹ️ {!! $menu->information_html !!}<br />
+            @endif
+
             @if($menu->event_name)
                 <strong>🎉 Événement {{ $menu->event_name }} 🎉</strong><br />
             @endif

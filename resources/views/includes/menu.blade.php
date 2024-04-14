@@ -1,7 +1,10 @@
 
-<div class="bg-white dark:bg-gray-700 rounded-lg shadow px-4 py-5 text-center mt-6 border-t-4 {{ $menu->is_fries_day ? 'border-red-500' : ($menu->event_name ? 'border-green-500' : 'border-blue-500') }}">
+<div class="bg-white dark:bg-gray-700 rounded-lg shadow px-4 py-5 text-center border-t-4 {{ $menu->is_fries_day ? 'border-red-500' : ($menu->event_name ? 'border-green-500' : 'border-blue-500') }}">
     <h1 class="text-2xl xl:hidden 2xl:block mb-3">{{ $menu->date_carbon->translatedFormat('l d F Y') }}</h1>
-    <h1 class="text-2xl hidden xl:block 2xl:hidden mb-3">{{ $menu->date_carbon->translatedFormat('l d M Y') }}</h1>
+    <h1 class="text-2xl hidden xl:block 2xl:hidden mb-3">{{ $menu->date_carbon->translatedFormat('D d M Y') }}</h1>
+    @if($menu->information)
+        <p class="mt-2 text-sm leading-snug">ℹ️ {!! $menu->information_html !!}</p>
+    @endif
     @if($menu->event_name)
         <div class="mt-2 font-semibold">🎉 Événement {{ $menu->event_name }} 🎉</div>
     @endif
@@ -83,16 +86,14 @@
         @endforeach
     </div>
     @auth
-        <div class="mt-2">
-            <small class="text-gray-500">
-                Généré le {{ $menu->updated_at->translatedFormat('d F Y à H:i') }}<br />
-                @if($menu->file)
-                    <a href="{{ route('file', $menu->file->hash) }}" class="hover:text-indigo-500">
-                        Source :
-                        {{ $menu->file->name }} du {{ $menu->file->datetime_carbon->translatedFormat('d F Y') }}
-                    </a>
-                @endif
-            </small>
+        <div class="mt-2 leading-snug text-xs text-gray-500">
+            Généré le {{ $menu->updated_at->translatedFormat('d F Y à H:i') }}<br />
+            @if($menu->file)
+                <a href="{{ route('file', $menu->file->hash) }}" class="hover:text-indigo-500">
+                    Source :
+                    {{ $menu->file->name }} du {{ $menu->file->datetime_carbon->translatedFormat('d F Y') }}
+                </a>
+            @endif
         </div>
     @endauth
 </div>

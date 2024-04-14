@@ -7,6 +7,7 @@ use App\Models\File;
 use App\Http\Requests\UploadFormRequest;
 use App\Jobs\ProcessFile;
 use Barryvdh\Debugbar\Facades\Debugbar;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
@@ -24,14 +25,14 @@ class MenuController extends Controller
         if(date('N', $date) >= 6) {
             $date = strtotime('+1 week', $date);
         }
-        $mondayTime = strtotime('monday this week', $date);
-        $sundayTime = strtotime('sunday this week', $date);
+        $mondayTime = strtotime('monday this week 10 am', $date);
+        $sundayTime = strtotime('sunday this week 10 am', $date);
         $calendarWeekFirstDay = date('Y-m-d', $mondayTime);
         $calendarWeekLastDay = date('Y-m-d', $sundayTime);
         $weekMenus = Menu::whereBetween('date', [$calendarWeekFirstDay, $calendarWeekLastDay])->get();
         $prevWeek = date('Y-m-d', strtotime('-1 week', $mondayTime));
         $nextWeek = date('Y-m-d', strtotime('+1 week', $mondayTime));
-        return view('index', ['menus' => $weekMenus, 'prevWeek' => $prevWeek, 'nextWeek' => $nextWeek]);
+        return view('index', ['menus' => $weekMenus, 'weekMonday' => Carbon::parse($mondayTime), 'weekSunday' => Carbon::parse($sundayTime), 'prevWeek' => $prevWeek, 'nextWeek' => $nextWeek]);
     }
 
     public function webexMenu($dateString)
@@ -59,17 +60,21 @@ class MenuController extends Controller
                         continue;
                     }
                 }
-                if(!preg_match('/^S[0-9]+-([0-9]{4})\.pdf$/', $validatedFile->getClientOriginalName(), $matches)) {
-                    return $this->redirectWithErrror('Fichier '.$validatedFile->getClientOriginalName().' invalide, nom incorrect, format attendu : SXX-XXXX.pdf', redirect()->route('files'));
+                $originalFilename = $validatedFile->getClientOriginalName();
+                if(preg_match('/^[0-9a-f]{40}_(S[0-9]+-[0-9]{4}\.pdf)$/', $originalFilename, $matches)) {
+                    $originalFilename = $matches[1];
                 }
-                $fileName = $fileHash.'_'.$validatedFile->getClientOriginalName();
+                if(!preg_match('/^S[0-9]+-[0-9]{4}\.pdf$/', $originalFilename, $matches)) {
+                    return $this->redirectWithErrror('Fichier '.$originalFilename.' invalide, nom incorrect, format attendu : SXX-XXXX.pdf', redirect()->route('files'));
+                }
+                $fileName = $fileHash.'_'.$originalFilename;
                 $filePath = $validatedFile->storeAs('uploads/menus', $fileName, 'public');
                 $file = new File;
                 if(auth()->user()) {
                     $file->user_id = auth()->user()->id;
                 }
                 $file->hash = $fileHash;
-                $file->name = $validatedFile->getClientOriginalName();
+                $file->name = $originalFilename;
                 $file->file_path = '/storage/' . $filePath;
                 $file->save();
                 ProcessFile::dispatch($file);

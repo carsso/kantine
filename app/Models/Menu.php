@@ -25,6 +25,7 @@ class Menu extends Model
         'cheeses',
         'desserts',
         'file_id',
+        'information',
     ];
 
     /**
@@ -74,6 +75,7 @@ class Menu extends Model
         'desserts_without_usual',
         'desserts_usual',
         'mains_special_indexes',
+        'information_html',
     ];
 
     public function getIsAntioxidantsDayAttribute()
@@ -153,6 +155,11 @@ class Menu extends Model
     public function getDateCarbonAttribute()
     {
         return Carbon::parse($this->date);
+    }
+
+    public function getInformationHtmlAttribute()
+    {
+        return nl2br(e($this->information), false);
     }
 
     public function file(): BelongsTo

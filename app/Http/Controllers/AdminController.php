@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Http\Requests\UpdateMenuFormRequest;
 use App\Libraries\WebexApi;
+use Carbon\Carbon;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use App\Models\Menu;
 
@@ -29,8 +30,8 @@ class AdminController extends Controller
         if(date('N', $date) >= 6) {
             $date = strtotime('+1 week', $date);
         }
-        $mondayTime = strtotime('monday this week', $date);
-        $sundayTime = strtotime('sunday this week', $date);
+        $mondayTime = strtotime('monday this week 10 am', $date);
+        $sundayTime = strtotime('sunday this week 10 am', $date);
         $calendarWeekFirstDay = date('Y-m-d', $mondayTime);
         $calendarWeekLastDay = date('Y-m-d', $sundayTime);
         $weekMenus = Menu::whereBetween('date', [$calendarWeekFirstDay, $calendarWeekLastDay])->get();
@@ -50,7 +51,7 @@ class AdminController extends Controller
             })->unique()->sort()->values()->toArray();
 
         }
-        return view('admin.menu', ['menus' => $weekMenus, 'autocompleteDishes' => $autocompleteDishes, 'week' => $calendarWeekFirstDay, 'prevWeek' => $prevWeek, 'nextWeek' => $nextWeek]);
+        return view('admin.menu', ['menus' => $weekMenus, 'weekMonday' => Carbon::parse($mondayTime), 'weekSunday' => Carbon::parse($sundayTime), 'autocompleteDishes' => $autocompleteDishes, 'week' => $calendarWeekFirstDay, 'prevWeek' => $prevWeek, 'nextWeek' => $nextWeek]);
     }
 
     public function updateMenu(UpdateMenuFormRequest $request)
@@ -70,6 +71,7 @@ class AdminController extends Controller
                 }
                 $menu->date = $date;
                 $menu->event_name = $validated['event_name'][$idx] ?? '';
+                $menu->information = $validated['information'][$idx] ? $validated['information'][$idx] : null;
                 $menu->starters = $validated['starters'][$idx] ?? $menu->starters ?? [];
                 $menu->mains = $validated['mains'][$idx] ?? $menu->mains ?? [];
                 $menu->sides = $validated['sides'][$idx] ?? $menu->sides ?? [];

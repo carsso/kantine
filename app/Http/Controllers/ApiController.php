@@ -37,8 +37,8 @@ class ApiController extends Controller
 
     public function week()
     {
-        $calendarWeekFirstDay = date('Y-m-d', strtotime('monday this week'));
-        $calendarWeekLastDay = date('Y-m-d', strtotime('sunday this week'));
+        $calendarWeekFirstDay = date('Y-m-d', strtotime('monday this week 10 am'));
+        $calendarWeekLastDay = date('Y-m-d', strtotime('sunday this week 10 am'));
         $weekMenus = Menu::whereBetween('date', [$calendarWeekFirstDay, $calendarWeekLastDay])->get();
         if(!$weekMenus) {
             return response()->json([

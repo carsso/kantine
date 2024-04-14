@@ -8,7 +8,7 @@
 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
     <div class="bg-white dark:bg-gray-700 rounded-lg shadow px-8 mt-6 py-12">
         <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-            <h1 class="text-center text-2xl font-bold leading-9 tracking-tight">Mentions légales</h1>
+            <h1 class="text-center text-2xl leading-9 tracking-tight">Mentions légales</h1>
         </div>
         <div class="mt-6">
             <div>

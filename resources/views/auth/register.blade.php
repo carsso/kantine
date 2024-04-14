@@ -4,7 +4,7 @@
 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
     <div class="bg-white dark:bg-gray-700 rounded-lg shadow px-4 mt-6 py-12">
         <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-            <h2 class="text-center text-2xl font-bold leading-9 tracking-tight">{{ __('Register') }}</h2>
+            <h1 class="text-center text-2xl leading-9 tracking-tight">{{ __('Register') }}</h1>
         </div>
         <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
             <form class="space-y-6" action="{{ route('register') }}" method="POST">
