@@ -8,7 +8,7 @@
             @complete="search"
             :pt="{
                 root: { class: 'block w-full' },
-                input: { class: 'block w-full py-0.5 my-2 border border-gray-200 shadow-sm rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-400' },
+                input: { class: 'block w-full py-0.5 border border-gray-200 shadow-sm rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-400' },
                 loadingicon: { class: 'text-surface-500 dark:text-surface-0/70 absolute bottom-[0.4rem] right-[0.5rem] -mt-2 animate-spin' },
                 token: { class: 'block w-full inline-flex flex-row-reverse items-center cursor-default' },
                 tokenLabel: { class: 'grow' },
