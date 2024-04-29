@@ -36,6 +36,7 @@
         "@headlessui/vue": "^1.7.15",
         "@heroicons/vue": "^2.0.18",
         "crypto-js": "^4.1.1",
+        "primevue": "^3.52.0",
         "vue-lodash": "^2.1.2"
     },
     "keywords": [],

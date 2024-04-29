@@ -72,11 +72,11 @@ class AdminController extends Controller
                 $menu->date = $date;
                 $menu->event_name = $validated['event_name'][$idx] ?? '';
                 $menu->information = $validated['information'][$idx] ? $validated['information'][$idx] : null;
-                $menu->starters = $validated['starters'][$idx] ?? $menu->starters ?? [];
-                $menu->mains = $validated['mains'][$idx] ?? $menu->mains ?? [];
-                $menu->sides = $validated['sides'][$idx] ?? $menu->sides ?? [];
-                $menu->cheeses = $validated['cheeses'][$idx] ?? $menu->cheeses ?? [];
-                $menu->desserts = $validated['desserts'][$idx] ?? $menu->desserts ?? [];
+                $menu->starters = $validated['starters'][$idx] ?? [];
+                $menu->mains = $validated['mains'][$idx] ?? [];
+                $menu->sides = $validated['sides'][$idx] ?? [];
+                $menu->cheeses = $validated['cheeses'][$idx] ?? [];
+                $menu->desserts = $validated['desserts'][$idx] ?? [];
                 $menu->file_id = $menu->file_id ?? null;
                 $menu->save();
             }

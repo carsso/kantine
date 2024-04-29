@@ -1,5 +1,6 @@
 import { createApp } from "vue";
 import GlobalComponents from './globals'
+import PrimeVue from 'primevue/config';
 import './bootstrap';
 import.meta.glob(["../images/**", "../fonts/**"]);
 
@@ -37,4 +38,8 @@ window.Vue = app;
 
 app.config.globalProperties.window = window;
 
-app.use(GlobalComponents).mount('#app');
+app.use(GlobalComponents);
+app.use(PrimeVue, {
+    unstyled: true
+});
+app.mount('#app');
