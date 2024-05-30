@@ -1,5 +1,9 @@
 @extends('layouts.app-with-navbar')
 
+@section('meta')
+<meta http-equiv="refresh" content="14400">
+@endsection
+
 @section('content')
 <div class="container-2xl 2xl:container mx-auto px-4 sm:px-6 lg:px-8">
     <h1 class="lg:hidden text-2xl text-center mb-4">
