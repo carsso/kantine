@@ -20,20 +20,19 @@
                 <strong>🏋️ Jour des Antioxydants 🏋️</strong><br />
             @endif
 
-            <br />
+            @if($menu->information || $menu->event_name || $menu->is_fries_day || $menu->is_burgers_day || $menu->is_antioxidants_day)
+                <br />
+            @endif
 
-            @if(count($menu->desserts_without_usual) == 1)
+            @if(count($menu->starters_without_usual) == 1)
                 <strong>🥗 Entrée :</strong> {{ join(', ', $menu->starters_without_usual) }} <i>(ou {{ join(', ', $menu->starters_usual) }})</i><br />
             @else
-                <strong>🥗 Entrées :</strong><br />
+                <strong>🥗 Entrées </strong> <i>(ou {{ join(', ', $menu->starters_usual) }})</i> <strong> :</strong><br />
                 @if(!$menu->starters)
                     <i>Pas d'entrées</i><br />
                 @endif
                 @foreach($menu->starters_without_usual as $dish)
                     <span>&nbsp;&nbsp;&nbsp;&nbsp;- {{ $dish }}</span><br />
-                @endforeach
-                @foreach($menu->starters_usual as $dish)
-                    <span>&nbsp;&nbsp;&nbsp;&nbsp;- <i>{{ $dish }}</i></span><br />
                 @endforeach
             @endif
 
@@ -84,15 +83,12 @@
             @if(count($menu->desserts_without_usual) == 1)
                 <strong>🍨 Dessert :</strong> {{ join(', ', $menu->desserts_without_usual) }} <i>(ou {{ join(', ', $menu->desserts_usual) }})</i><br />
             @else
-                <strong>🍨 Desserts</strong> (hors {{ join(', ', $menu->desserts_usual) }}) <strong>:</strong><br />
+                <strong>🍨 Desserts </strong> <i>(ou {{ join(', ', $menu->desserts_usual) }})</i> <strong> :</strong><br />
                 @if(!$menu->desserts)
                     <i>Pas de desserts</i><br />
                 @endif
                 @foreach($menu->desserts_without_usual as $dish)
                     <span>&nbsp;&nbsp;&nbsp;&nbsp;- {{ $dish }}</span><br />
-                @endforeach
-                @foreach($menu->desserts_usual as $dish)
-                    <span>&nbsp;&nbsp;&nbsp;&nbsp;- <i>{{ $dish }}</i></span><br />
                 @endforeach
             @endif
 
