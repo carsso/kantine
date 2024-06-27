@@ -6,7 +6,6 @@
             @if($menu->information)
                 ℹ️ {!! $menu->information_html !!}<br />
             @endif
-
             @if($menu->event_name)
                 <strong>🎉 Événement {{ $menu->event_name }} 🎉</strong><br />
             @endif
@@ -21,16 +20,22 @@
                 <strong>🏋️ Jour des Antioxydants 🏋️</strong><br />
             @endif
 
-            <strong>🥗 Entrées :</strong><br />
-            @if(!$menu->starters)
-                <i>Pas d'entrées</i><br />
+            <br />
+
+            @if(count($menu->desserts_without_usual) == 1)
+                <strong>🥗 Entrée :</strong> {{ join(', ', $menu->starters_without_usual) }} <i>(ou {{ join(', ', $menu->starters_usual) }})</i><br />
+            @else
+                <strong>🥗 Entrées :</strong><br />
+                @if(!$menu->starters)
+                    <i>Pas d'entrées</i><br />
+                @endif
+                @foreach($menu->starters_without_usual as $dish)
+                    <span>&nbsp;&nbsp;&nbsp;&nbsp;- {{ $dish }}</span><br />
+                @endforeach
+                @foreach($menu->starters_usual as $dish)
+                    <span>&nbsp;&nbsp;&nbsp;&nbsp;- <i>{{ $dish }}</i></span><br />
+                @endforeach
             @endif
-            @foreach($menu->starters_without_usual as $dish)
-                <span> - {{ $dish }}</span><br />
-            @endforeach
-            @foreach($menu->starters_usual as $dish)
-                <span> - <i>{{ $dish }}</i></span><br />
-            @endforeach
 
             <strong>🍗 Plats :</strong><br />
             @if(!$menu->mains)
@@ -39,9 +44,9 @@
             @foreach($menu->mains as $idx => $dish)
                 <span>
                     @if($dish == 'Burger' && !$menu->getMainSpecialName($idx))
-                        - 🍔 {{ $dish }} 🍔
+                        &nbsp;&nbsp;&nbsp;&nbsp;- 🍔 {{ $dish }} 🍔
                     @else
-                        - {{ $dish }}
+                        &nbsp;&nbsp;&nbsp;&nbsp;- {{ $dish }}
                     @endif
                     @if($specialName = $menu->getMainSpecialName($idx))
                         <i>({{ $specialName }})</i>
@@ -55,33 +60,41 @@
             @endif
             @foreach($menu->sides as $dish)
                 @if($dish == 'Frites')
-                    <span> - 🍟 {{ $dish }} 🍟 <br />
+                    <span>&nbsp;&nbsp;&nbsp;&nbsp;- 🍟 {{ $dish }} 🍟 <br />
                 @else
-                    <span> - {{ $dish }}</span><br />
+                    <span>&nbsp;&nbsp;&nbsp;&nbsp;- {{ $dish }}</span><br />
                 @endif
             @endforeach
 
-            <strong>🧀 Fromages / Laitages :</strong><br />
-            @if(!$menu->cheeses)
-                <i>Pas de fromages / laitages</i><br />
+            @if(count($menu->cheeses) == 1)
+                <strong>🧀 {{ join(', ', $menu->cheeses) }}</strong><br />
+            @else
+                <strong>🧀 Fromages / Laitages :</strong><br />
+                @if(!$menu->cheeses)
+                    <i>Pas de fromages / laitages</i><br />
+                @endif
+                @foreach($menu->cheeses_without_usual as $dish)
+                    <span>&nbsp;&nbsp;&nbsp;&nbsp;- {{ $dish }}</span><br />
+                @endforeach
+                @foreach($menu->cheeses_usual as $dish)
+                    <span>&nbsp;&nbsp;&nbsp;&nbsp;- <i>{{ $dish }}</i></span><br />
+                @endforeach
             @endif
-            @foreach($menu->cheeses_without_usual as $dish)
-                <span> - {{ $dish }}</span><br />
-            @endforeach
-            @foreach($menu->cheeses_usual as $dish)
-                <span> - <i>{{ $dish }}</i></span><br />
-            @endforeach
 
-            <strong>🍨 Desserts :</strong><br />
-            @if(!$menu->desserts)
-                <i>Pas de desserts</i><br />
+            @if(count($menu->desserts_without_usual) == 1)
+                <strong>🍨 Dessert :</strong> {{ join(', ', $menu->desserts_without_usual) }} <i>(ou {{ join(', ', $menu->desserts_usual) }})</i><br />
+            @else
+                <strong>🍨 Desserts</strong> (hors {{ join(', ', $menu->desserts_usual) }}) <strong>:</strong><br />
+                @if(!$menu->desserts)
+                    <i>Pas de desserts</i><br />
+                @endif
+                @foreach($menu->desserts_without_usual as $dish)
+                    <span>&nbsp;&nbsp;&nbsp;&nbsp;- {{ $dish }}</span><br />
+                @endforeach
+                @foreach($menu->desserts_usual as $dish)
+                    <span>&nbsp;&nbsp;&nbsp;&nbsp;- <i>{{ $dish }}</i></span><br />
+                @endforeach
             @endif
-            @foreach($menu->desserts_without_usual as $dish)
-                <span> - {{ $dish }}</span><br />
-            @endforeach
-            @foreach($menu->desserts_usual as $dish)
-                <span> - <i>{{ $dish }}</i></span><br />
-            @endforeach
 
             <br />
 
