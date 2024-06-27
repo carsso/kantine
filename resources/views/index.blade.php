@@ -7,7 +7,7 @@
 @section('content')
 <div class="container-2xl 2xl:container mx-auto px-4 sm:px-6 lg:px-8">
     <h1 class="lg:hidden text-2xl text-center mb-4">
-        Menus de la semaine {{ $weekMonday->translatedFormat('W') }}
+        Menus de la semaine {{ $weekMonday->translatedFormat('W (Y)') }}
     </h1>
     <div class="flex mb-4">
         <div class="flex-none w-48 text-left">
@@ -18,7 +18,7 @@
         </div>
         <div class="flex-auto">
             <h1 class="hidden lg:block text-2xl text-center">
-                Menus de la semaine {{ $weekMonday->translatedFormat('W') }}
+                Menus de la semaine {{ $weekMonday->translatedFormat('W (Y)') }}
             </h1>
         </div>
         <div class="flex-none w-48 text-right">
