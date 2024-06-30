@@ -26,9 +26,9 @@
         @foreach($menu->starters_without_usual as $dish)
             <div class="leading-snug">{{ $dish }}</div>
         @endforeach
-        @foreach($menu->starters_usual as $dish)
-            <div class="text-gray-500 text-xs leading-normal">{{ $dish }}</div>
-        @endforeach
+        @if(count($menu->starters_usual))
+            <div class="text-gray-500 text-xs leading-normal">{{ join(', ', $menu->starters_usual) }}</div>
+        @endif
     </div>
     <div class="mt-2">
         <div class="font-semibold">🍗 Plats :</div>
@@ -62,16 +62,20 @@
         @endforeach
     </div>
     <div class="mt-2">
-        <div class="font-semibold">🧀 Fromages / Laitages :</div>
-        @if(!$menu->cheeses)
-            <div class="text-gray-500 leading-snug">Pas de fromages / laitages</div>
+        @if(count($menu->cheeses) == 1)
+            <div class="font-semibold">🧀 {{ join(', ', $menu->cheeses) }}</div>
+        @else
+            <div class="font-semibold">🧀 Fromages / Laitages :</div>
+            @if(!$menu->cheeses)
+                <div class="text-gray-500 leading-snug">Pas de fromages / laitages</div>
+            @endif
+            @foreach($menu->cheeses_without_usual as $dish)
+                <div class="leading-snug">{{ $dish }}</div>
+            @endforeach
+            @if(count($menu->cheeses_usual))
+                <div class="text-gray-500 text-xs leading-normal">{{ join(', ', $menu->cheeses_usual) }}</div>
+            @endif
         @endif
-        @foreach($menu->cheeses_without_usual as $dish)
-            <div class="leading-snug">{{ $dish }}</div>
-        @endforeach
-        @foreach($menu->cheeses_usual as $dish)
-            <div class="text-gray-500 text-xs leading-normal">{{ $dish }}</div>
-        @endforeach
     </div>
     <div class="mt-2">
         <div class="font-semibold">🍨 Desserts :</div>
@@ -81,9 +85,9 @@
         @foreach($menu->desserts_without_usual as $dish)
             <div class="leading-snug">{{ $dish }}</div>
         @endforeach
-        @foreach($menu->desserts_usual as $dish)
-            <div class="text-gray-500 text-xs leading-normal">{{ $dish }}</div>
-        @endforeach
+        @if(count($menu->desserts_usual))
+            <div class="text-gray-500 text-xs leading-normal">{{ join(', ', $menu->desserts_usual) }}</div>
+        @endif
     </div>
     @auth
         <div class="mt-2 leading-snug text-xs text-gray-500">
