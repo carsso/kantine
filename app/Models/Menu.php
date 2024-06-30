@@ -214,7 +214,7 @@ class Menu extends Model
 
     public function getUsualDessertsConfig()
     {
-        return ['Corbeille de fruits', 'Sweet\'bar'];
+        return ['Corbeille de fruits', 'Sweet\'bar', 'Glace'];
     }
     public function getDessertsWithoutUsualAttribute()
     {
