@@ -68,6 +68,7 @@ class ProcessFile implements ShouldQueue
         $currentKey = null;
         $keyMappings = [
             'ENTRÉE' => 'starters',
+            'ENTREE' => 'starters',
             'PLAT' => 'mains',
             'GARNITURES' => 'sides',
             'FROMAGE / LAITAGE' => 'cheeses',
@@ -91,9 +92,9 @@ class ProcessFile implements ShouldQueue
                 $currentKey = 'event_name';
                 $skipLine = true;
             }
-            if(str_contains($str, 'ENTRÉE')) {
+            if(str_contains($str, 'ENTRÉE') || str_contains($str, 'ENTREE')) {
                 foreach($data as $key => $value) {
-                    if($value && $value != 'ENTRÉE') {
+                    if($value && $value != 'ENTRÉE' && $value != 'ENTREE') {
                         $all_data[$key]['event_name'] = $value;
                     }
                 }
@@ -198,7 +199,12 @@ class ProcessFile implements ShouldQueue
         );
         $data = file_get_contents($csvFilePath);
         foreach ($wordsToCheck as $string) {
-            if (!preg_match('/' . $string . '/', $data)) {
+            $string2 = $string;
+            if($string == 'ENTRÉE')
+            {
+                $string2 = 'ENTREE';
+            }
+            if (!preg_match('/' . $string . '/', $data) && !preg_match('/' . $string2 . '/', $data)) {
                 if($string == 'ENTRÉE' && $this->file->name == 'S16-2023.pdf') {
                     # exception for S16-2023.pdf
                     continue;
