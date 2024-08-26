@@ -91,7 +91,7 @@
     </div>
 
     @if($displayDetails ?? false)
-        <div class="mt-4 text-xs">
+        <div class="mt-4 text-sm italic">
             @if($menu->next_fries_day && $menu->next_fries_day->is_burgers_day)
                 <div class="mt-1">
                     <div>Prochain 🍔 🍟 Jour des Burgers et des Frites 🍟 🍔 : </div>
