@@ -135,7 +135,7 @@
                 <br />
             @endif
 
-            <a href="{{ route('menu', $menu->date) }}">{{ route('menu', $menu->date) }}</a>
+            <a href="{{ route('menu.week', $menu->date) }}">{{ route('menu.week', $menu->date) }}</a>
         </blockquote>
     @else
         <blockquote class="warning">

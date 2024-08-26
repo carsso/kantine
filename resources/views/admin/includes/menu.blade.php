@@ -46,6 +46,11 @@
     </div>
     <div class="mt-2">
         <label for="starters" class="block font-semibold">🍗 Plats :</label>
+        <div class="text-gray-500 text-xs">
+            L'ordre est important.<br />
+            Avant-dernier : plat végé.<br />
+            Dernier : plat hallal
+        </div>
         <admin-dishes-input
             name="mains[{{ $idx }}]"
             :dishes='@json(old('mains') ?? $menu->mains ?? [])'

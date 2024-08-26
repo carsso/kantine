@@ -5,9 +5,14 @@
     @php
         $routes = [
             [
-                'name' => 'Menus',
-                'route' => route('home'),
-                'active' => request()->routeIs('menu.*') || request()->routeIs('menu') || request()->routeIs('home'),
+                'name' => 'Menus de la semaine',
+                'route' => route('menu.week'),
+                'active' => request()->routeIs('menu.week') || request()->routeIs('home'),
+            ],
+            [
+                'name' => 'Menu du jour',
+                'route' => route('menu.day'),
+                'active' => request()->routeIs('menu.day'),
             ],
             [
                 'name' => 'Notifications',

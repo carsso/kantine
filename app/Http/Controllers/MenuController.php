@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Http;
 
 class MenuController extends Controller
 {
-    public function menu($dateString = null)
+    public function week($dateString = null)
     {
         if(!$dateString) {
             $dateString = date('Y-m-d');
@@ -32,7 +32,19 @@ class MenuController extends Controller
         $weekMenus = Menu::whereBetween('date', [$calendarWeekFirstDay, $calendarWeekLastDay])->get();
         $prevWeek = date('Y-m-d', strtotime('-1 week', $mondayTime));
         $nextWeek = date('Y-m-d', strtotime('+1 week', $mondayTime));
-        return view('index', ['menus' => $weekMenus, 'weekMonday' => Carbon::parse($mondayTime), 'weekSunday' => Carbon::parse($sundayTime), 'prevWeek' => $prevWeek, 'nextWeek' => $nextWeek]);
+        return view('menu.week', ['menus' => $weekMenus, 'weekMonday' => Carbon::parse($mondayTime), 'weekSunday' => Carbon::parse($sundayTime), 'prevWeek' => $prevWeek, 'nextWeek' => $nextWeek]);
+    }
+
+    public function day($dateString = null)
+    {
+        $date = time();
+        if(preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateString)) {
+            $date = strtotime($dateString.' 10 am');
+        }
+        $menu = Menu::where('date', date('Y-m-d', $date))->first();
+        $prevDay = date('Y-m-d', strtotime('-1 day', $date));
+        $nextDay = date('Y-m-d', strtotime('+1 day', $date));
+        return view('menu.day', ['menu' => $menu, 'day' => Carbon::parse($date), 'prevDay' => $prevDay, 'nextDay' => $nextDay]);
     }
 
     public function webexMenu($dateString)

@@ -17,11 +17,14 @@ use App\Http\Controllers\AdminController;
 |
 */
 
-Route::get('/', [MenuController::class, 'menu'])
+Route::get('/', [MenuController::class, 'week'])
     ->name('home');
 
-Route::get('/menu/{date?}', [MenuController::class, 'menu'])
-    ->name('menu');
+Route::get('/menu/{date?}', [MenuController::class, 'day'])
+    ->name('menu.day');
+
+Route::get('/menus/{date?}', [MenuController::class, 'week'])
+    ->name('menu.week');
 
 Route::get('/notifications', [MenuController::class, 'notifications'])
     ->name('notifications');
@@ -66,10 +69,10 @@ Route::prefix('/admin')->group(function () {
         Route::get('/', [AdminController::class, 'index'])
             ->name('admin');
 
-        Route::get('/menu/{date?}', [AdminController::class, 'menu'])
+        Route::get('/menus/{date?}', [AdminController::class, 'menu'])
             ->name('admin.menu');
 
-        Route::post('/menu', [AdminController::class, 'updateMenu'])
+        Route::post('/menus', [AdminController::class, 'updateMenu'])
             ->name('admin.menu.update');
 
         Route::get('/webex', [AdminController::class, 'webex'])

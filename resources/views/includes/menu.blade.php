@@ -89,8 +89,47 @@
             <div class="text-gray-500 text-xs leading-normal">{{ join(', ', $menu->desserts_usual) }}</div>
         @endif
     </div>
+
+    @if($displayDetails ?? false)
+        <div class="mt-4 text-xs">
+            @if($menu->next_fries_day && $menu->next_fries_day->is_burgers_day)
+                <div class="mt-1">
+                    <div>Prochain 🍔 🍟 Jour des Burgers et des Frites 🍟 🍔 : </div>
+                    <div>{{ $menu->next_fries_day->date_carbon->translatedFormat('l d F') }}</div>
+                </div>
+            @else
+                @if($menu->next_fries_day)
+                    <div class="mt-1">
+                        <div>Prochain 🍟 Jour des Frites 🍟 : </div>
+                        <div>{{ $menu->next_fries_day->date_carbon->translatedFormat('l d F') }}</div>
+                    </div>
+                @endif
+                @if($menu->next_burgers_day)
+                    <div class="mt-1">
+                        <div>Prochain 🍔 Jour des Burgers 🍔 : </div>
+                        <div>{{ $menu->next_burgers_day->date_carbon->translatedFormat('l d F') }}</div>
+                    </div>
+                @endif
+            @endif
+
+            @if($menu->next_event)
+                <div class="mt-1">
+                    <div>Prochain 🎉 Événement 🎉 : </div>
+                    <div>{{ $menu->next_event->event_name }} - {{ $menu->next_event->date_carbon->translatedFormat('l d F') }}</div>
+                </div>
+            @endif
+
+            @if($menu->next_antioxidants_day)
+                <div class="mt-1">
+                    <div>Prochain 🏋️ Jour des Antioxydants 🏋️ : </div>
+                    <div>{{ $menu->next_antioxidants_day->date_carbon->translatedFormat('l d F') }}</div>
+                </div>
+            @endif
+        </div>
+    @endif
+
     @auth
-        <div class="mt-2 leading-snug text-xs text-gray-500">
+        <div class="mt-4 leading-snug text-xs text-gray-500">
             Généré le {{ $menu->updated_at->translatedFormat('d F Y à H:i') }}<br />
             @if($menu->file)
                 <a href="{{ route('file', $menu->file->hash) }}" class="hover:text-indigo-500">
