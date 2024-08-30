@@ -9,12 +9,12 @@
 
 @section('body')
     <body class="font-['Source_Sans_3'] bg-[#000E9C] text-white h-screen w-screen p-11">
-        <main id="app" class="relative flex items-center text-4xl h-full w-full">
+        <main id="app" class="relative flex items-center text-6xl h-full w-full">
             <div class="flex-none p-11 border-r-4 text-center @if($menu) {{ $menu->is_fries_day ? 'border-[#ED733D]' : ($menu->event_name ? 'border-[#A6D64D]' : 'border-[#147DE8]') }} @else border-white @endif">
-                <div class="text-8xl mb-5 font-black">Menu</div>
-                <div class="text-6xl mb-3 font-black">{{ $day->translatedFormat('l') }}</div>
-                <div class="text-[192px] leading-none mb-3 font-black">{{ $day->translatedFormat('d') }}</div>
-                <div class="text-8xl mb-3 font-black">{{ $day->translatedFormat('F') }}</div>
+                <div class="text-9xl mb-5 font-black">Menu</div>
+                <div class="text-8xl mb-3 font-black">{{ $day->translatedFormat('l') }}</div>
+                <div class="text-[256px] leading-none mb-3 font-black">{{ $day->translatedFormat('d') }}</div>
+                <div class="text-9xl mb-3 font-black">{{ $day->translatedFormat('F') }}</div>
                 @if($menu && $menu->event_name)
                     <div class="bg-white rounded-lg p-6 mt-16 font-bold text-5xl border-t-4 border-[#147DE8] text-[#000E9C]">
                         <div class="">Événement</div>
@@ -26,7 +26,7 @@
                 @if($menu)
                     <div class="flex items-center place-content-center">
                         <div class="mx-8">
-                            <div class="font-bold text-5xl mb-2 text-[#ED733D]">🥗 Entrées :</div>
+                            <div class="font-bold text-7xl mb-2 text-[#ED733D]">🥗 Entrées :</div>
                             @if(!$menu->starters)
                                 <div class="font-extralight leading-snug">Pas d'entrée</div>
                             @endif
@@ -40,7 +40,7 @@
                     </div>
                     <div class="flex place-content-center mt-12">
                         <div class="mx-12">
-                            <div class="font-bold text-5xl mb-2 text-[#A6D64D]">🍗 Plats :</div>
+                            <div class="font-bold text-7xl mb-2 text-[#A6D64D]">🍗 Plats :</div>
                             @if(!$menu->mains)
                                 <div class="font-extralight leading-snug">Pas de plat</div>
                             @endif
@@ -58,7 +58,7 @@
                             @endforeach
                         </div>
                         <div class="mx-12">
-                            <div class="font-bold text-5xl mb-2 text-[#FFD124]">🥬 Garnitures :</div>
+                            <div class="font-bold text-7xl mb-2 text-[#FFD124]">🥬 Garnitures :</div>
                             @if(!$menu->sides)
                                 <div class="font-extralight leading-snug">Pas de garniture</div>
                             @endif
@@ -75,9 +75,9 @@
                         <div class="mx-12">
                             <div>
                                 @if(count($menu->cheeses) == 1)
-                                    <div class="font-bold text-5xl text-[#73E3FF]">🧀 {{ join(', ', $menu->cheeses) }}</div>
+                                    <div class="font-bold text-7xl text-[#73E3FF]">🧀 {{ join(', ', $menu->cheeses) }}</div>
                                 @else
-                                    <div class="font-bold text-5xl mb-2 text-[#73E3FF]">🧀 Fromages / Laitages :</div>
+                                    <div class="font-bold text-7xl mb-2 text-[#73E3FF]">🧀 Fromages / Laitages :</div>
                                     @if(!$menu->cheeses)
                                         <div class="font-extralight leading-snug">Pas de fromage / laitage</div>
                                     @endif
@@ -90,7 +90,7 @@
                                 @endif
                             </div>
                             <div class="mt-12">
-                                <div class="font-bold text-5xl mb-2 text-[#147DE8]">🍨 Desserts :</div>
+                                <div class="font-bold text-7xl mb-2 text-[#147DE8]">🍨 Desserts :</div>
                                 @if(!$menu->desserts)
                                     <div class="font-extralight leading-snug">Pas de dessert</div>
                                 @endif
