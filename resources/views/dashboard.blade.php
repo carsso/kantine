@@ -8,15 +8,15 @@
 @endsection
 
 @section('body')
-    <body class="font-['Source_Sans_3'] bg-[#000E9C] text-white">
-        <main id="app" class="flex items-center text-4xl h-screen px-11 @if($menu) border-t-4 {{ $menu->is_fries_day ? 'border-[#ED733D]' : ($menu->event_name ? 'border-[#A6D64D]' : 'border-[#147DE8]') }} @endif">
-            <div class="flex-none px-11 border-r-1 border-white">
-                <div class="text-8xl mb-5 font-black text-center">Menu</div>
-                <div class="text-6xl mb-3 font-black text-center">{{ $day->translatedFormat('l') }}</div>
-                <div class="text-[192px] leading-none mb-3 font-black text-center">{{ $day->translatedFormat('d') }}</div>
-                <div class="text-8xl mb-3 font-black text-center">{{ $day->translatedFormat('F') }}</div>
+    <body class="font-['Source_Sans_3'] bg-[#000E9C] text-white h-screen w-screen p-11">
+        <main id="app" class="relative flex items-center text-4xl h-full w-full">
+            <div class="flex-none p-11 border-r-4 text-center @if($menu) {{ $menu->is_fries_day ? 'border-[#ED733D]' : ($menu->event_name ? 'border-[#A6D64D]' : 'border-[#147DE8]') }} @else border-white @endif">
+                <div class="text-8xl mb-5 font-black">Menu</div>
+                <div class="text-6xl mb-3 font-black">{{ $day->translatedFormat('l') }}</div>
+                <div class="text-[192px] leading-none mb-3 font-black">{{ $day->translatedFormat('d') }}</div>
+                <div class="text-8xl mb-3 font-black">{{ $day->translatedFormat('F') }}</div>
                 @if($menu && $menu->event_name)
-                    <div class="bg-white rounded-lg p-6 mt-16 text-center font-bold text-5xl border-t-4 border-[#147DE8] text-[#000E9C]">
+                    <div class="bg-white rounded-lg p-6 mt-16 font-bold text-5xl border-t-4 border-[#147DE8] text-[#000E9C]">
                         <div class="">Événement</div>
                         <div class="mt-4">{{ $menu->event_name }}</div>
                     </div>
@@ -109,9 +109,9 @@
                     </h1>
                 @endif
             </div>
+            <div class="absolute right-0 bottom-0 text-xs mt-16 text-[#00279c]">
+                {{ $time->translatedFormat('d/m/y H:i:s') }}
+            </div>
         </main>
-        <div class="absolute text-xs bottom-1 right-2 text-[#147DE8]">
-            {{ config('app.name') }} - {{ $time->translatedFormat('d/m/y H:i:s') }}
-        </div>
     </body>
 @endsection
