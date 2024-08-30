@@ -242,22 +242,54 @@ class Menu extends Model
         );
     }
 
+    public function getSpecialIndexesDefinitions($type)
+    {
+        if($type === 'mains') {
+            return [
+                'hallal' => -1,
+                'vegetarian' => -2,
+            ];
+        }
+        return [];
+    }
+
+    public function getSpecialIndexesTranslations($short = true)
+    {
+        return [
+            'hallal' => 'Hallal',
+            'vegetarian' => $short ? 'Végé.' : 'Végétarien',
+        ];
+    }
+
+    public function getSpecialIndexesDefinitionHumanReadable($type, $short = true)
+    {
+        $translations = $this->getSpecialIndexesTranslations($short);
+        $specialIndexes = $this->getSpecialIndexesDefinitions($type);
+        $specialIndexesHumanReadable = [];
+        foreach($specialIndexes as $key => $index) {
+            $translatedKey = $translations[$key] ?? $key;
+            $specialIndexesHumanReadable[$translatedKey] = $index;
+        }
+        return $specialIndexesHumanReadable;
+    }
+
     public function getMainsSpecialIndexesAttribute()
     {
         # return associative array with hallal for last and vegetarian for second to last
-        return [
-            'hallal' => count($this->mains) > 1 ? count($this->mains) - 1 : null,
-            'vegetarian' => count($this->mains) > 2 ? count($this->mains) - 2 : null,
-        ];
+        $specialIndexes = [];
+        foreach($this->getSpecialIndexesDefinitions('mains') as $type => $index) {
+            $specialIndexes[$type] = count($this->mains) > 1 ? count($this->mains) + $index : null;
+        }
+        return $specialIndexes;
     }
 
     public function getMainSpecialName($index, $short = true)
     {
-        if ($index === $this->mains_special_indexes['hallal']) {
-            return 'Hallal';
-        }
-        if ($index === $this->mains_special_indexes['vegetarian']) {
-            return $short ? 'Végé.' : 'Végétarien';
+        $translations = $this->getSpecialIndexesTranslations($short);
+        foreach($this->getSpecialIndexesDefinitions('mains') as $type => $specialIndex) {
+            if($index === $this->mains_special_indexes[$type]) {
+                return $translations[$type] ?? $type;
+            }
         }
         return null;
     }

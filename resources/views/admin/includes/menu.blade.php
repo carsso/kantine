@@ -60,6 +60,7 @@
         <admin-dishes-input
             name="mains[{{ $idx }}]"
             :dishes='@json(old('mains') ?? $menu->mains ?? [])'
+            :special-indexes='@json($menu->getSpecialIndexesDefinitionHumanReadable('mains', true))'
             :autocomplete-dishes='@json($autocompleteDishes['mains'])'>
         </admin-dishes-input>
         @error('mains')
