@@ -5,14 +5,9 @@
     @php
         $routes = [
             [
-                'name' => 'Menus de la semaine',
+                'name' => 'Menus',
                 'route' => route('menu.week'),
-                'active' => request()->routeIs('menu.week') || request()->routeIs('home'),
-            ],
-            [
-                'name' => 'Menu du jour',
-                'route' => route('menu.day'),
-                'active' => request()->routeIs('menu.day'),
+                'active' => request()->routeIs('menu.week') || request()->routeIs('menu.day') || request()->routeIs('home'),
             ],
             [
                 'name' => 'Notifications',
@@ -39,6 +34,11 @@
             ],
         ];
         if(auth()->check()) {
+            $routes[] = [
+                'name' => 'Dashboard',
+                'route' => route('dashboard'),
+                'active' => request()->routeIs('dashboard.*') || request()->routeIs('dashboard'),
+            ];
             $leftRoutes = [
                 [
                     'name' => 'Compte',

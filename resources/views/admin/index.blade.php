@@ -24,11 +24,11 @@
                     </form>
                 </div>
                 <div class="basis-3/4 text-center mb-3">
-                    <a href="{{ route('admin.menu') }}" class="p-2 m-2 border border-transparent text-sm leading-10 font-medium rounded-md shadow-sm text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                    <a href="{{ route('admin.menu') }}" class="p-2 m-4 border border-transparent text-sm leading-10 font-medium rounded-md shadow-sm text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                         Modification manuelle du menu
                     </a>
-                    <a href="{{ route('admin.webex') }}" class="p-2 m-2 border border-transparent text-sm leading-10 font-medium rounded-md shadow-sm text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-                        Debug Webex BOT
+                    <a href="{{ route('admin.webex') }}" class="p-2 m-4 border border-transparent text-sm leading-10 font-medium rounded-md shadow-sm text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                        Administration du BOT Webex
                     </a>
                 </div>
             </div>

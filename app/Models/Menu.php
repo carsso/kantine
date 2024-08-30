@@ -242,13 +242,13 @@ class Menu extends Model
         ];
     }
 
-    public function getMainSpecialName($index)
+    public function getMainSpecialName($index, $short = true)
     {
         if ($index === $this->mains_special_indexes['hallal']) {
             return 'Hallal';
         }
         if ($index === $this->mains_special_indexes['vegetarian']) {
-            return 'Végé.';
+            return $short ? 'Végé.' : 'Végétarien';
         }
         return null;
     }

@@ -21,7 +21,7 @@
     <div class="mt-2">
         <div class="font-semibold">🥗 Entrées :</div>
         @if(!$menu->starters)
-            <div class="text-gray-500 leading-snug">Pas d'entrées</div>
+            <div class="text-gray-500 leading-snug">Pas d'entrée</div>
         @endif
         @foreach($menu->starters_without_usual as $dish)
             <div class="leading-snug">{{ $dish }}</div>
@@ -33,7 +33,7 @@
     <div class="mt-2">
         <div class="font-semibold">🍗 Plats :</div>
         @if(!$menu->mains)
-            <div class="text-gray-500 leading-snug">Pas de plats</div>
+            <div class="text-gray-500 leading-snug">Pas de plat</div>
         @endif
         @foreach($menu->mains as $idx => $dish)
             <div class="leading-snug">
@@ -49,9 +49,9 @@
         @endforeach
     </div>
     <div class="mt-2">
-        <div class="font-semibold">🥬 Accompagnements :</div>
+        <div class="font-semibold">🥬 Garnitures :</div>
         @if(!$menu->sides)
-            <div class="text-gray-500 leading-snug">Pas d'accompagnements</div>
+            <div class="text-gray-500 leading-snug">Pas de garniture</div>
         @endif
         @foreach($menu->sides as $dish)
             @if($dish == 'Frites')
@@ -67,7 +67,7 @@
         @else
             <div class="font-semibold">🧀 Fromages / Laitages :</div>
             @if(!$menu->cheeses)
-                <div class="text-gray-500 leading-snug">Pas de fromages / laitages</div>
+                <div class="text-gray-500 leading-snug">Pas de fromage / laitage</div>
             @endif
             @foreach($menu->cheeses_without_usual as $dish)
                 <div class="leading-snug">{{ $dish }}</div>
@@ -80,7 +80,7 @@
     <div class="mt-2">
         <div class="font-semibold">🍨 Desserts :</div>
         @if(!$menu->desserts)
-            <div class="text-gray-500 leading-snug">Pas de desserts</div>
+            <div class="text-gray-500 leading-snug">Pas de dessert</div>
         @endif
         @foreach($menu->desserts_without_usual as $dish)
             <div class="leading-snug">{{ $dish }}</div>

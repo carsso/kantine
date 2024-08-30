@@ -34,7 +34,7 @@
             {{ $file->state }}
         @endif
         @if($displayDetails ?? false)
-            @if($file->state == 'error' || auth()->user()->hasRole('Super Admin'))
+            @if(auth()->user()->hasRole('Super Admin'))
                 <br />
                 <a href="{{ route('file.relaunch', $file->hash) }}" class="m-1 inline-flex items-center px-2 py-1 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                     Relancer le traitement

@@ -20,6 +20,9 @@ use App\Http\Controllers\AdminController;
 Route::get('/', [MenuController::class, 'week'])
     ->name('home');
 
+Route::get('/dashboard/{date?}', [MenuController::class, 'dashboard'])
+    ->name('dashboard');
+
 Route::get('/menu/{date?}', [MenuController::class, 'day'])
     ->name('menu.day');
 

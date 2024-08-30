@@ -29,7 +29,7 @@
             @else
                 <strong>🥗 Entrées </strong> <i>(ou {{ join(', ', $menu->starters_usual) }})</i> <strong> :</strong><br />
                 @if(!$menu->starters)
-                    <i>Pas d'entrées</i><br />
+                    <i>Pas d'entrée</i><br />
                 @endif
                 @foreach($menu->starters_without_usual as $dish)
                     <span>&nbsp;&nbsp;&nbsp;&nbsp;- {{ $dish }}</span><br />
@@ -38,7 +38,7 @@
 
             <strong>🍗 Plats :</strong><br />
             @if(!$menu->mains)
-                <i>Pas de plats</i><br />
+                <i>Pas de plat</i><br />
             @endif
             @foreach($menu->mains as $idx => $dish)
                 <span>
@@ -47,15 +47,15 @@
                     @else
                         &nbsp;&nbsp;&nbsp;&nbsp;- {{ $dish }}
                     @endif
-                    @if($specialName = $menu->getMainSpecialName($idx))
+                    @if($specialName = $menu->getMainSpecialName($idx, false))
                         <i>({{ $specialName }})</i>
                     @endif
                 </span><br />
             @endforeach
 
-            <strong>🥬 Accompagnements :</strong><br />
+            <strong>🥬 Garnitures :</strong><br />
             @if(!$menu->sides)
-                <i>Pas d'accompagnements</i><br />
+                <i>Pas de garniture</i><br />
             @endif
             @foreach($menu->sides as $dish)
                 @if($dish == 'Frites')
@@ -70,7 +70,7 @@
             @else
                 <strong>🧀 Fromages / Laitages :</strong><br />
                 @if(!$menu->cheeses)
-                    <i>Pas de fromages / laitages</i><br />
+                    <i>Pas de fromage / laitage</i><br />
                 @endif
                 @foreach($menu->cheeses_without_usual as $dish)
                     <span>&nbsp;&nbsp;&nbsp;&nbsp;- {{ $dish }}</span><br />
@@ -85,7 +85,7 @@
             @else
                 <strong>🍨 Desserts </strong> <i>(ou {{ join(', ', $menu->desserts_usual) }})</i> <strong> :</strong><br />
                 @if(!$menu->desserts)
-                    <i>Pas de desserts</i><br />
+                    <i>Pas de dessert</i><br />
                 @endif
                 @foreach($menu->desserts_without_usual as $dish)
                     <span>&nbsp;&nbsp;&nbsp;&nbsp;- {{ $dish }}</span><br />

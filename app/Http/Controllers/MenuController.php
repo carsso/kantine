@@ -47,6 +47,19 @@ class MenuController extends Controller
         return view('menu.day', ['menu' => $menu, 'day' => Carbon::parse($date), 'prevDay' => $prevDay, 'nextDay' => $nextDay]);
     }
 
+    public function dashboard($dateString = null)
+    {
+        $date = time();
+        if(preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateString)) {
+            $date = strtotime($dateString.' 10 am');
+        }
+        $menu = Menu::where('date', date('Y-m-d', $date))->first();
+        $prevDay = date('Y-m-d', strtotime('-1 day', $date));
+        $nextDay = date('Y-m-d', strtotime('+1 day', $date));
+
+        return view('dashboard', ['menu' => $menu, 'day' => Carbon::parse($date), 'prevDay' => $prevDay, 'nextDay' => $nextDay, 'time' => Carbon::now()]);
+    }
+
     public function webexMenu($dateString)
     {
         $date = time();
