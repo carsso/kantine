@@ -108,7 +108,16 @@ class Menu extends Model
         if (!$this->mains) {
             return false;
         }
-        return str_contains(join(', ', $this->mains), 'Burger');
+        foreach ($this->mains as $idx => $dish) {
+            if($this->getMainSpecialName($idx, false)) {
+                # skip special dishes
+                continue;
+            }
+            if (str_contains($dish, 'Burger')) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public function getNextBurgersDayAttribute()
