@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UpdateMenuFormRequest;
 use App\Libraries\WebexApi;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use App\Jobs\ProcessWebexMenuNotification;
 use App\Models\Menu;
 
 class AdminController extends Controller
@@ -95,8 +97,29 @@ class AdminController extends Controller
         $webexRooms = $api->getRooms();
         foreach($webexRooms['items'] as $room) {
             $room['memberships'] = $api->getRoomMemberships($room['id'])['items'];
+            $room['messages'] = $api->getMessages($room['id'])['items'];
             $rooms[] = $room;
         }
         return view('admin.webex', ['rooms' => $rooms]);
+    }
+
+    public function webexNotify()
+    {
+        $date = date('Y-m-d');
+        Log::info('Sending Webex notifications for menu of ' . $date . ' to all rooms');
+        $menu = Menu::where('date', $date)->first();
+
+        if(!config('services.webex.bearer_token')) {
+            Log::info('Webex bearer token not set, aborting');
+            return $this->redirectWithError('Token Webex non configuré', redirect()->route('admin.webex'));
+        }
+        $api = new WebexApi;
+        Log::info('Listing Webex rooms');
+        $rooms = $api->getRooms();
+        foreach($rooms['items'] as $room) {
+            Log::info('Adding Webex room notification task to room ' . $room['title'] .' ' . $room['id']);
+            ProcessWebexMenuNotification::dispatch($room, $menu, $date);
+        }
+        return $this->redirectWithSuccess('Notifications Webex envoyées', redirect()->route('admin.webex'));
     }
 }

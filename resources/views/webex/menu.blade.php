@@ -1,10 +1,10 @@
 @spaceless
-    @if($menu)
-        <blockquote class="{{ $menu->is_fries_day || $menu->is_burgers_day ? 'danger' : ($menu->event_name ? 'success' : 'info') }}">
-            <h3>Menu du {{ $menu->date_carbon->translatedFormat('l d F Y') }}</h3><br />
+    <blockquote class="@if($menu) {{ $menu->is_fries_day || $menu->is_burgers_day ? 'danger' : ($menu->event_name ? 'success' : 'info') }} @else warning @endif">
+        <h3>Menu du {{ $date->translatedFormat('l d F Y') }}</h3><br />
 
+        @if($menu)
             @if($menu->information)
-                ℹ️ {!! $menu->information_html !!}<br />
+                📢 {!! $menu->information_html !!}<br />
             @endif
             @if($menu->event_name)
                 <strong>🎉 Événement {{ $menu->event_name }} 🎉</strong><br />
@@ -96,21 +96,21 @@
 
             @if($menu->next_fries_day && $menu->next_fries_day->is_burgers_day)
                 <i>
-                    <span>Prochain 🍔 🍟 Jour des Burgers et des Frites 🍟 🍔 : </span>
+                    <span>Prochain 🍔 🍟 Jour des Burgers et des Frites : </span>
                     <span>{{ $menu->next_fries_day->date_carbon->translatedFormat('l d F') }}</span>
                 </i>
                 <br />
             @else
                 @if($menu->next_fries_day)
                     <i>
-                        <span>Prochain 🍟 Jour des Frites 🍟 : </span>
+                        <span>Prochain 🍟 Jour des Frites : </span>
                         <span>{{ $menu->next_fries_day->date_carbon->translatedFormat('l d F') }}</span>
                     </i>
                     <br />
                 @endif
                 @if($menu->next_burgers_day)
                     <i>
-                        <span>Prochain 🍔 Jour des Burgers 🍔 : </span>
+                        <span>Prochain 🍔 Jour des Burgers : </span>
                         <span>{{ $menu->next_burgers_day->date_carbon->translatedFormat('l d F') }}</span>
                     </i>
                     <br />
@@ -119,7 +119,7 @@
 
             @if($menu->next_event)
                 <i>
-                    <span>Prochain 🎉 Événement 🎉 : </span>
+                    <span>Prochain 🎉 Événement : </span>
                     <span>{{ $menu->next_event->event_name }}</span>
                     -
                     <span>{{ $menu->next_event->date_carbon->translatedFormat('l d F') }}</span>
@@ -129,19 +129,17 @@
 
             @if($menu->next_antioxidants_day)
                 <i>
-                    <span>Prochain 🏋️ Jour des Antioxydants 🏋️ : </span>
+                    <span>Prochain 🏋️ Jour des Antioxydants : </span>
                     <span>{{ $menu->next_antioxidants_day->date_carbon->translatedFormat('l d F') }}</span>
                 </i>
                 <br />
             @endif
 
             <a href="{{ route('menu.week', $menu->date) }}">{{ route('menu.week', $menu->date) }}</a>
-        </blockquote>
-    @else
-        <blockquote class="warning">
-            <h3>Aucun menu trouvé pour aujourd'hui</h3><br />
-            <span>Tu as le menu ? Viens l'ajouter sur le site !</span><br />
+        @else
+            <span>Aucun menu trouvé pour aujourd'hui</span><br />
             <a href="{{ route('home') }}">{{ route('home') }}</a>
-        </blockquote>
-    @endif
+        @endif
+        <@personEmail:{{ config('services.webex.bot_name') }}| >
+    </blockquote>
 @endspaceless

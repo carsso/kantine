@@ -8,50 +8,45 @@
             v-model="inputDishes[index]" />
         <div
             v-for="(dish, index) in inputDishes" :key="index" class="flex items-center mb-1">
-            <span v-if="Object.keys(specialIndexes).find(key => inputDishes.length + specialIndexes[key] === index)" class="text-gray-500 text-xs mr-2">
+            <span v-if="specialIndexes && Object.keys(specialIndexes).find(key => inputDishes.length + specialIndexes[key] === index)" class="text-gray-500 text-xs mr-2">
                 {{ Object.keys(specialIndexes).find(key => inputDishes.length + specialIndexes[key] === index) }}
             </span>
-            <AutoComplete
+            <v-select
                 v-model="inputDishes[index]"
-                :suggestions="filteredDishes"
-                @complete="search"
-                :pt="{
-                    root: { class: 'block w-full' },
-                    input: { class: 'block w-full py-0.5 border border-gray-200 shadow-sm rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-400' },
-                    loadingicon: { class: 'text-surface-500 dark:text-surface-0/70 absolute bottom-[0.4rem] right-[0.5rem] -mt-2 animate-spin' },
-                    token: { class: 'block w-full inline-flex flex-row-reverse items-center cursor-default' },
-                    tokenLabel: { class: 'grow' },
-                    dropdownButton: { root: { class: 'absolute items-center inline-flex bottom-[0rem] right-[0rem] px-2 pt-2' }, },
-                    removeTokenIcon: { class: 'shrink rounded-md leading-6 mr-2 w-4 h-4 transition duration-200 ease-in-out cursor-pointer' },
-                    panel: { class: 'bg-white dark:bg-gray-700 rounded-lg shadow px-4 py-1 text-center border-t-4 border-blue-500 max-h-[200px] overflow-auto' },
-                    item: { class: 'cursor-pointer' },
-                }"
-            />
-            <span
+                class="block w-full border border-gray-200 shadow-sm rounded-md text-sm leading-none focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-400"
+                :options="filteredDishes"
+                @search="search">
+                <template v-slot:option="option">
+                    {{ option.label }}
+                </template>
+            </v-select>
+            <button
+                type="button"
                 v-if="!dish && index !== inputDishes.length"
                 @click="inputDishes.splice(index, 1)"
-                class="text-xs ml-2 inline-flex items-center text-red-800 px-1 py-1 border border-gray-200 leading-4 font-medium rounded-md shadow-sm text-green bg-white hover:bg-gray-200">
+                class="text-xs ml-2 inline-flex items-center text-red-800 dark:text-red-800 px-1 py-1 border border-gray-200 dark:border-gray-500 leading-4 font-medium rounded-md shadow-sm text-green bg-white dark:bg-gray-700">
                 <i class="fas fa-trash-alt"></i>
-            </span>
-            <span
+            </button>
+            <button
+                type="button"
                 v-if="dish"
                 @click="inputDishes.splice(index + 1, 0, '')"
-                class="text-xs ml-2 inline-flex items-center text-gray-800 px-1 py-1 border border-gray-200 leading-4 font-medium rounded-md shadow-sm text-green bg-white hover:bg-gray-200">
+                class="text-xs ml-2 inline-flex items-center text-gray-700 dark:text-gray-400 px-1 py-1 border border-gray-200 dark:border-gray-500 leading-4 font-medium rounded-md shadow-sm text-green bg-white dark:bg-gray-700">
                 <i class="fas fa-plus"></i>
-            </span>
+            </button>
         </div>
     </div>
 </template>
 
 <script>
-import AutoComplete from 'primevue/autocomplete';
+import vSelect from 'vue-select';
 
 export default {
     
     name: "AdminDishesInput",
 
     components: {
-        AutoComplete,
+        vSelect,
     },
 
     props: {
@@ -68,9 +63,9 @@ export default {
             required: true,
         },
         specialIndexes: {
-            type: Array,
+            type: Object,
             required: false,
-            default: () => [],
+            default: () => {},
         },
     },
 
@@ -84,10 +79,51 @@ export default {
     },
 
     methods: {
-        search: function (event) {
-            let value = event.query.trim();
+        search: function (text) {
+            let value = text.trim();
             this.filteredDishes = [value].concat(this.autocompleteDishes.filter(item => item.toLowerCase().includes(value.toLowerCase().trim())));
         },
     },
 };
 </script>
+<style src="vue-select/dist/vue-select.css"></style>
+
+<style>
+.admin-dishes-input .vs__search::placeholder,
+.admin-dishes-input .vs__dropdown-toggle,
+.admin-dishes-input .vs__selected,
+.admin-dishes-input .vs__dropdown-option {
+    @apply border-none dark:text-gray-400 text-sm leading-none my-0 py-0.5;
+}
+
+.admin-dishes-input .vs__search {
+    @apply bg-white dark:bg-gray-700 text-sm leading-none mt-0 pt-0.5;
+}
+
+.admin-dishes-input .vs__dropdown-menu {
+    @apply bg-white dark:text-gray-400 dark:bg-gray-800 border border-gray-200 dark:border-gray-50 text-sm leading-none;
+}
+
+.admin-dishes-input .vs__dropdown-option {
+    @apply py-1;
+}
+
+.admin-dishes-input .vs__dropdown-option--selected {
+    @apply bg-gray-300 text-black dark:bg-gray-900 dark:text-gray-400 text-sm leading-none;
+}
+
+.admin-dishes-input .vs__dropdown-option--highlight {
+    @apply bg-gray-200 text-black dark:bg-gray-700 dark:text-gray-400 text-sm leading-none;
+}
+
+.admin-dishes-input .vs__actions {
+    @apply py-0 pr-1;
+}
+
+.admin-dishes-input .vs__open-indicator {
+    @apply hidden;
+}
+.admin-dishes-input .vs__clear {
+    @apply dark:fill-gray-400;
+}
+</style>

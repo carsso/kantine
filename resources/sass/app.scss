@@ -4,9 +4,34 @@
 
 $fa-font-path: '~fontawesome/webfonts';
 @import "~fontawesome/scss/fontawesome";
-@import "~fontawesome/scss/solid";
-@import "~fontawesome/scss/regular";
+@import "~fontawesome/scss/_animated";
+@import "~fontawesome/scss/_bordered-pulled";
 @import "~fontawesome/scss/brands";
+@import "~fontawesome/scss/_core";
+@import "~fontawesome/scss/_duotone-icons";
+@import "~fontawesome/scss/duotone";
+@import "~fontawesome/scss/_fixed-width";
+@import "~fontawesome/scss/_functions";
+@import "~fontawesome/scss/_icons";
+@import "~fontawesome/scss/light";
+@import "~fontawesome/scss/_list";
+@import "~fontawesome/scss/_mixins";
+@import "~fontawesome/scss/regular";
+@import "~fontawesome/scss/_rotated-flipped";
+@import "~fontawesome/scss/_screen-reader";
+@import "~fontawesome/scss/_sharp-duotone-icons";
+@import "~fontawesome/scss/sharp-duotone-solid";
+@import "~fontawesome/scss/sharp-light";
+@import "~fontawesome/scss/sharp-regular";
+@import "~fontawesome/scss/sharp-solid";
+@import "~fontawesome/scss/sharp-thin";
+@import "~fontawesome/scss/_shims";
+@import "~fontawesome/scss/_sizing";
+@import "~fontawesome/scss/solid";
+@import "~fontawesome/scss/_stacked";
+@import "~fontawesome/scss/thin";
+@import "~fontawesome/scss/v4-shims";
+@import "~fontawesome/scss/_variables";
 
 html {
     height: 100%;

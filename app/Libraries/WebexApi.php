@@ -4,6 +4,7 @@ namespace App\Libraries;
 
 use App\Libraries\WebexApiClient;
 use GuzzleHttp\Client as GuzzleClient;
+use Psr\Http\Message\ResponseInterface;
 
 class WebexApi
 {
@@ -29,6 +30,12 @@ class WebexApi
         return json_decode($json, true);
     }
 
+    public function put($path, $data = [], $headers = [])
+    {
+        $json = $this->client->getJson($this->client->put($path, json_encode($data), $headers));
+        return json_decode($json, true);
+    }
+
     public function getRooms($type = 'group')
     {
         if(!empty($type)) {
@@ -44,7 +51,7 @@ class WebexApi
 
     public function getRoomMemberships($roomId)
     {
-        return $this->get('v1/memberships?roomId=' . $roomId);
+        return $this->get('v1/memberships?roomId=' . $roomId .'&max=1000');
     }
 
     public function getPerson($personId)
@@ -56,10 +63,24 @@ class WebexApi
         return $this->get('v1/organizations/' . $organizationId);
     }
 
-    public function postMessage($roomId, $message)
+    public function getMessages($roomId)
+    {
+        return $this->get('v1/messages?roomId=' . $roomId . '&mentionedPeople=me');
+    }
+
+    public function postMessage($roomId, $message, $parentId = null)
     {
         return $this->post('v1/messages', [
             'roomId' => $roomId,
+            'html' => $message,
+            'parentId' => $parentId,
+        ]);
+    }
+
+    public function upddateMessage($messageId, $roomId, $message)
+    {
+        return $this->put('v1/messages/' . $messageId, [
+            'roomId'=> $roomId,
             'html' => $message,
         ]);
     }

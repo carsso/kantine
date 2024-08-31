@@ -34,7 +34,7 @@ jobs:
       continue-on-error: true
       run: npm list
     - name: npm install
-      run: npm --userconfig=.npmrc_build install --verbose
+      run: npm --userconfig=.npmrc_build install
       env:
         NPM_FONTAWESOME_AUTH_TOKEN: ${{ secrets.NPM_FONTAWESOME_AUTH_TOKEN }}
     - run: npm run build --verbose

@@ -80,5 +80,8 @@ Route::prefix('/admin')->group(function () {
 
         Route::get('/webex', [AdminController::class, 'webex'])
             ->name('admin.webex');
+
+        Route::post('/webex/notify', [AdminController::class, 'webexNotify'])
+            ->name('admin.webex.notify');
     });
 });

@@ -32,17 +32,12 @@
     },
     "dependencies": {
         "@fortawesome/fontawesome-pro": "^6.6.0",
-        "@fortawesome/fontawesome-svg-core": "^6.6.0",
-        "@fortawesome/pro-duotone-svg-icons": "^6.6.0",
-        "@fortawesome/pro-light-svg-icons": "^6.6.0",
-        "@fortawesome/pro-regular-svg-icons": "^6.6.0",
-        "@fortawesome/pro-solid-svg-icons": "^6.6.0",
         "@fortawesome/vue-fontawesome": "^3.0.8",
         "@headlessui/vue": "^1.7.22",
         "@heroicons/vue": "^2.1.5",
         "crypto-js": "^4.2.0",
-        "primevue": "^4.0.5",
-        "vue-lodash": "^2.1.2"
+        "vue-lodash": "^2.1.2",
+        "vue-select": "^4.0.0-beta.6"
     },
     "keywords": [],
     "author": "",

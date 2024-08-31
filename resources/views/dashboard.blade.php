@@ -10,7 +10,7 @@
 @section('body')
     <body class="font-['Source_Sans_3'] bg-[#000E9C] text-white h-screen w-screen px-11">
         <main id="app" class="relative flex items-center text-4xl h-full w-full">
-            <div class="flex-none py-2 px-[100px] border-r-4 text-center @if($menu) {{ $menu->is_fries_day ? 'border-[#ED733D]' : ($menu->event_name ? 'border-[#A6D64D]' : 'border-[#147DE8]') }} @else border-white @endif">
+            <div class="flex-none py-2 px-[100px] border-r-4 text-center @if($menu) {{ $menu->is_fries_day ? 'border-[#ED733D]' : ($menu->event_name ? 'border-[#FFD124]' : 'border-[#147DE8]') }} @else border-white @endif">
                 <div class="text-9xl mb-5 font-black">Menu</div>
                 <div class="text-8xl mb-3 font-black">{{ $day->translatedFormat('l') }}</div>
                 <div class="text-[196px] leading-none mb-3 font-black">{{ $day->translatedFormat('d') }}</div>
@@ -26,7 +26,9 @@
                 @if($menu)
                     <div class="flex items-center place-content-center">
                         <div class="mx-8">
-                            <div class="font-bold text-5xl mb-2 text-[#ED733D]">🥗 Entrées :</div>
+                            <div class="font-bold text-5xl mb-2 text-[#A6D64D]">
+                                <i class="fa-thin fa-salad"></i> Entrées :
+                            </div>
                             @if(!$menu->starters)
                                 <div class="font-extralight leading-snug">Pas d'entrée</div>
                             @endif
@@ -40,14 +42,16 @@
                     </div>
                     <div class="flex place-content-center mt-12">
                         <div class="mx-12">
-                            <div class="font-bold text-5xl mb-2 text-[#A6D64D]">🍗 Plats :</div>
+                            <div class="font-bold text-5xl mb-2 text-[#ED733D]">
+                                <i class="fa-thin fa-turkey"></i> Plats :
+                            </div>
                             @if(!$menu->mains)
                                 <div class="font-extralight leading-snug">Pas de plat</div>
                             @endif
                             @foreach($menu->mains as $idx => $dish)
                                 <div class="leading-snug">
                                     @if($dish == 'Burger' && !$menu->getMainSpecialName($idx))
-                                        🍔 {{ $dish }} 🍔
+                                        <i class="fa-thin fa-burger-cheese"></i> {{ $dish }}
                                     @else
                                         {{ $dish }}
                                     @endif
@@ -58,13 +62,17 @@
                             @endforeach
                         </div>
                         <div class="mx-12">
-                            <div class="font-bold text-5xl mb-2 text-[#FFD124]">🥬 Garnitures :</div>
+                            <div class="font-bold text-5xl mb-2 text-[#FFD124]">
+                                <i class="fa-thin fa-carrot"></i> Garnitures :
+                            </div>
                             @if(!$menu->sides)
                                 <div class="font-extralight leading-snug">Pas de garniture</div>
                             @endif
                             @foreach($menu->sides as $dish)
                                 @if($dish == 'Frites')
-                                    <div class="leading-snug">🍟 {{ $dish }} 🍟</div>
+                                    <div class="leading-snug">
+                                        <i class="fa-thin fa-french-fries"></i> {{ $dish }}
+                                    </div>
                                 @else
                                     <div class="leading-snug">{{ $dish }}</div>
                                 @endif
@@ -75,9 +83,13 @@
                         <div class="mx-12">
                             <div>
                                 @if(count($menu->cheeses) == 1)
-                                    <div class="font-bold text-5xl text-[#73E3FF]">🧀 {{ join(', ', $menu->cheeses) }}</div>
+                                    <div class="font-bold text-5xl text-[#73E3FF]">
+                                        <i class="fa-thin fa-cheese-swiss"></i> {{ join(', ', $menu->cheeses) }}
+                                    </div>
                                 @else
-                                    <div class="font-bold text-5xl mb-2 text-[#73E3FF]">🧀 Fromages / Laitages :</div>
+                                    <div class="font-bold text-5xl mb-2 text-[#73E3FF]">
+                                        <i class="fa-thin fa-cheese-swiss"></i> Fromages / Laitages :
+                                    </div>
                                     @if(!$menu->cheeses)
                                         <div class="font-extralight leading-snug">Pas de fromage / laitage</div>
                                     @endif
@@ -90,7 +102,9 @@
                                 @endif
                             </div>
                             <div class="mt-12">
-                                <div class="font-bold text-5xl mb-2 text-[#147DE8]">🍨 Desserts :</div>
+                                <div class="font-bold text-5xl mb-2 text-[#147DE8]">
+                                    <i class="fa-thin fa-cupcake"></i> Desserts :
+                                </div>
                                 @if(!$menu->desserts)
                                     <div class="font-extralight leading-snug">Pas de dessert</div>
                                 @endif

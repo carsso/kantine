@@ -31,8 +31,9 @@ class NotifyWebex extends Command
      */
     public function handle()
     {
-        Log::info('Sending Webex notifications for menu of ' . date('Y-m-d') . ' to all rooms');
-        $menu = Menu::where('date', date('Y-m-d'))->first();
+        $date = date('Y-m-d', time()-86400);
+        Log::info('Sending Webex notifications for menu of ' . $date . ' to all rooms');
+        $menu = Menu::where('date', $date)->first();
 
         if(!config('services.webex.bearer_token')) {
             Log::info('Webex bearer token not set, aborting');
@@ -42,12 +43,8 @@ class NotifyWebex extends Command
         Log::info('Listing Webex rooms');
         $rooms = $api->getRooms();
         foreach($rooms['items'] as $room) {
-            if ($room['isReadOnly']) {
-                Log::info('Skipping read-only Webex room "' . $room['title'] .'" ' . $room['id']);
-                continue;
-            }
             Log::info('Adding Webex room notification task to room ' . $room['title'] .' ' . $room['id']);
-            ProcessWebexMenuNotification::dispatch($room, $menu);
+            ProcessWebexMenuNotification::dispatch($room, $menu, $date);
         }
         return 0;
     }
