@@ -140,6 +140,8 @@
             <span>Aucun menu trouvé pour aujourd'hui</span><br />
             <a href="{{ route('home') }}">{{ route('home') }}</a>
         @endif
-        <@personEmail:{{ config('services.webex.bot_name') }}| >
+        @if(!isset($hideMention) || !$hideMention)
+            <@personEmail:{{ config('services.webex.bot_name') }}| >
+        @endif
     </blockquote>
 @endspaceless

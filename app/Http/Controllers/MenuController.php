@@ -67,7 +67,7 @@ class MenuController extends Controller
             $date = strtotime($dateString);
         }
         $menu = Menu::where('date', date('Y-m-d', $date))->first();
-         return view('webex.menu', ['menu' => $menu, 'date' => Carbon::parse($date)]);
+        return view('webex.menu', ['menu' => $menu, 'date' => Carbon::parse($date)]);
     }
 
     public function upload(UploadFormRequest $request)
@@ -164,7 +164,9 @@ class MenuController extends Controller
 
    public function notifications()
    {
-        return view('notifications');
+        $date = time();
+        $menu = Menu::where('date', date('Y-m-d', $date))->first();
+        return view('notifications', ['menu' => $menu, 'date' => Carbon::parse($date)]);
    }
 
    public function legal()
