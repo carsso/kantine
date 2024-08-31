@@ -13,6 +13,7 @@
             </span>
             <v-select
                 v-model="inputDishes[index]"
+                taggable
                 class="block w-full border border-gray-200 shadow-sm rounded-md text-sm leading-none focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-400"
                 :options="filteredDishes"
                 @search="search">
@@ -80,8 +81,7 @@ export default {
 
     methods: {
         search: function (text) {
-            let value = text.trim();
-            this.filteredDishes = [value].concat(this.autocompleteDishes.filter(item => item.toLowerCase().includes(value.toLowerCase().trim())));
+            this.filteredDishes = this.autocompleteDishes;
         },
     },
 };
@@ -94,6 +94,10 @@ export default {
 .admin-dishes-input .vs__selected,
 .admin-dishes-input .vs__dropdown-option {
     @apply border-none dark:text-gray-400 text-sm leading-none my-0 py-0.5;
+}
+
+.admin-dishes-input .vs__selected-options {
+    @apply flex-nowrap;
 }
 
 .admin-dishes-input .vs__search {
