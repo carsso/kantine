@@ -9,20 +9,22 @@
 
 @section('body')
     <body class="font-['Source_Sans_3'] bg-[#000E9C] text-white h-screen w-screen px-11">
-        <main id="app" class="relative flex items-center text-4xl h-full w-full">
-            <div class="flex-none py-2 px-[100px] border-r-4 text-center @if($menu) {{ $menu->is_fries_day ? 'border-[#ED733D]' : ($menu->event_name ? 'border-[#FFD124]' : 'border-[#147DE8]') }} @else border-white @endif">
+        <main id="app" class="relative flex flex-row items-center text-4xl h-full w-full">
+            <div class="basis-1/3 py-2 border-r-4 text-center @if($menu) {{ $menu->is_fries_day ? 'border-[#ED733D]' : ($menu->event_name ? 'border-[#FFD124]' : 'border-[#147DE8]') }} @else border-white @endif">
                 <div class="text-9xl mb-5 font-black">Menu</div>
                 <div class="text-8xl mb-3 font-black">{{ $day->translatedFormat('l') }}</div>
                 <div class="text-[196px] leading-none mb-3 font-black">{{ $day->translatedFormat('d') }}</div>
                 <div class="text-8xl mb-3 font-black">{{ $day->translatedFormat('F') }}</div>
                 @if($menu && $menu->event_name)
-                    <div class="bg-white rounded-lg p-6 mt-16 mb-5 font-bold text-5xl border-t-4 border-[#147DE8] text-[#000E9C]">
-                        <div class="">Événement</div>
-                        <div class="mt-4">{{ $menu->event_name }}</div>
+                    <div class="flex items-center justify-center">
+                        <div class="bg-white rounded-lg px-10 py-6 mt-16 mb-5 mx-auto font-bold text-5xl border-t-4 border-[#147DE8] text-[#000E9C]">
+                            <div class="">Événement</div>
+                            <div class="mt-4">{{ $menu->event_name }}</div>
+                        </div>
                     </div>
                 @endif
             </div>
-            <div class="grow text-center">
+            <div class="basis-2/3 text-center">
                 @if($menu)
                     <div class="flex items-center place-content-center">
                         <div class="mx-8">
