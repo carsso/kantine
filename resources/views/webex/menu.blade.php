@@ -43,7 +43,7 @@
             @foreach($menu->mains as $idx => $dish)
                 <span>
                     @if($dish == 'Burger' && !$menu->getMainSpecialName($idx))
-                        &nbsp;&nbsp;&nbsp;&nbsp;- 🍔 {{ $dish }} 🍔
+                        &nbsp;&nbsp;&nbsp;&nbsp;- 🍔 {{ $dish }}
                     @else
                         &nbsp;&nbsp;&nbsp;&nbsp;- {{ $dish }}
                     @endif
@@ -59,7 +59,7 @@
             @endif
             @foreach($menu->sides as $dish)
                 @if($dish == 'Frites')
-                    <span>&nbsp;&nbsp;&nbsp;&nbsp;- 🍟 {{ $dish }} 🍟 <br />
+                    <span>&nbsp;&nbsp;&nbsp;&nbsp;- 🍟 {{ $dish }}<br />
                 @else
                     <span>&nbsp;&nbsp;&nbsp;&nbsp;- {{ $dish }}</span><br />
                 @endif
