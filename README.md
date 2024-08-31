@@ -1,4 +1,7 @@
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](http://opensource.org/licenses/MIT)
+[![GitHub License](https://img.shields.io/github/license/carsso/kantine)](LICENSE)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/carsso/kantine/build.yml)
+![GitHub branch check runs](https://img.shields.io/github/check-runs/carsso/kantine/main)
+![GitHub last commit](https://img.shields.io/github/last-commit/carsso/kantine)
 
 # Kantine
 
@@ -8,97 +11,127 @@ Written in PHP/Laravel and VueJS.
 
 ### Screenshots:
 
-#### Menu view:
+#### Live preview
+
+[Kantine.menu](https://kantine.menu)
+
+#### Menu view
+
 ![Menu view](https://user-images.githubusercontent.com/666182/258982451-8f32fcd3-319c-4141-970e-cbe1cc04bcca.png)
+
+## Pre-requisites
+
+- PHP >= 8.1
+- NodeJS >= 18
+- FontAwesome Pro 6 license, with a [configured .npmrc file](https://docs.fontawesome.com/web/setup/packages#project-specific-using-configuration-files)
 
 ## Deployment
 
-#### Clone repository : 
+#### Clone repository 
+
 ```sh
 git clone https://github.com/carsso/kantine.git
 ```
 
-#### Switch to deploy branch :
-```sh
-git fetch origin deploy
-```
+#### Copy default env file
 
-#### Copy default env file :
 ```sh
 cp .env.example .env
 ```
 
-#### Fill the env file :
+#### Fill the env file
+
 ```sh
 vim .env
 ```
 
-#### Install dependencies based on lock file
+#### Install JS dependencies based on lock file
+
+```sh
+npm install
+```
+
+#### Build assets
+
+```sh
+npm run build
+```
+
+#### Install PHP dependencies based on lock file
+
 ```sh
 composer install --no-interaction --prefer-dist --optimize-autoloader
 ```
 
 #### Clear cache
+
 ```sh
 php artisan optimize
 ```
 
 #### Create the storage symbolic links
+
 ```sh
 php artisan storage:link
 ```
 
 #### Run queue worker
+
 ```sh
 php artisan queue:listen
 ```
 
 ## Development
 
-#### Pre-requisites
-- PHP >= 8.1
-- NodeJS >= 18
+#### Clone repository (main branch)
 
-#### Clone repository (main branch) : 
 ```sh
 git clone git@github.com:carsso/kantine.git
 ```
 
-Install PHP dependencies with Composer :
+Install PHP dependencies with Composer
+
 ```sh
 composer install
 ```
 
-Install JS dependencies with NPM :
+Install JS dependencies with NPM
+
 ```sh
 npm install
 ```
 
-#### Copy default env file :
+#### Copy default env file
+
 ```sh
 cp .env.dev.example .env
 ```
 
-#### Fill the env file :
+#### Fill the env file
+
 ```sh
 vim .env
 ```
 
 #### Create the storage symbolic links
+
 ```sh
 php artisan storage:link
 ```
 
-#### Build js and css files automatically while developing :
+#### Build js and css files automatically while developing
+
 ```sh
 npm run dev
 ```
 
 #### Run queue worker
+
 ```sh
 php artisan queue:listen
 ```
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+- The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
