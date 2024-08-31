@@ -69,10 +69,15 @@
                 PDF
             </a>
             @if($file->state == 'error' || auth()->user()->hasRole('Super Admin'))
-                <a href="{{ route('file.delete', $file->hash) }}" class="ml-2 inline-flex items-center mx-2 px-2 py-1 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-                    <i class="fas fa-trash-can mr-2"></i>
-                    Supprimer
-                </a>
+                <form id="delete-form" class="text-center mt-4" action="{{ route('file.delete', $file->hash) }}" method="POST">
+                    @csrf
+                    <button
+                        type="submit"
+                        class="rounded-md bg-red-600 dark:bg-red-800 py-1 px-2 text-xs leading-1 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+                        onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce fichier ?');">
+                        <i class="fas fa-trash-can mr-2"></i> Supprimer
+                    </button>
+                </form>
             @endif
         @else
             <a href="{{ route('file', $file->hash) }}" class="inline-flex items-center mx-2 px-2 py-1 border border-transparent text-xs leading-4 font-medium rounded-md shadow-sm text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">

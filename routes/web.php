@@ -59,7 +59,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/file/{hash}/relaunch', [MenuController::class, 'fileRelaunch'])
         ->name('file.relaunch');
 
-    Route::get('/file/{hash}/delete', [MenuController::class, 'fileDelete'])
+    Route::post('/file/{hash}/delete', [MenuController::class, 'fileDelete'])
         ->name('file.delete');
 
     Route::post('/upload', [MenuController::class, 'upload'])
