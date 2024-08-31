@@ -137,7 +137,7 @@
 
             <a href="{{ route('menu.week', $menu->date) }}">{{ route('menu.week', $menu->date) }}</a>
         @else
-            <span>Aucun menu pour aujourd'hui</span><br />
+            <span>Aucun menu pour ce jour</span><br />
             <a href="{{ route('home') }}">{{ route('home') }}</a>
         @endif
         @if(!isset($hideMention) || !$hideMention)

@@ -35,7 +35,7 @@
     @else
         <div class="bg-white dark:bg-gray-700 rounded-lg shadow p-6 text-center mb-6">
             <p class="text-2xl text-gray-500">
-                <i>Aucun menu pour aujourd'hui</i>
+                <i>Aucun menu pour ce jour</i>
             </p>
         </div>
     @endif

@@ -121,7 +121,7 @@
                     </div>
                 @else
                     <h1 class="text-4xl mt-14 text-[#147DE8]">
-                        Aucun menu pour aujourd'hui
+                        Aucun menu pour ce jour
                     </h1>
                 @endif
             </div>
