@@ -37,24 +37,31 @@
                     @endforeach
                 </p>
                 <p class="mt-3">
-                    <span>Membres :</span><br />
+                    <span>{{ count($room['memberships']) }} membres :</span><br />
                     <ul class="ml-3 list-disc list-inside text-sm">
+                        @php $i = 0; $max = 20; @endphp
                         @foreach($room['memberships'] as $membership)
-                            <li>
-                                <span title="{{ $membership['personId'] }}">
-                                    {{ $membership['personDisplayName'] }}
-                                    <span class="text-gray-400">
-                                        ({{ $membership['personEmail'] }})
+                            @php $i++; @endphp
+                            @if($i < $max || $membership['isModerator'] || $membership['personId'] == $room['creatorId'] || str_contains($membership['personEmail'], '@webex.bot'))
+                                <li>
+                                    <span title="{{ $membership['personId'] }}">
+                                        {{ $membership['personDisplayName'] }}
+                                        <span class="text-gray-400">
+                                            ({{ $membership['personEmail'] }})
+                                        </span>
                                     </span>
-                                </span>
-                                @if($membership['isModerator'])
-                                    <i>(modérateur)</i>
-                                @endif
-                                @if($membership['personId'] == $room['creatorId'])
-                                    <i>(créateur)</i>
-                                @endif
-                            </li>
+                                    @if($membership['isModerator'])
+                                        <i>(modérateur)</i>
+                                    @endif
+                                    @if($membership['personId'] == $room['creatorId'])
+                                        <i>(créateur)</i>
+                                    @endif
+                                </li>
+                            @endif
                         @endforeach
+                        @if($i >= $max)
+                            <li class="text-gray-400">... Liste tronquée ...</li>
+                        @endif
                     </ul>
                 </p>
             </div>

@@ -97,7 +97,7 @@ class AdminController extends Controller
         $webexRooms = $api->getRooms();
         foreach($webexRooms['items'] as $room) {
             $room['memberships'] = $api->getRoomMemberships($room['id'])['items'];
-            $room['messages'] = $api->getMessages($room['id'])['items'];
+            $room['messages'] = $api->getMessages($room['id'], 3)['items'];
             $rooms[] = $room;
         }
         return view('admin.webex', ['rooms' => $rooms]);

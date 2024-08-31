@@ -63,9 +63,9 @@ class WebexApi
         return $this->get('v1/organizations/' . $organizationId);
     }
 
-    public function getMessages($roomId)
+    public function getMessages($roomId, $max = 50)
     {
-        return $this->get('v1/messages?roomId=' . $roomId . '&mentionedPeople=me');
+        return $this->get('v1/messages?roomId=' . $roomId . '&mentionedPeople=me&max=' . $max);
     }
 
     public function postMessage($roomId, $message, $parentId = null)
