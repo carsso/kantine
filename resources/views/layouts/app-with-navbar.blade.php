@@ -25,6 +25,12 @@
                 'route' => route('files'),
                 'active' => request()->routeIs('file.*') || request()->routeIs('file') || request()->routeIs('files'),
             ],
+            [
+                'name' => 'Dashboard',
+                'route' => route('dashboard'),
+                'active' => request()->routeIs('dashboard.*') || request()->routeIs('dashboard'),
+                'target' => '_blank',
+            ],
         ];
         $leftRoutes = [
             [
@@ -34,12 +40,6 @@
             ],
         ];
         if(auth()->check()) {
-            $routes[] = [
-                'name' => 'Dashboard',
-                'route' => route('dashboard'),
-                'active' => request()->routeIs('dashboard.*') || request()->routeIs('dashboard'),
-                'target' => '_blank',
-            ];
             $leftRoutes = [
                 [
                     'name' => 'Compte',
