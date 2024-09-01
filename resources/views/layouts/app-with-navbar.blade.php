@@ -38,6 +38,7 @@
                 'name' => 'Dashboard',
                 'route' => route('dashboard'),
                 'active' => request()->routeIs('dashboard.*') || request()->routeIs('dashboard'),
+                'target' => '_blank',
             ];
             $leftRoutes = [
                 [
