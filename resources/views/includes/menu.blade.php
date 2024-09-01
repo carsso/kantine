@@ -1,7 +1,7 @@
 
 <div class="bg-white dark:bg-gray-700 rounded-lg shadow px-4 py-5 text-center border-t-4 {{ $menu->is_fries_day || $menu->is_burgers_day ? 'border-[#ED733D]' : ($menu->event_name ? 'border-[#FFD124]' : 'border-[#147DE8]') }}">
-    <h1 class="text-2xl xl:hidden 2xl:block mb-3">{{ $menu->date_carbon->translatedFormat('l d F') }}</h1>
-    <h1 class="text-2xl hidden xl:block 2xl:hidden mb-3">{{ $menu->date_carbon->translatedFormat('D d M') }}</h1>
+    <h1 class="text-2xl xl:hidden 2xl:block mb-3">{{ $menu->date_carbon->translatedFormat('l j F') }}</h1>
+    <h1 class="text-2xl hidden xl:block 2xl:hidden mb-3">{{ $menu->date_carbon->translatedFormat('D j M') }}</h1>
     @if($menu->information)
         <p class="mt-2 text-sm leading-snug">
             <i class="fa-solid fa-bullhorn"></i> {!! $menu->information_html !!}
@@ -131,19 +131,19 @@
             @if($menu->next_fries_day && $menu->next_fries_day->is_burgers_day)
                 <div class="mt-1">
                     <div>Prochain <i class="fa-solid fa-burger-fries"></i> Jour des Burgers et des Frites : </div>
-                    <div>{{ $menu->next_fries_day->date_carbon->translatedFormat('l d F') }}</div>
+                    <div>{{ $menu->next_fries_day->date_carbon->translatedFormat('l j F') }}</div>
                 </div>
             @else
                 @if($menu->next_fries_day)
                     <div class="mt-1">
                         <div>Prochain <i class="fa-solid fa-french-fries"></i> Jour des Frites : </div>
-                        <div>{{ $menu->next_fries_day->date_carbon->translatedFormat('l d F') }}</div>
+                        <div>{{ $menu->next_fries_day->date_carbon->translatedFormat('l j F') }}</div>
                     </div>
                 @endif
                 @if($menu->next_burgers_day)
                     <div class="mt-1">
                         <div>Prochain <i class="fa-solid fa-burger-cheese"></i> Jour des Burgers : </div>
-                        <div>{{ $menu->next_burgers_day->date_carbon->translatedFormat('l d F') }}</div>
+                        <div>{{ $menu->next_burgers_day->date_carbon->translatedFormat('l j F') }}</div>
                     </div>
                 @endif
             @endif
@@ -151,14 +151,14 @@
             @if($menu->next_event)
                 <div class="mt-1">
                     <div>Prochain <i class="fa-solid fa-party-horn"></i> Événement : </div>
-                    <div>{{ $menu->next_event->event_name }} - {{ $menu->next_event->date_carbon->translatedFormat('l d F') }}</div>
+                    <div>{{ $menu->next_event->event_name }} - {{ $menu->next_event->date_carbon->translatedFormat('l j F') }}</div>
                 </div>
             @endif
 
             @if($menu->next_antioxidants_day)
                 <div class="mt-1">
                     <div>Prochain <i class="fa-solid fa-dumbbell"></i> Jour des Antioxydants : </div>
-                    <div>{{ $menu->next_antioxidants_day->date_carbon->translatedFormat('l d F') }}</div>
+                    <div>{{ $menu->next_antioxidants_day->date_carbon->translatedFormat('l j F') }}</div>
                 </div>
             @endif
         </div>

@@ -6,8 +6,8 @@
         $routes = [
             [
                 'name' => 'Menus',
-                'route' => route('menu.week'),
-                'active' => request()->routeIs('menu.week') || request()->routeIs('menu.day') || request()->routeIs('home'),
+                'route' => route('menus'),
+                'active' => request()->routeIs('menus') || request()->routeIs('menu') || request()->routeIs('home'),
             ],
             [
                 'name' => 'Notifications',

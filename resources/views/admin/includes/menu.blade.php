@@ -1,7 +1,7 @@
 
 <div class="bg-white dark:bg-gray-700 rounded-lg shadow px-4 py-5 text-center">
-    <h1 class="text-2xl xl:hidden 2xl:block mb-1">{{ $menu->date_carbon->translatedFormat('l d F') }}</h1>
-    <h1 class="text-2xl hidden xl:block 2xl:hidden mb-1">{{ $menu->date_carbon->translatedFormat('D d M') }}</h1>
+    <h1 class="text-2xl xl:hidden 2xl:block mb-1">{{ $menu->date_carbon->translatedFormat('l j F') }}</h1>
+    <h1 class="text-2xl hidden xl:block 2xl:hidden mb-1">{{ $menu->date_carbon->translatedFormat('D j M') }}</h1>
     <input id="date[{{ $idx }}]" type="hidden" name="date[{{ $idx }}]" value="{{ $menu->date }}">
     <div class="mb-3 leading-snug text-xs text-gray-500">
         <a href="{{ route('dashboard', ['date' => $menu->date_carbon->format('Y-m-d')]) }}" target="_blank" class="hover:text-indigo-500">

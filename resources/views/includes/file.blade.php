@@ -2,7 +2,7 @@
     <h1 class="text-2xl">Fichier : {{ $file->name }}</h1>
     <p>
         <small title="{{ $file->created_at }}" class="text-gray-500">
-            Uploadé le {{ $file->created_at->translatedFormat('d F Y à H:i') }}
+            Uploadé le {{ $file->created_at->translatedFormat('j F Y à H:i') }}
             @if($file->user)
                 par {{ $file->user->name }}
             @endif
@@ -47,7 +47,7 @@
             Menus importés :<br />
             <small>
                 @foreach($file->menus as $menu)
-                    - <a href="{{ route('menu.week', $menu->date) }}" class="hover:text-indigo-500">{{ $menu->date_carbon->translatedFormat('l d F Y') }}</a>
+                    - <a href="{{ route('menu', $menu->date) }}" class="hover:text-indigo-500">{{ $menu->date_carbon->translatedFormat('l j F Y') }}</a>
                     <br />
                 @endforeach
             </small>
@@ -56,7 +56,7 @@
 
     <p class="mt-2 text-gray-500"><small><small><small>SHA1 : {{ $file->hash }}</small></small></small></p>
     @if($file->datetime_carbon)
-        <p class="text-gray-500"><small title="{{ $file->datetime_carbon }}">Document du {{ $file->datetime_carbon->translatedFormat('d F Y à H:i') }}</small></p>
+        <p class="text-gray-500"><small title="{{ $file->datetime_carbon }}">Document du {{ $file->datetime_carbon->translatedFormat('j F Y à H:i') }}</small></p>
     @endif
     <p class="mt-2">
         @if($displayDetails ?? false)

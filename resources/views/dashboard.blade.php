@@ -13,7 +13,7 @@
             <div class="basis-1/3 py-2 border-r-4 text-center @if($menu) {{ $menu->is_fries_day ? 'border-[#ED733D]' : ($menu->event_name ? 'border-[#FFD124]' : 'border-[#147DE8]') }} @else border-white @endif">
                 <div class="text-9xl mb-5 font-black">Menu</div>
                 <div class="text-8xl mb-3 font-black">{{ $day->translatedFormat('l') }}</div>
-                <div class="text-[196px] leading-none mb-3 font-black">{{ $day->translatedFormat('d') }}</div>
+                <div class="text-[196px] leading-none mb-3 font-black">{{ $day->translatedFormat('j') }}</div>
                 <div class="text-8xl mb-3 font-black">{{ $day->translatedFormat('F') }}</div>
                 @if($menu && $menu->event_name)
                     <div class="flex items-center justify-center">

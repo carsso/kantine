@@ -17,17 +17,17 @@ use App\Http\Controllers\AdminController;
 |
 */
 
-Route::get('/', [MenuController::class, 'week'])
+Route::get('/', [MenuController::class, 'menu'])
     ->name('home');
 
 Route::get('/dashboard/{date?}', [MenuController::class, 'dashboard'])
     ->name('dashboard');
 
-Route::get('/menu/{date?}', [MenuController::class, 'day'])
-    ->name('menu.day');
+Route::get('/menu/{date?}', [MenuController::class, 'menu'])
+    ->name('menu');
 
-Route::get('/menus/{date?}', [MenuController::class, 'week'])
-    ->name('menu.week');
+Route::get('/menus/{date?}', [MenuController::class, 'menu'])
+    ->name('menus');
 
 Route::get('/notifications', [MenuController::class, 'notifications'])
     ->name('notifications');
