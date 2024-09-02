@@ -54,6 +54,16 @@
             <div class="text-gray-500 text-xs leading-normal">{{ join(', ', $menu->starters_usual) }}</div>
         @endif
     </div>
+    @if($menu->liberos)
+        <div class="mt-2">
+            <div class="font-semibold text-[#4AB0F5]">
+                <i class="fa-solid fa-pan-frying"></i> Libéro :
+            </div>
+            @foreach($menu->liberos as $dish)
+                <div class="leading-snug">{{ $dish }}</div>
+            @endforeach
+        </div>
+    @endif
     <div class="mt-2">
         <div class="font-semibold text-[#ED733D]">
             <i class="fa-solid fa-turkey"></i> Plats :

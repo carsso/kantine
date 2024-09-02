@@ -41,6 +41,19 @@
         @enderror
     </div>
     <div class="mt-2">
+        <label for="liberos" class="block font-semibold">Libéro :</label>
+        <admin-dishes-input
+            name="liberos[{{ $idx }}]"
+            :dishes='@json(old('liberos') ?? $menu->liberos ?? [])'
+            :autocomplete-dishes='@json($autocompleteDishes['liberos'])'>
+        </admin-dishes-input>
+        @error('liberos')
+            <div class="rounded-md bg-red-50 dark:bg-red-800 text-xs font-medium text-red-800 dark:text-red-50 p-2 mt-1">
+                {{ $message }}
+            </div>
+        @enderror
+    </div>
+    <div class="mt-2">
         <label for="starters" class="block font-semibold">Plats :</label>
         <div class="text-gray-500 text-xs">
             L'ordre est important.<br />

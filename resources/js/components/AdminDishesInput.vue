@@ -23,7 +23,7 @@
             </v-select>
             <button
                 type="button"
-                v-if="!dish && index !== inputDishes.length"
+                v-if="!dish && index !== inputDishes.length && inputDishes.length !== 1"
                 @click="inputDishes.splice(index, 1)"
                 class="text-xs ml-2 inline-flex items-center text-red-800 dark:text-red-800 px-1 py-1 border border-gray-200 dark:border-gray-500 leading-4 font-medium rounded-md shadow-sm text-green bg-white dark:bg-gray-700">
                 <i class="fas fa-trash-alt"></i>
@@ -75,7 +75,7 @@ export default {
         let inputDishes = this.dishes;
         return {
             filteredDishes: filteredDishes,
-            inputDishes: inputDishes,
+            inputDishes: inputDishes.length ? inputDishes : [''],
         }
     },
 

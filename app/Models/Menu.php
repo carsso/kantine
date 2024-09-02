@@ -20,6 +20,7 @@ class Menu extends Model
         'date',
         'event_name',
         'starters',
+        'liberos',
         'mains',
         'sides',
         'cheeses',
@@ -36,6 +37,7 @@ class Menu extends Model
     protected $casts = [
         'date_carbon' => 'date:Y-m-d',
         'starters' => 'array',
+        'liberos' => 'array',
         'mains' => 'array',
         'sides' => 'array',
         'cheeses' => 'array',

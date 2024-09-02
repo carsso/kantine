@@ -47,7 +47,7 @@ class AdminController extends Controller
         $prevWeek = date('Y-m-d', strtotime('-1 week', $mondayTime));
         $nextWeek = date('Y-m-d', strtotime('+1 week', $mondayTime));
         $autocompleteDishes = [];
-        foreach(['starters', 'mains', 'sides', 'cheeses', 'desserts'] as $type) {
+        foreach(['starters', 'liberos', 'mains', 'sides', 'cheeses', 'desserts'] as $type) {
             $autocompleteDishes[$type] = Menu::select($type)->orderBy('id', 'desc')->limit(300)->get()->pluck($type)->filter()->flatMap(function($item) {
                 return $item;
             })->unique()->sort()->values()->toArray();
@@ -66,7 +66,7 @@ class AdminController extends Controller
                 if(!$menu) {
                     $menu = new Menu;
                 }
-                foreach (['starters', 'mains', 'sides', 'cheeses', 'desserts'] as $type) {
+                foreach (['starters', 'liberos', 'mains', 'sides', 'cheeses', 'desserts'] as $type) {
                     if(isset($validated[$type][$idx])) {
                         $validated[$type][$idx] = array_values(array_filter($validated[$type][$idx]));
                     }
@@ -75,6 +75,7 @@ class AdminController extends Controller
                 $menu->event_name = $validated['event_name'][$idx] ?? '';
                 $menu->information = $validated['information'][$idx] ? $validated['information'][$idx] : null;
                 $menu->starters = $validated['starters'][$idx] ?? [];
+                $menu->liberos = $validated['liberos'][$idx] ?? [];
                 $menu->mains = $validated['mains'][$idx] ?? [];
                 $menu->sides = $validated['sides'][$idx] ?? [];
                 $menu->cheeses = $validated['cheeses'][$idx] ?? [];
