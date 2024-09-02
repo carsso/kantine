@@ -118,7 +118,7 @@ class AdminController extends Controller
         $rooms = $api->getRooms();
         foreach($rooms['items'] as $room) {
             Log::info('Adding Webex room notification task to room ' . $room['title'] .' ' . $room['id']);
-            ProcessWebexMenuNotification::dispatch($room, $menu, $date);
+            ProcessWebexMenuNotification::dispatch($room, $menu, $date, true);
         }
         return $this->redirectWithSuccess('Notifications Webex envoyées', redirect()->route('admin'));
     }

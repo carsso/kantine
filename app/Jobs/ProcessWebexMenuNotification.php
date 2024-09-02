@@ -26,11 +26,12 @@ class ProcessWebexMenuNotification implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(public array $room, public ?Menu $menu, public ?string $date)
+    public function __construct(public array $room, public ?Menu $menu, public ?string $date, public ?bool $notifyUpdate = false)
     {
         $this->room = $room;
         $this->menu = $menu;
         $this->date = $date;
+        $this->notifyUpdate = $notifyUpdate;
     }
 
     /**
@@ -57,11 +58,14 @@ class ProcessWebexMenuNotification implements ShouldQueue
             if($message['personEmail'] !== config('services.webex.bot_name')) {
                 continue;
             }
-            if(str_starts_with($message['text'], 'Menu du '.$date->translatedFormat('l d F Y'))) {
+            if(str_contains($message['text'], route('menu', ['date' => $this->date]))) {
                 Log::info('Updating message in Webex room "' . $this->room['title'] .'" ' . $this->room['id']);
                 Log::info($html);
                 $api->upddateMessage($message['id'], $this->room['id'], $html);
                 sleep(5);
+                if(!$this->notifyUpdate) {
+                    return;
+                }
                 $html = 'Menu mis à jour à ' . date('H\hi');
                 Log::info('Posting reply message in Webex room "' . $this->room['title'] .'" ' . $this->room['id']);
                 Log::info($html);
