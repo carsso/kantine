@@ -31,7 +31,7 @@ class NotifyWebex extends Command
      */
     public function handle()
     {
-        $date = date('Y-m-d', time()-86400);
+        $date = date('Y-m-d');
         Log::info('Sending Webex notifications for menu of ' . $date . ' to all rooms');
         $menu = Menu::where('date', $date)->first();
 
