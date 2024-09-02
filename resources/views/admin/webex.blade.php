@@ -3,15 +3,6 @@
 @section('content')
 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
     <h1 class="text-2xl text-center pt-2">Administration du BOT Webex</h1>
-    <form id="notify-form" class="text-center mt-4 mb-4" action="{{ route('admin.webex.notify') }}" method="POST">
-        @csrf
-        <button
-            type="submit"
-            class="rounded-md bg-red-600 dark:bg-red-800 py-1 px-2 text-xs leading-1 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
-            onclick="return confirm('Êtes-vous sûr de vouloir envoyer/mettre à jour le menu du jour sur Webex ?');">
-            <i class="fa-regular fa-paper-plane"></i> Envoyer/mettre à jour le menu sur Webex
-        </button>
-    </form>
     <div class="grid grid-cols-2 gap-4 mb-6">
         @foreach($rooms as $room)
             <div class="bg-white dark:bg-gray-700 rounded-lg shadow p-6 mt-6">

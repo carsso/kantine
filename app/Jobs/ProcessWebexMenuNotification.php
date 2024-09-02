@@ -51,6 +51,7 @@ class ProcessWebexMenuNotification implements ShouldQueue
         $html = view('webex.menu', ['menu' => $this->menu, 'date' => $date])->render();
         Log::info('Working on Webex room "' . $this->room['title'] .'" ' . $this->room['id']);
         $messages = $api->getMessages($this->room['id']);
+        sleep(5);
         Log::info($messages);
         foreach ($messages['items'] as $message) {
             if($message['personEmail'] !== config('services.webex.bot_name')) {
@@ -60,10 +61,12 @@ class ProcessWebexMenuNotification implements ShouldQueue
                 Log::info('Updating message in Webex room "' . $this->room['title'] .'" ' . $this->room['id']);
                 Log::info($html);
                 $api->upddateMessage($message['id'], $this->room['id'], $html);
+                sleep(5);
                 $html = 'Menu mis à jour à ' . date('H\hi');
                 Log::info('Posting reply message in Webex room "' . $this->room['title'] .'" ' . $this->room['id']);
                 Log::info($html);
                 $api->postMessage($this->room['id'], $html, $message['id']);
+                sleep(5);
                 return;
             }
         }
@@ -71,5 +74,6 @@ class ProcessWebexMenuNotification implements ShouldQueue
         Log::info('Posting message to Webex room "' . $this->room['title'] .'" ' . $this->room['id']);
         Log::info($html);
         $api->postMessage($this->room['id'], $html);
+        sleep(5);
     }
 }

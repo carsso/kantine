@@ -30,6 +30,15 @@
                     <a href="{{ route('admin.webex') }}" class="p-2 m-4 border border-transparent text-sm leading-10 font-medium rounded-md shadow-sm text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                         Administration du BOT Webex
                     </a>
+                    <form id="notify-form" class="text-center mt-8 mb-4" action="{{ route('admin.webex.notify') }}" method="POST">
+                        @csrf
+                        <button
+                            type="submit"
+                            class="rounded-md bg-red-600 dark:bg-red-800 py-1 px-2 text-xs leading-1 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+                            onclick="return confirm('Êtes-vous sûr de vouloir envoyer/mettre à jour le menu du jour sur Webex ?');">
+                            <i class="fa-regular fa-paper-plane"></i> Envoyer/mettre à jour le menu sur Webex
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
