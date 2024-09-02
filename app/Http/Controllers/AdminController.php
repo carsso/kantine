@@ -111,7 +111,7 @@ class AdminController extends Controller
 
         if(!config('services.webex.bearer_token')) {
             Log::info('Webex bearer token not set, aborting');
-            return $this->redirectWithError('Token Webex non configuré', redirect()->route('admin.webex'));
+            return $this->redirectWithError('Token Webex non configuré', redirect()->route('admin'));
         }
         $api = new WebexApi;
         Log::info('Listing Webex rooms');
@@ -120,6 +120,6 @@ class AdminController extends Controller
             Log::info('Adding Webex room notification task to room ' . $room['title'] .' ' . $room['id']);
             ProcessWebexMenuNotification::dispatch($room, $menu, $date);
         }
-        return $this->redirectWithSuccess('Notifications Webex envoyées', redirect()->route('admin.webex'));
+        return $this->redirectWithSuccess('Notifications Webex envoyées', redirect()->route('admin'));
     }
 }
