@@ -77,7 +77,7 @@ class WebexApi
         ]);
     }
 
-    public function upddateMessage($messageId, $roomId, $message)
+    public function updateMessage($messageId, $roomId, $message)
     {
         return $this->put('v1/messages/' . $messageId, [
             'roomId'=> $roomId,

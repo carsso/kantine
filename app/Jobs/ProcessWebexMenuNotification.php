@@ -61,7 +61,19 @@ class ProcessWebexMenuNotification implements ShouldQueue
             if(str_contains($message['text'], route('menu', ['date' => $this->date]))) {
                 Log::info('Updating message in Webex room "' . $this->room['title'] .'" ' . $this->room['id']);
                 Log::info($html);
-                $api->upddateMessage($message['id'], $this->room['id'], $html);
+                try {
+                    $api->updateMessage($message['id'], $this->room['id'], $html);
+                } catch (\Exception $e) {
+                    if (str_contains($e->getMessage(), 'Max allowed number of edits per activity reached')) {
+                        Log::error($e);
+                        Log::info('Max allowed number of edits per activity reached. Posting a new message instead.');
+                        $api->postMessage($this->room['id'], $html);
+                        sleep(5);
+                        return;
+                    } else {
+                        throw $e;
+                    }
+                }
                 sleep(5);
                 if(!$this->notifyUpdate) {
                     return;

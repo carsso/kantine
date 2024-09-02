@@ -36,6 +36,17 @@
                 @endforeach
             @endif
 
+            @if($menu->liberos)
+                @if(count($menu->liberos) == 1)
+                    <strong>🍳 Libéro :</strong> {{ join(', ', $menu->liberos) }}<br />
+                @else
+                    <strong>🍳 Libéro :</strong><br />
+                    @foreach($menu->liberos as $dish)
+                        <span>&nbsp;&nbsp;&nbsp;&nbsp;- {{ $dish }}</span><br />
+                    @endforeach
+                @endif
+            @endif
+
             <strong>🍗 Plats :</strong><br />
             @if(!$menu->mains)
                 <i>Pas de plat</i><br />

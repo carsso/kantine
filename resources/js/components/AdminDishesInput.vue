@@ -20,6 +20,9 @@
                 <template v-slot:option="option">
                     {{ option.label }}
                 </template>
+                <template v-slot:no-options>
+                    Aucune option trouvée
+                </template>
             </v-select>
             <button
                 type="button"
