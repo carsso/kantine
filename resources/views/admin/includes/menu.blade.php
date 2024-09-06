@@ -58,7 +58,7 @@
         <div class="text-gray-500 text-xs">
             L'ordre est important.<br />
             Avant-dernier : plat végé.<br />
-            Dernier : plat hallal
+            Dernier : plat halal
         </div>
         <admin-dishes-input
             name="mains[{{ $idx }}]"

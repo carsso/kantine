@@ -248,7 +248,7 @@ class Menu extends Model
     {
         if($type === 'mains') {
             return [
-                'hallal' => -1,
+                'halal' => -1,
                 'vegetarian' => -2,
             ];
         }
@@ -258,7 +258,7 @@ class Menu extends Model
     public function getSpecialIndexesTranslations($short = true)
     {
         return [
-            'hallal' => 'Hallal',
+            'halal' => 'Halal',
             'vegetarian' => $short ? 'Végé.' : 'Végétarien',
         ];
     }
@@ -277,7 +277,7 @@ class Menu extends Model
 
     public function getMainsSpecialIndexesAttribute()
     {
-        # return associative array with hallal for last and vegetarian for second to last
+        # return associative array with halal for last and vegetarian for second to last
         $specialIndexes = [];
         foreach($this->getSpecialIndexesDefinitions('mains') as $type => $index) {
             $specialIndexes[$type] = count($this->mains) > 1 ? count($this->mains) + $index : null;
