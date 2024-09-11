@@ -18,7 +18,7 @@ class MenuController extends Controller
         if(!$dateString) {
             $dateString = date('Y-m-d');
         }
-        $date = time();
+        $date = strtotime('today 10 am');
         if(preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateString)) {
             $date = strtotime($dateString);
         }
@@ -37,7 +37,7 @@ class MenuController extends Controller
 
     public function dashboard($dateString = null)
     {
-        $date = time();
+        $date = strtotime('today 10 am');
         if(preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateString)) {
             $date = strtotime($dateString.' 10 am');
         }
@@ -50,7 +50,7 @@ class MenuController extends Controller
 
     public function webexMenu($dateString)
     {
-        $date = time();
+        $date = strtotime('today 10 am');
         if(preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateString)) {
             $date = strtotime($dateString);
         }
@@ -152,7 +152,7 @@ class MenuController extends Controller
 
    public function notifications()
    {
-        $date = time();
+        $date = strtotime('today 10 am');
         $menu = Menu::where('date', date('Y-m-d', $date))->first();
         return view('notifications', ['menu' => $menu, 'date' => Carbon::parse($date)]);
    }

@@ -22,7 +22,7 @@ class ApiController extends Controller
 
     public function day($dateString)
     {
-        $date = time();
+        $date = strtotime('today 10 am');
         if(preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateString)) {
             $date = strtotime($dateString);
         }
