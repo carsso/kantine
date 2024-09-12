@@ -27,7 +27,7 @@ class AdminController extends Controller
         }
         $date = strtotime('today 10 am');
         if(preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateString)) {
-            $date = strtotime($dateString);
+            $date = strtotime($dateString.' 10 am');
         }
         if(date('N', $date) >= 6) {
             $date = strtotime('+1 week', $date);

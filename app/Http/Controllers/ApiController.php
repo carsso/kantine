@@ -24,7 +24,7 @@ class ApiController extends Controller
     {
         $date = strtotime('today 10 am');
         if(preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateString)) {
-            $date = strtotime($dateString);
+            $date = strtotime($dateString.' 10 am');
         }
         $menu = Menu::where('date', date('Y-m-d', $date))->first();
         if(!$menu) {
