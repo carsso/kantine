@@ -27,7 +27,7 @@
             <div class="basis-3/4 px-8 border-l-4 @if($menu) {{ $menu->is_fries_day ? 'border-[#ED733D]' : ($menu->event_name ? 'border-[#FFD124]' : 'border-[#147DE8]') }} @else border-white @endif">
                 @if($menu)
                     <div class="flex flex-row place-content-center">
-                        <div class="@if($menu->liberos) basis-1/2 @endif px-8">
+                        <div class="basis-1/2 px-8">
                             <div class="font-bold text-6xl mb-2 text-[#A6D64D]">
                                 <i class="fa-thin fa-salad"></i> Entrées :
                             </div>
@@ -41,16 +41,18 @@
                                 <div class="font-extralight text-4xl">{{ join(', ', $menu->starters_usual) }}</div>
                             @endif
                         </div>
-                        @if($menu->liberos)
-                            <div class="basis-1/2 px-8">
-                                <div class="font-bold text-6xl mb-2 text-[#4AB0F5]">
-                                    <i class="fa-thin fa-pan-frying"></i> Libéro :
-                                </div>
+                        <div class="basis-1/2 px-8">
+                            <div class="font-bold text-6xl mb-2 text-[#4AB0F5]">
+                                <i class="fa-thin fa-pan-frying"></i> Libéro :
+                            </div>
+                            @if(!$menu->liberos)
+                                <div class="font-extralight">Pas de Libéro</div>
+                            @else
                                 @foreach($menu->liberos as $dish)
                                     <div>{{ $dish }}</div>
                                 @endforeach
-                            </div>
-                        @endif
+                            @endif
+                        </div>
                     </div>
                     <div class="flex flex-row place-content-center mt-12">
                         <div class="basis-1/2 px-8">

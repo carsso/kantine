@@ -30,6 +30,10 @@ class ProcessAllFiles extends Command
      */
     public function handle()
     {
+        if (env('APP_ENV') !== 'local') {
+            Log::info('We do not want to process all files in PROD environment');
+            return 0;
+        }
         Log::info('Launching process for all files');
         $files = File::all()->sortBy('datetime')->sortBy('name');
         foreach($files as $file) {

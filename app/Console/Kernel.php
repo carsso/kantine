@@ -13,7 +13,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         $schedule->command('kantine:notify-webex')
-            ->weekdays()->at('09:30');
+            ->weekdays()->at('10:30');
     }
 
     /**

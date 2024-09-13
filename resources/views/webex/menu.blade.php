@@ -36,7 +36,9 @@
                 @endforeach
             @endif
 
-            @if($menu->liberos)
+            @if(!$menu->liberos)
+                <strong>🍳 Libéro : </strong> <i>Pas de Libéro</i><br />
+            @else
                 @if(count($menu->liberos) == 1)
                     <strong>🍳 Libéro :</strong> {{ join(', ', $menu->liberos) }}<br />
                 @else

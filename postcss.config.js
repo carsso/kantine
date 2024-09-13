@@ -2,8 +2,8 @@ export default {
   plugins: {
     tailwindcss: {},
     "postcss-preset-env": {
-        features: {
-        },
+        stage: 2,
+        minimumVendorImplementations: 2
     }
   },
 }

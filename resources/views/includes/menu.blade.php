@@ -54,16 +54,22 @@
             <div class="text-gray-500 text-xs leading-normal">{{ join(', ', $menu->starters_usual) }}</div>
         @endif
     </div>
-    @if($menu->liberos)
-        <div class="mt-2">
-            <div class="font-semibold text-[#4AB0F5]">
-                <i class="fa-solid fa-pan-frying"></i> Libéro :
-            </div>
+    <div class="mt-2">
+        <div class="font-semibold text-[#4AB0F5]">
+            <i class="fa-solid fa-pan-frying"></i> Libéro :
+        </div>
+        @if(!$menu->liberos)
+            @if($menu->date_carbon->startOfDay()->isPast())
+                <div class="text-gray-500 leading-snug">Pas de Libéro</div>
+            @else
+                <div class="text-gray-500 leading-snug">...</div>
+            @endif
+        @else
             @foreach($menu->liberos as $dish)
                 <div class="leading-snug">{{ $dish }}</div>
             @endforeach
-        </div>
-    @endif
+        @endif
+    </div>
     <div class="mt-2">
         <div class="font-semibold text-[#ED733D]">
             <i class="fa-solid fa-turkey"></i> Plats :
