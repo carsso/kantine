@@ -11,8 +11,11 @@
     <body class="font-['Source_Sans_3'] bg-[#000E9C] text-white h-screen w-screen px-11">
         <main id="app" class="relative flex flex-row items-center text-5xl text-center h-full w-full leading-[1.2]">
             <div class="basis-1/4 px-16">
-                <div class="text-8xl mb-8 font-black">Menu</div>
-                <div class="text-7xl">{{ $day->translatedFormat('l') }}</div>
+                <div class="text-8xl font-black">Menu</div>
+                @if($diff)
+                    <div class="text-4xl font-extralight italic">{{ $diff }}</div>
+                @endif
+                <div class="text-7xl mt-8">{{ $day->translatedFormat('l') }}</div>
                 <div class="text-[256px] leading-none font-black">{{ $day->translatedFormat('j') }}</div>
                 <div class="text-7xl">{{ $day->translatedFormat('F') }}</div>
                 @if($menu && $menu->event_name)

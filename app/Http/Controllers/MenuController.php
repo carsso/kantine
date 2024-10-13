@@ -19,6 +19,9 @@ class MenuController extends Controller
             $dateString = date('Y-m-d');
         }
         $date = strtotime('today 10 am');
+        if(date('H') >= 15) {
+            $date = strtotime('+1 day', $date);
+        }
         if(preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateString)) {
             $date = strtotime($dateString.' 10 am');
         }
@@ -37,15 +40,33 @@ class MenuController extends Controller
 
     public function dashboard($dateString = null)
     {
-        $date = strtotime('today 10 am');
+        $dateToday = strtotime('today 10 am');
+        $date = $dateToday;
+        if(date('H') >= 15) {
+            $date = strtotime('+1 day', $date);
+        }
         if(preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateString)) {
             $date = strtotime($dateString.' 10 am');
         }
-        $menu = Menu::where('date', date('Y-m-d', $date))->first();
-        $prevDay = date('Y-m-d', strtotime('-1 day', $date));
-        $nextDay = date('Y-m-d', strtotime('+1 day', $date));
+        $menu = Menu::where('date', '>=', date('Y-m-d', $date))->orderBy('date', 'asc')->first();
+        if($menu) {
+            $date = strtotime($menu->date.' 10 am');
+        }
 
-        return view('dashboard', ['menu' => $menu, 'day' => Carbon::parse($date), 'prevDay' => $prevDay, 'nextDay' => $nextDay, 'time' => Carbon::now()]);
+        $day = Carbon::parse(time: $date);
+        $diff = $day->diffForHumans(
+            Carbon::parse($dateToday),
+            [
+                'syntax' => Carbon::DIFF_RELATIVE_TO_NOW,
+                'options' => Carbon::JUST_NOW | Carbon::ONE_DAY_WORDS | Carbon::TWO_DAY_WORDS
+            ],
+        );
+        if($date == $dateToday)
+        {
+            $diff = '';
+        }
+
+        return view('dashboard', ['menu' => $menu, 'diff' => $diff, 'day' => $day]);
     }
 
     public function webexMenu($dateString)
