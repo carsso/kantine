@@ -2,6 +2,7 @@
 
 @section('meta')
 <meta http-equiv="refresh" content="14400">
+<meta name="google" content="notranslate">
 @endsection
 
 @section('footer')
