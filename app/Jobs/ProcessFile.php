@@ -184,7 +184,7 @@ class ProcessFile implements ShouldQueue
 
         $wordsToCheck = ['GARNITURES', 'ENTRÉE', 'PLAT', 'FROMAGE', 'DESSERT', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi'];
         $csvFilePath = $filePath . '.csv';
-        $process = new Process(['python3', base_path('scripts/') . 'pdf2csv.py', $filePath, $csvFilePath]);
+        $process = new Process([base_path('scripts/') . 'bin/python3', base_path('scripts/') . 'pdf2csv.py', $filePath, $csvFilePath]);
         $process->run();
         if (!$process->isSuccessful()) {
             throw new ProcessFailedException($process);

@@ -63,6 +63,14 @@ npm run build
 composer install --no-interaction --prefer-dist --optimize-autoloader
 ```
 
+#### Init Python virtual env
+
+```sh
+python3 -m venv scripts/
+scripts/bin/pip3 install -r scripts/requirements.txt
+scripts/bin/python3
+```
+
 #### Clear cache
 
 ```sh
@@ -117,6 +125,14 @@ vim .env
 
 ```sh
 php artisan storage:link
+```
+
+#### Init Python virtual env
+
+```sh
+python3 -m venv scripts/
+scripts/bin/pip3 install -r scripts/requirements.txt
+scripts/bin/python3
 ```
 
 #### Build js and css files automatically while developing

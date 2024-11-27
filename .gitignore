@@ -19,3 +19,7 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+/scripts/bin
+/scripts/lib
+/scripts/lib64
+/scripts/pyvenv.cfg

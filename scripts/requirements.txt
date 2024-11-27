@@ -1,0 +1,5 @@
+camelot-py
+tabula-py
+opencv-python
+jpype1
+
