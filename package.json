@@ -36,7 +36,12 @@
         "@fortawesome/vue-fontawesome": "^3.0.8",
         "@headlessui/vue": "^1.7.22",
         "@heroicons/vue": "^2.1.5",
+        "@tsparticles/preset-links": "^3.2.0",
+        "@tsparticles/preset-snow": "^3.2.0",
+        "@tsparticles/preset-triangles": "^3.2.0",
+        "@tsparticles/vue3": "^3.0.1",
         "crypto-js": "^4.2.0",
+        "tsparticles": "^3.7.1",
         "vue-lodash": "^2.1.2",
         "vue-select": "^4.0.0-beta.6"
     },

@@ -19,6 +19,32 @@
         @enderror
     </div>
     <div class="mt-2">
+        <label for="style" class="block text-sm font-semibold">Style visuel :</label>
+        <div class="text-gray-500 text-xs">
+            Aperçu des styles : 
+            @foreach(array_keys(config('tsparticles.config', [])) as $style)
+                @if(!$loop->first) - @endif
+                <a href="{{ route('dashboard', ['date' => $menu->date_carbon->format('Y-m-d'), 'style' => $style]) }}" target="_blank" class="hover:text-indigo-500">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    {{ config('tsparticles.config.'.$style.'.name', $style) }}
+                </a>
+            @endforeach
+        </div>
+        <select id="style[{{ $idx }}]" type="text" name="style[{{ $idx }}]" class="block w-full py-0.5 border border-gray-200 shadow-sm rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-400">
+            <option value=""></option>
+            @foreach(array_keys(config('tsparticles.config', [])) as $style)
+                <option value="{{ $style }}" @if($style == (old('style') ?? $menu->style)) selected @endif>
+                    {{ config('tsparticles.config.'.$style.'.name', $style) }}
+                </option>
+            @endforeach
+        </select>
+        @error('style')
+            <div class="rounded-md bg-red-50 dark:bg-red-800 text-xs font-medium text-red-800 dark:text-red-50 p-2 mt-1">
+                {{ $message }}
+            </div>
+        @enderror
+    </div>
+    <div class="mt-2">
         <label for="event_name" class="block font-semibold">Événement :</label>
         <input id="event_name[{{ $idx }}]" type="text" name="event_name[{{ $idx }}]" value="{{ old('event_name') ?? $menu->event_name }}" class="block w-full py-0.5 border border-gray-200 shadow-sm rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-400">
         @error('event_name')

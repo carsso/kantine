@@ -74,6 +74,7 @@ class AdminController extends Controller
                 $menu->date = $date;
                 $menu->event_name = $validated['event_name'][$idx] ?? '';
                 $menu->information = $validated['information'][$idx] ? $validated['information'][$idx] : null;
+                $menu->style = $validated['style'][$idx] ? $validated['style'][$idx] : null;
                 $menu->starters = $validated['starters'][$idx] ?? [];
                 $menu->liberos = $validated['liberos'][$idx] ?? [];
                 $menu->mains = $validated['mains'][$idx] ?? [];

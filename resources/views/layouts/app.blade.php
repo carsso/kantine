@@ -62,8 +62,8 @@
 </head>
 
 @section('body')
-    <body class="bg-gray-100 dark:bg-gray-900 dark:text-gray-300">
-        <div id="app">
+    <body id="app" class="bg-gray-100 dark:bg-gray-900 dark:text-gray-300">
+        <div>
             @yield('navbar')
             <main class="py-4">
                 <div class="container mx-auto px-4 sm:px-6 lg:px-8">@flash</div>

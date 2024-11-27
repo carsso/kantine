@@ -9,8 +9,16 @@
 @endsection
 
 @section('body')
-    <body class="font-['Source_Sans_3'] bg-[#000E9C] text-white h-screen w-screen px-11">
-        <main id="app" class="relative flex flex-row items-center text-5xl text-center h-full w-full leading-[1.2]">
+    <body id="app" class="font-['Source_Sans_3'] bg-[#000E9C] text-white h-screen w-screen px-11">
+        @if($particlesOptions)
+            <div>
+                <vue-particles
+                    id="tsparticles"
+                    :options='@json($particlesOptions)'>
+                </vue-particles>
+            </div>
+        @endif
+        <main class="relative flex flex-row items-center text-5xl text-center h-full w-full leading-[1.2]">
             <div class="basis-1/4 px-16">
                 <div class="text-8xl font-black">Menu</div>
                 @if($diff)

@@ -38,7 +38,7 @@ class MenuController extends Controller
         return view('menu', ['menus' => $weekMenus, 'weekMonday' => Carbon::parse($mondayTime), 'weekSunday' => Carbon::parse($sundayTime), 'prevWeek' => $prevWeek, 'nextWeek' => $nextWeek]);
     }
 
-    public function dashboard($dateString = null)
+    public function dashboard(Request $request, $dateString = null)
     {
         $dateToday = strtotime('today 10 am');
         $date = $dateToday;
@@ -66,7 +66,9 @@ class MenuController extends Controller
             $diff = '';
         }
 
-        return view('dashboard', ['menu' => $menu, 'diff' => $diff, 'day' => $day]);
+        $style = $request->query('style', $menu->style);
+        $particlesOptions = in_array($style, array_keys(config('tsparticles.config', []))) ? config('tsparticles.config.'.$style) : null;
+        return view('dashboard', ['menu' => $menu, 'diff' => $diff, 'day' => $day, 'particlesOptions' => $particlesOptions]);
     }
 
     public function webexMenu($dateString)

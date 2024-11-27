@@ -27,6 +27,7 @@ class Menu extends Model
         'desserts',
         'file_id',
         'information',
+        'style',
     ];
 
     /**

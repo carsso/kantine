@@ -15,6 +15,8 @@ class UpdateMenuFormRequest extends FormRequest
             'event_name.*' => 'nullable',
             'information' => 'required|array',
             'information.*' => 'nullable',
+            'style' => 'required|array',
+            'style.*' => 'nullable',
             'starters' => 'required|array',
             'starters.*.*' => 'nullable',
             'liberos' => 'required|array',
