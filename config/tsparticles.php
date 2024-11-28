@@ -6,31 +6,120 @@ $particlesOptionsSnow = [
     'background' => [
         'color' => '#000E9C',
     ],
-    'preset' => 'snow',
+    "particles" => [
+        "number" => [
+            "value" => 100,
+        ],
+        "move" => [
+            "direction" => "bottom",
+            "enable" => true,
+            "random" => false,
+            "straight" => false,
+        ],
+        "opacity" => [
+            "value" => [
+                "min" => 0.1,
+                "max" => 0.5,
+            ],
+        ],
+        "size" => [
+            "value" => [
+                "min" => 1,
+                "max" => 10,
+            ],
+        ],
+        "wobble" => [
+            "distance" => 20,
+            "enable" => true,
+            "speed" => [
+                "min" => -5,
+                "max" => 5,
+            ],
+        ],
+    ],
+];
+$particlesOptionsFire = [
+    'name' => 'Feu',
+    'background' => [
+        'color' => '#000E9C',
+    ],
+    "fpsLimit" => 40,
+    "particles" => [
+        "number" => [
+            "value" => 200,
+            "density" => [
+                "enable" => true,
+            ],
+        ],
+        "color" => [
+            "value" => ["#4a90e2", "#50e3c2", "#003f5c", "#2f4b7c", "#6aafd8"]
+        ],
+        "opacity" => [
+            "value" => ["min" => 0.1, "max" => 0.5],
+        ],
+        "size" => [
+            "value" => ["min" => 1, "max" => 3],
+        ],
+        "move" => [
+            "enable" => true,
+            "speed" => 6,
+            "random" => false,
+        ],
+    ],
 ];
 $particlesOptionsLinks = [
     'name' => 'Liens',
     'background' => [
         'color' => '#000E9C',
     ],
-    'preset' => 'links',
+    "particles" => [
+        "number" => [
+            "value" => 100,
+        ],
+        "links" => [
+            "distance" => 175,
+            "enable" => true,
+            "opacity" => 0.5,
+        ],
+        "move" => [
+            "enable" => true,
+        ],
+        "size" => [
+            "value" => 1,
+        ],
+        "shape" => [
+            "type" => "circle",
+        ],
+    ],
 ];
 $particlesOptionsTriangles = [
     'name' => 'Triangles',
     'background' => [
         'color' => '#000E9C',
     ],
-    'preset' => 'triangles',
-    'particles' => [
-        'move' => [
-            'speed' => 2,
+    "particles" => [
+        "number" => [
+            "value" => 100,
         ],
-        'links' => [
-            'distance' => 175,
-            'triangles' => [
-                'opacity' => 0.02,
+        "links" => [
+            "distance" => 175,
+            "enable" => true,
+            "opacity" => 0.5,
+            "triangles" => [
+                "enable" => true,
+                "opacity" => 0.02,
             ],
-        ]
+        ],
+        "move" => [
+            "enable" => true,
+            "speed" => 2,
+        ],
+        "size" => [
+            "value" => 1,
+        ],
+        "shape" => [
+            "type" => "circle",
+        ],
     ],
 ];
 $particlesOptionsBalls = [
@@ -114,6 +203,7 @@ $particlesOptionsBalls = [
 return [
     'config' => [
         'snow' => $particlesOptionsSnow,
+        'fire' => $particlesOptionsFire,
         'links' => $particlesOptionsLinks,
         'triangles' => $particlesOptionsTriangles,
         'balls' => $particlesOptionsBalls,
