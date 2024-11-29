@@ -66,9 +66,12 @@ class AdminController extends Controller
                 if(!$menu) {
                     $menu = new Menu;
                 }
+                $ucfirst = function($s) {
+                    return mb_strtoupper( mb_substr( $s, 0, 1 )) . mb_substr( $s, 1 );
+                };
                 foreach (['starters', 'liberos', 'mains', 'sides', 'cheeses', 'desserts'] as $type) {
                     if(isset($validated[$type][$idx])) {
-                        $validated[$type][$idx] = array_values(array_filter($validated[$type][$idx]));
+                        $validated[$type][$idx] = array_map($ucfirst, array_values(array_filter($validated[$type][$idx])));
                     }
                 }
                 $menu->date = $date;
