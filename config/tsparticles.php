@@ -39,7 +39,7 @@ $particlesOptionsSnow = [
     ],
 ];
 $particlesOptionsFire = [
-    'name' => 'Feu',
+    'name' => 'Braises',
     'background' => [
         'color' => '#000E9C',
     ],
@@ -55,14 +55,14 @@ $particlesOptionsFire = [
             "value" => ["#4a90e2", "#50e3c2", "#003f5c", "#2f4b7c", "#6aafd8"]
         ],
         "opacity" => [
-            "value" => ["min" => 0.1, "max" => 0.5],
+            "value" => ["min" => 0.4, "max" => 0.8],
         ],
         "size" => [
-            "value" => ["min" => 1, "max" => 3],
+            "value" => ["min" => 2, "max" => 4],
         ],
         "move" => [
             "enable" => true,
-            "speed" => 6,
+            "speed" => 3,
             "random" => false,
         ],
     ],
