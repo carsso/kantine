@@ -22,15 +22,17 @@ class AdminController extends Controller
     }
     public function menu($dateString = null)
     {
-        if(!$dateString) {
-            $dateString = date('Y-m-d');
+        $dateToday = strtotime('today 10 am');
+        $date = $dateToday;
+        if(date('H') >= 15) {
+            $date = strtotime('+1 day', $date);
         }
-        $date = strtotime('today 10 am');
         if(preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateString)) {
             $date = strtotime($dateString.' 10 am');
         }
-        if(date('N', $date) >= 6) {
-            $date = strtotime('+1 week', $date);
+        $menu = Menu::where('date', '>=', date('Y-m-d', $date))->orderBy('date', 'asc')->first();
+        if($menu) {
+            $date = strtotime($menu->date.' 10 am');
         }
         $mondayTime = strtotime('monday this week 10 am', $date);
         $sundayTime = strtotime('sunday this week 10 am', $date);
