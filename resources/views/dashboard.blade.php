@@ -148,5 +148,8 @@
                 @endif
             </div>
         </main>
+        <div class="fixed bottom-10 right-10 text-[#002f9c]">
+            {{ $generationDate->translatedFormat('j F Y à H:i:s') }}
+        </div>
     </body>
 @endsection

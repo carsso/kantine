@@ -65,9 +65,11 @@ class MenuController extends Controller
             $diff = '';
         }
 
+        $generationDate = Carbon::now();
+
         $style = $request->query('style', $menu->style);
         $particlesOptions = in_array($style, array_keys(config('tsparticles.config', []))) ? config('tsparticles.config.'.$style) : null;
-        return view('dashboard', ['menu' => $menu, 'diff' => $diff, 'day' => $day, 'particlesOptions' => $particlesOptions]);
+        return view('dashboard', ['menu' => $menu, 'diff' => $diff, 'day' => $day, 'particlesOptions' => $particlesOptions, 'generationDate' => $generationDate]);
     }
 
     public function webexMenu($dateString)

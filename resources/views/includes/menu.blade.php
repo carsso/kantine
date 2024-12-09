@@ -182,7 +182,7 @@
 
     @auth
         <div class="mt-4 leading-snug text-xs text-gray-500">
-            Généré le {{ $menu->updated_at->translatedFormat('d F Y à H:i') }}<br />
+            Généré le {{ $menu->updated_at->translatedFormat('j F Y à H:i') }}<br />
             @if($menu->file)
                 <a href="{{ route('file', $menu->file->hash) }}" class="hover:text-indigo-500">
                     Source :
