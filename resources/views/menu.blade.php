@@ -1,7 +1,7 @@
 @extends('layouts.app-with-navbar')
 
 @section('meta')
-<meta http-equiv="refresh" content="14400">
+<meta http-equiv="refresh" content="3600">
 @endsection
 
 @section('content')

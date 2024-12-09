@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('meta')
-<meta http-equiv="refresh" content="14400">
+<meta http-equiv="refresh" content="3600">
 <meta name="google" content="notranslate">
 @endsection
 
