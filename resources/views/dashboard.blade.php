@@ -39,7 +39,7 @@
             <div class="basis-3/4 border-l-4 @if($menu) {{ $menu->is_fries_day ? 'border-[#ED733D]' : ($menu->event_name ? 'border-[#FFD124]' : 'border-[#147DE8]') }} @else border-white @endif">
                 @if($menu)
                     <div class="flex flex-row place-content-center">
-                        <div class="basis-1/2 px-8 place-items-center">
+                        <div class="basis-1/2 px-8 flex flex-col place-content-center">
                             <div>
                                 <div class="font-bold text-6xl mb-2 text-[#A6D64D]">
                                     <i class="fa-thin fa-salad"></i> Entrées :
@@ -95,7 +95,7 @@
                                 @endif
                             </div>
                         </div>
-                        <div class="basis-1/2 px-8 place-items-center">
+                        <div class="basis-1/2 px-8 flex flex-col place-content-center">
                             <div>
                                 <div class="font-bold text-6xl mb-2 text-[#4AB0F5]">
                                     <i class="fa-thin fa-pan-frying"></i> Libéro :
