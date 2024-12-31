@@ -30,7 +30,7 @@ class AdminController extends Controller
         if(preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateString)) {
             $date = strtotime($dateString.' 10 am');
         }
-        $menu = Menu::where('date', '>=', date('Y-m-d', $date))->orderBy('date', 'asc')->first();
+        $menu = Menu::where('date', '>=', date('Y-m-d', $date))->where('mains', '!=', '[]')->where('sides', '!=', '[]')->orderBy('date', 'asc')->first();
         if($menu) {
             $date = strtotime($menu->date.' 10 am');
         }

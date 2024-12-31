@@ -47,6 +47,10 @@ class ProcessWebexMenuNotification implements ShouldQueue
             Log::info('Skipping read-only Webex room "' . $this->room['title'] .'" ' . $this->room['id']);
             return;
         }
+        if(!$this->menu) {
+            Log::info('No menu for date '.$this->date.', skipping');
+            return;
+        }
         $api = new WebexApi;
         $date = Carbon::parse($this->date);
         $html = view('webex.menu', ['menu' => $this->menu, 'date' => $date])->render();

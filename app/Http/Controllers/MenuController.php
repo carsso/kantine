@@ -23,7 +23,7 @@ class MenuController extends Controller
         if(preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateString)) {
             $date = strtotime($dateString.' 10 am');
         }
-        $menu = Menu::where('date', '>=', date('Y-m-d', $date))->orderBy('date', 'asc')->first();
+        $menu = Menu::where('date', '>=', date('Y-m-d', $date))->where('mains', '!=', '[]')->where('sides', '!=', '[]')->orderBy('date', 'asc')->first();
         if($menu) {
             $date = strtotime($menu->date.' 10 am');
         }
@@ -47,7 +47,7 @@ class MenuController extends Controller
         if(preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateString)) {
             $date = strtotime($dateString.' 10 am');
         }
-        $menu = Menu::where('date', '>=', date('Y-m-d', $date))->orderBy('date', 'asc')->first();
+        $menu = Menu::where('date', '>=', date('Y-m-d', $date))->where('mains', '!=', '[]')->where('sides', '!=', '[]')->orderBy('date', 'asc')->first();
         if($menu) {
             $date = strtotime($menu->date.' 10 am');
         }
@@ -67,7 +67,7 @@ class MenuController extends Controller
 
         $generationDate = Carbon::now();
 
-        $style = $request->query('style', $menu->style);
+        $style = $menu ? $request->query('style', $menu->style): 'default';
         $particlesOptions = in_array($style, array_keys(config('tsparticles.config', []))) ? config('tsparticles.config.'.$style) : null;
         return view('dashboard', ['menu' => $menu, 'diff' => $diff, 'day' => $day, 'particlesOptions' => $particlesOptions, 'generationDate' => $generationDate]);
     }
@@ -78,7 +78,7 @@ class MenuController extends Controller
         if(preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateString)) {
             $date = strtotime($dateString.' 10 am');
         }
-        $menu = Menu::where('date', date('Y-m-d', $date))->first();
+        $menu = Menu::where('date', date('Y-m-d', $date))->where('mains', '!=', '[]')->where('sides', '!=', '[]')->first();
         return view('webex.menu', ['menu' => $menu, 'date' => Carbon::parse($date)]);
     }
 
