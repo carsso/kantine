@@ -59,7 +59,7 @@ class Controller extends BaseController
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    protected function redirectWithErrror(string $message, RedirectResponse $redirectResponse, ?Exception $e = null, $sessionBag = 'flash')
+    protected function redirectWithError(string $message, RedirectResponse $redirectResponse, ?Exception $e = null, $sessionBag = 'flash')
     {
         $withError = 'with' . Str::studly($sessionBag) . 'Error';
         $withErrorException = $withError . 'Exception';

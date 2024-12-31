@@ -92,7 +92,7 @@ class MenuController extends Controller
                 $file = File::where('hash', $fileHash)->first();
                 if($file) {
                     if(count($validated['files']) == 1) {
-                        return $this->redirectWithErrror('Fichier déjà uploadé', redirect()->route('file', $file->hash));
+                        return $this->redirectWithError('Fichier déjà uploadé', redirect()->route('file', $file->hash));
                     } else {
                         continue;
                     }
@@ -102,7 +102,7 @@ class MenuController extends Controller
                     $originalFilename = $matches[1];
                 }
                 if(!preg_match('/^S[0-9]+-[0-9]{4}\.pdf$/', $originalFilename, $matches)) {
-                    return $this->redirectWithErrror('Fichier '.$originalFilename.' invalide, nom incorrect, format attendu : SXX-XXXX.pdf', redirect()->route('files'));
+                    return $this->redirectWithError('Fichier '.$originalFilename.' invalide, nom incorrect, format attendu : SXX-XXXX.pdf', redirect()->route('files'));
                 }
                 $fileName = $fileHash.'_'.$originalFilename;
                 $filePath = $validatedFile->storeAs('uploads/menus', $fileName, 'public');
@@ -128,10 +128,10 @@ class MenuController extends Controller
    {
         $file = File::where('hash', $hash)->first();
         if(!$file) {
-            return $this->redirectWithErrror('Fichier non trouvé', redirect()->route('home'));
+            return $this->redirectWithError('Fichier non trouvé', redirect()->route('home'));
         }
         if($file->state != 'error' && !auth()->user()->hasRole('Super Admin')) {
-            return $this->redirectWithErrror('Le fichier n\'est pas en erreur', redirect()->route('file', $file->hash));
+            return $this->redirectWithError('Le fichier n\'est pas en erreur', redirect()->route('file', $file->hash));
         }
         $file->state = 'todo';
         $file->message = null;
@@ -144,10 +144,10 @@ class MenuController extends Controller
    {
         $file = File::where('hash', $hash)->first();
         if(!$file) {
-            return $this->redirectWithErrror('Fichier non trouvé', redirect()->route('home'));
+            return $this->redirectWithError('Fichier non trouvé', redirect()->route('home'));
         }
         if($file->state != 'error' && !auth()->user()->hasRole('Super Admin')) {
-            return $this->redirectWithErrror('Fichier non en erreur', redirect()->route('file', $file->hash));
+            return $this->redirectWithError('Fichier non en erreur', redirect()->route('file', $file->hash));
         }
         if(is_file(public_path($file->file_path))) {
             unlink(public_path($file->file_path));
@@ -163,7 +163,7 @@ class MenuController extends Controller
    {
         $file = File::where('hash', $hash)->first();
         if(!$file) {
-            return $this->redirectWithErrror('Fichier non trouvé', redirect()->route('home'));
+            return $this->redirectWithError('Fichier non trouvé', redirect()->route('home'));
         }
         return view('file', ['file' => $file]);
    }

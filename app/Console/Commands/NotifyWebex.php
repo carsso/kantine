@@ -33,10 +33,14 @@ class NotifyWebex extends Command
     {
         $date = date('Y-m-d');
         Log::info('Sending Webex notifications for menu of ' . $date . ' to all rooms');
-        $menu = Menu::where('date', $date)->first();
+        $menu = Menu::where('date', $date)->where('mains', '!=', '[]')->where('sides', '!=', '[]')->first();
 
         if(!config('services.webex.bearer_token')) {
             Log::info('Webex bearer token not set, aborting');
+            return 0;
+        }
+        if(!$menu) {
+            Log::info('No menu for date '.$date.', aborting');
             return 0;
         }
         $api = new WebexApi;
