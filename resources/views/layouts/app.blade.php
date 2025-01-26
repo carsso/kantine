@@ -17,7 +17,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @yield('meta')
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
-    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    @vite(['resources/css/base.css', 'resources/scss/app.scss', 'resources/js/app.js'])
 
     @if (strtoupper(config('app.env')) != 'PRODUCTION')
         <style>
@@ -25,39 +25,6 @@
                 background-image: url('{{ Vite::asset('resources/images/bg_dev.png') }}');
             }
         </style>
-    @endif
-
-    @if (config('sentry.dsn'))
-        <script
-            src="{{ config('app.sentry_cdn') }}/7.69.0/bundle.tracing.replay.min.js"
-            integrity="sha384-6ZlY7nOHgnD0vXeSWEgeSHy/+WXQkLYa52vA7d20SFsyRhhCU9mGOIGSgNlbzdSS"
-            crossorigin="anonymous"></script>
-
-        <script>
-            Sentry.init({
-                dsn: "{{ config('sentry.dsn') }}",
-                tunnel: "/sentry",
-                integrations: [
-                    new Sentry.BrowserTracing(),
-                    new Sentry.Replay({
-                        maskAllText: false,
-                        maskAllInputs: false,
-                        blockAllMedia: false,
-                    })
-                ],
-                tracesSampleRate: 1.0,
-                replaysSessionSampleRate: 1.0,
-                replaysOnErrorSampleRate: 1.0,
-            });
-
-            @if (auth()->check())
-                Sentry.setTag("user_id", "{{ Auth::user()->id }}");
-                Sentry.setUser({
-                    id: "{{ Auth::user()->id ?? 0 }}",
-                    email: "{{ Auth::user()->email ?? '' }}",
-                });
-            @endif
-        </script>
     @endif
 </head>
 
@@ -83,6 +50,7 @@
                 </div>
             </main>
         </div>
+        <echo-state></echo-state>
     </body>
 @endsection
 @yield('body')

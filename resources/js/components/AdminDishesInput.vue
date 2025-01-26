@@ -14,7 +14,7 @@
             <v-select
                 v-model="inputDishes[index]"
                 taggable
-                class="block w-full border border-gray-200 shadow-sm rounded-md text-sm leading-none focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-400"
+                class="block w-full border px-2 py-1 border-gray-200 shadow-xs rounded-md text-sm leading-none focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-400"
                 :options="filteredDishes"
                 @search="search">
                 <template v-slot:option="option">
@@ -28,14 +28,14 @@
                 type="button"
                 v-if="!dish && index !== inputDishes.length && inputDishes.length !== 1"
                 @click="inputDishes.splice(index, 1)"
-                class="text-xs ml-2 inline-flex items-center text-red-800 dark:text-red-800 px-1 py-1 border border-gray-200 dark:border-gray-500 leading-4 font-medium rounded-md shadow-sm text-green bg-white dark:bg-gray-700">
+                class="cursor-pointer text-xs ml-2 inline-flex items-center text-red-800 dark:text-red-800 p-1.5 border border-gray-200 dark:border-gray-500 leading-4 font-medium rounded-md shadow-xs text-green bg-white dark:bg-gray-700">
                 <i class="fas fa-trash-alt"></i>
             </button>
             <button
                 type="button"
                 v-if="dish"
                 @click="inputDishes.splice(index + 1, 0, '')"
-                class="text-xs ml-2 inline-flex items-center text-gray-700 dark:text-gray-400 px-1 py-1 border border-gray-200 dark:border-gray-500 leading-4 font-medium rounded-md shadow-sm text-green bg-white dark:bg-gray-700">
+                class="cursor-pointer text-xs ml-2 inline-flex items-center text-gray-700 dark:text-gray-400 p-1.5 border border-gray-200 dark:border-gray-500 leading-4 font-medium rounded-md shadow-xs text-green bg-white dark:bg-gray-700">
                 <i class="fas fa-plus"></i>
             </button>
         </div>
@@ -92,6 +92,9 @@ export default {
 <style src="vue-select/dist/vue-select.css"></style>
 
 <style>
+@reference "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
 .admin-dishes-input .vs__search::placeholder,
 .admin-dishes-input .vs__dropdown-toggle,
 .admin-dishes-input .vs__selected,
@@ -111,8 +114,9 @@ export default {
     @apply bg-white dark:text-gray-400 dark:bg-gray-800 border border-gray-200 dark:border-gray-50 text-sm leading-none;
 }
 
-.admin-dishes-input .vs__dropdown-option {
-    @apply py-1;
+.admin-dishes-input .vs__dropdown-option,
+.admin-dishes-input *:not(#\#).vs__dropdown-option {
+    @apply py-1 px-2;
 }
 
 .admin-dishes-input .vs__dropdown-option--selected {
@@ -123,12 +127,14 @@ export default {
     @apply bg-gray-200 text-black dark:bg-gray-700 dark:text-gray-400 text-sm leading-none;
 }
 
-.admin-dishes-input .vs__actions {
-    @apply py-0 pr-1;
+.admin-dishes-input .vs__actions,
+.admin-dishes-input *:not(#\#).vs__actions {
+    @apply py-0 pl-1;
 }
 
-.admin-dishes-input .vs__open-indicator {
-    @apply hidden;
+.admin-dishes-input .vs__open-indicator,
+.admin-dishes-input svg:not(#\#).vs__open-indicator {
+    @apply hidden
 }
 .admin-dishes-input .vs__clear {
     @apply dark:fill-gray-400;

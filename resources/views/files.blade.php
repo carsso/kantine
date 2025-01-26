@@ -10,7 +10,7 @@
             @endforeach
         </div>
     @else
-        <div class="bg-white dark:bg-gray-700 rounded-lg shadow p-4 text-center mt-6">
+        <div class="bg-white dark:bg-gray-700 rounded-lg shadow-sm p-4 text-center mt-6">
             <i class="text-2xl text-gray-500">Aucun fichier</i>
         </div>
     @endif

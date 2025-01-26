@@ -5,7 +5,7 @@
     <h1 class="text-2xl text-center pt-2">Administration du BOT Webex</h1>
     <div class="grid grid-cols-2 gap-4 mb-6">
         @foreach($rooms as $room)
-            <div class="bg-white dark:bg-gray-700 rounded-lg shadow p-6 mt-6">
+            <div class="bg-white dark:bg-gray-700 rounded-lg shadow-sm p-6 mt-6">
                 <h2 class="text-xl mb-1" title="{{ $room['id'] }}">
                     {{ $room['title'] }}
                 </h2>

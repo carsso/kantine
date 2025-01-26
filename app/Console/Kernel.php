@@ -14,6 +14,10 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('kantine:notify-webex')
             ->weekdays()->at('10:30');
+
+        $schedule->command('kantine:refresh-dashboards')
+            ->dailyAt('00:30')
+            ->dailyAt('15:30');
     }
 
     /**

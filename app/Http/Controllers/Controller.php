@@ -59,14 +59,18 @@ class Controller extends BaseController
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    protected function redirectWithError(string $message, RedirectResponse $redirectResponse, ?Exception $e = null, $sessionBag = 'flash')
+    protected function redirectWithError(string $message, RedirectResponse $redirectResponse, ?Exception $e = null, $sessionBag = 'flash', $withoutInput = false)
     {
         $withError = 'with' . Str::studly($sessionBag) . 'Error';
         $withErrorException = $withError . 'Exception';
 
-        $response = $redirectResponse->$withError($message)->withInput();
+        if($withoutInput) {
+            $response = $redirectResponse->$withError($message);
+        } else {
+            $response = $redirectResponse->$withError($message)->withInput();
+        }
         if ($e) {
-            $response = $response->$withErrorException($e->getMessage());
+            $response = $redirectResponse->$withErrorException($e->getMessage());
         }
 
         return $response;

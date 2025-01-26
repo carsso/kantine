@@ -1,5 +1,5 @@
 
-<div class="bg-white dark:bg-gray-700 rounded-lg shadow px-4 py-5 text-center">
+<div class="bg-white dark:bg-gray-700 rounded-lg shadow-sm px-4 py-5 text-center">
     <h1 class="text-2xl xl:hidden 2xl:block mb-1">{{ $menu->date_carbon->translatedFormat('l j F') }}</h1>
     <h1 class="text-2xl hidden xl:block 2xl:hidden mb-1">{{ $menu->date_carbon->translatedFormat('D j M') }}</h1>
     <input id="date[{{ $idx }}]" type="hidden" name="date[{{ $idx }}]" value="{{ $menu->date }}">
@@ -11,7 +11,7 @@
     </div>
     <div class="mt-2">
         <label for="information" class="block text-sm font-semibold">Information :</label>
-        <textarea id="information[{{ $idx }}]" rows="3" type="text" name="information[{{ $idx }}]" value="{{ old('information') ?? $menu->information }}" class="block w-full py-0.5 border border-gray-200 shadow-sm rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-400"></textarea>
+        <textarea id="information[{{ $idx }}]" rows="3" type="text" name="information[{{ $idx }}]" value="{{ old('information') ?? $menu->information }}" class="block w-full px-2 py-0.5 border border-gray-200 shadow-xs rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-400"></textarea>
         @error('information')
             <div class="rounded-md bg-red-50 dark:bg-red-800 text-xs font-medium text-red-800 dark:text-red-50 p-2 mt-1">
                 {{ $message }}
@@ -30,7 +30,7 @@
                 </a>
             @endforeach
         </div>
-        <select id="style[{{ $idx }}]" type="text" name="style[{{ $idx }}]" class="block w-full py-0.5 border border-gray-200 shadow-sm rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-400">
+        <select id="style[{{ $idx }}]" type="text" name="style[{{ $idx }}]" class="block w-full px-1 py-1 border border-gray-200 shadow-xs rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-400">
             <option value=""></option>
             @foreach(array_keys(config('tsparticles.config', [])) as $style)
                 <option value="{{ $style }}" @if($style == (old('style') ?? $menu->style)) selected @endif>
@@ -46,7 +46,7 @@
     </div>
     <div class="mt-2">
         <label for="event_name" class="block font-semibold">Événement :</label>
-        <input id="event_name[{{ $idx }}]" type="text" name="event_name[{{ $idx }}]" value="{{ old('event_name') ?? $menu->event_name }}" class="block w-full py-0.5 border border-gray-200 shadow-sm rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-400">
+        <input id="event_name[{{ $idx }}]" type="text" name="event_name[{{ $idx }}]" value="{{ old('event_name') ?? $menu->event_name }}" class="block w-full px-2 py-0.5 border border-gray-200 shadow-xs rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-400">
         @error('event_name')
             <div class="rounded-md bg-red-50 dark:bg-red-800 text-xs font-medium text-red-800 dark:text-red-50 p-2 mt-1">
                 {{ $message }}

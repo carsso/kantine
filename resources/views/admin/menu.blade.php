@@ -7,7 +7,7 @@
     </h1>
     <div class="flex mb-4">
         <div class="flex-none w-48 text-left">
-            <a href="{{ route('admin.menu', $prevWeek) }}" class="px-2 py-1 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+            <a href="{{ route('admin.menu', $prevWeek) }}" class="px-2 py-1 border border-transparent text-sm leading-4 font-medium rounded-md shadow-xs text-white bg-gray-600 hover:bg-gray-700 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                 <i class="fas fa-circle-arrow-left mr-2"></i>
                 Semaine précédente
             </a>
@@ -18,7 +18,7 @@
             </h1>
         </div>
         <div class="flex-none w-48 text-right">
-            <a href="{{ route('admin.menu', $nextWeek) }}" class="px-2 py-1 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+            <a href="{{ route('admin.menu', $nextWeek) }}" class="px-2 py-1 border border-transparent text-sm leading-4 font-medium rounded-md shadow-xs text-white bg-gray-600 hover:bg-gray-700 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                 Semaine suivante
                 <i class="fas fa-circle-arrow-right ml-2"></i>
             </a>
@@ -39,13 +39,18 @@
             </div>
         @endif
 
+        <div class="mb-2 text-right">
+            <button type="submit" name="submit" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-xs text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                Sauvegarder le menu
+            </button>
+        </div>
         <div class="grid xl:grid-cols-5 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-4 mb-8">
             @foreach($menus as $idx => $menu)
                 @include('admin.includes.menu', ['idx' => $idx, 'menu' => $menu, 'autocompleteDishes' => $autocompleteDishes])
             @endforeach
         </div>
         <div class="mt-2 text-right">
-            <button type="submit" name="submit" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            <button type="submit" name="submit" class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-xs text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                 Sauvegarder le menu
             </button>
         </div>

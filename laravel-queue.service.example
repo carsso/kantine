@@ -1,0 +1,14 @@
+[Unit]
+Description=Laravel Kantine Queue Service
+
+[Service]
+User=www-data
+Group=www-data
+Restart=always
+WorkingDirectory=/home/www/kantine.menu
+ExecStart=php /home/www/kantine.menu/artisan queue:work
+StandardOutput=append:/home/www/kantine.menu/storage/logs/queue-jobs.log
+StandardError=append:/home/www/kantine.menu/storage/logs/queue-jobs.log
+
+[Install]
+WantedBy=multi-user.target

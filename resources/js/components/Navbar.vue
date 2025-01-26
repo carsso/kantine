@@ -3,7 +3,7 @@
         <div class="container-2xl 2xl:container mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
                 <div class="flex">
-                    <div class="flex-shrink-0 flex items-center text-gray-900 dark:text-white">
+                    <div class="shrink-0 flex items-center text-gray-900 dark:text-white">
                         <a :href="homeRoute">
                             <strong v-if="isDev" class="bg-red-500 text-white px-2 mr-2">DEV</strong>
                             {{ appName }}
@@ -34,7 +34,7 @@
                 </div>
                 <div class="-mr-2 flex items-center md:hidden">
                     <!-- Mobile menu button -->
-                    <DisclosureButton class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
+                    <DisclosureButton class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-hidden focus:ring-2 focus:ring-inset focus:ring-indigo-500">
                         <span class="sr-only">Open main menu</span>
                         <Bars3Icon v-if="!open" class="block h-6 w-6" aria-hidden="true" />
                         <XMarkIcon v-else class="block h-6 w-6" aria-hidden="true" />

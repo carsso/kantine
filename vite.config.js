@@ -1,13 +1,15 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue';
+import commonjs from 'vite-plugin-commonjs';
 import path from 'path';
 
 export default defineConfig({
     plugins: [
         laravel({
             input: [
-                'resources/sass/app.scss',
+                'resources/css/base.css',
+                'resources/scss/app.scss',
                 'resources/js/app.js',
             ],
             refresh: true,
@@ -20,6 +22,7 @@ export default defineConfig({
                 },
             },
         }),
+        commonjs(),
     ],
     resolve: {
         alias: {

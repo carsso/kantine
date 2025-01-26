@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('meta')
-<meta http-equiv="refresh" content="3600">
 <meta name="google" content="notranslate">
 @endsection
 
@@ -151,5 +150,7 @@
         <div class="fixed bottom-10 right-10 text-[#002f9c]">
             {{ $generationDate->translatedFormat('j F Y à H:i:s') }}
         </div>
+        <echo-state></echo-state>
+        <page-refresher date="{{ $menu->date }}"></page-refresher>
     </body>
 @endsection

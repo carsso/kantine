@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="bg-white dark:bg-gray-700 rounded-lg shadow px-4 mx-6 py-12">
+    <div class="bg-white dark:bg-gray-700 rounded-lg shadow-sm px-4 mx-6 py-12">
         <div class="sm:mx-auto sm:w-full sm:max-w-sm">
             <h1 class="text-center text-2xl leading-9 tracking-tight">{{ __('Verify Your Email Address') }}</h1>
         </div>
@@ -24,7 +24,7 @@
                 </p>
 
                 <div class="mb-3">
-                    <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                    <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-xs hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                         {{ __('click here to request another') }}
                     </button>
                 </div>

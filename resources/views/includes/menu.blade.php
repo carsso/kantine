@@ -1,5 +1,5 @@
 
-<div class="bg-white dark:bg-gray-700 rounded-lg shadow px-4 py-5 text-center border-t-4 {{ $menu->is_fries_day || $menu->is_burgers_day ? 'border-[#ED733D]' : ($menu->event_name ? 'border-[#FFD124]' : 'border-[#147DE8]') }}">
+<div class="bg-white dark:bg-gray-700 rounded-lg shadow-sm px-4 py-5 text-center border-t-4 {{ $menu->is_fries_day || $menu->is_burgers_day ? 'border-[#ED733D]' : ($menu->event_name ? 'border-[#FFD124]' : 'border-[#147DE8]') }}">
     <h1 class="text-2xl xl:hidden 2xl:block mb-3">{{ $menu->date_carbon->translatedFormat('l j F') }}</h1>
     <h1 class="text-2xl hidden xl:block 2xl:hidden mb-3">{{ $menu->date_carbon->translatedFormat('D j M') }}</h1>
     @if($menu->information)
@@ -191,4 +191,6 @@
             @endif
         </div>
     @endauth
+
+    <page-refresher date="{{ $menu->date }}"></page-refresher>
 </div>

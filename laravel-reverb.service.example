@@ -1,0 +1,14 @@
+[Unit]
+Description=Laravel Kantine Reverb Server
+
+[Service]
+User=www-data
+Group=www-data
+Restart=always
+WorkingDirectory=/home/www/kantine.menu
+ExecStart=php /home/www/kantine.menu/artisan reverb:start
+StandardOutput=append:/home/www/kantine.menu/storage/logs/reverb-server.log
+StandardError=append:/home/www/kantine.menu/storage/logs/reverb-server.log
+
+[Install]
+WantedBy=multi-user.target

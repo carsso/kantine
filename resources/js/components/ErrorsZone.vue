@@ -6,7 +6,7 @@
                     <div class="text-sm font-medium text-red-800 dark:text-red-50">
                         <div class="float-right pl-3">
                             <div class="-mx-1.5 -my-1.5">
-                                <button type="button" @click="dismiss(errorKey)" class="inline-flex rounded-md p-1.5 text-red-500 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-red-50 focus:ring-red-600">
+                                <button type="button" @click="dismiss(errorKey)" class="inline-flex rounded-md p-1.5 text-red-500 hover:bg-red-100 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-offset-red-50 focus:ring-red-600">
                                     <span class="sr-only">Dismiss</span>
                                     <i class="fas fa-times"></i>
                                 </button>

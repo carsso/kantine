@@ -126,8 +126,6 @@ return [
 
     'cipher' => 'AES-256-CBC',
 
-    'sentry_cdn' => env('SENTRY_CDN', 'https://browser.sentry-cdn.com'),
-
     /*
     |--------------------------------------------------------------------------
     | Maintenance Mode Driver
@@ -167,7 +165,7 @@ return [
          */
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
-        // App\Providers\BroadcastServiceProvider::class,
+        App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\ViewServiceProvider::class,
@@ -186,7 +184,6 @@ return [
 
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
-        'Debugbar' => Barryvdh\Debugbar\Facades\Debugbar::class,
         'Vite' => \Illuminate\Support\Facades\Vite::class,
     ])->toArray(),
 

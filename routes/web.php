@@ -38,9 +38,6 @@ Route::get('/notifications/webex/{day}', [MenuController::class, 'webexMenu'])
 Route::get('/legal', [MenuController::class, 'legal'])
     ->name('legal');
 
-Route::name('sentry')
-    ->any('/sentry', [MenuController::class, 'sentry']);
-
 Route::get('/darkmode/{enable}', [DarkmodeController::class, 'json'])
     ->name('darkmode');
 

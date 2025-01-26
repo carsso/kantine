@@ -1,5 +1,5 @@
 <template>
-    <button type="button" @click="switchMode()" :disabled="loading" :class="btnClass" class="darkmode-toggler p-1 rounded-full text-gray-400 hover:text-gray-500 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-white">
+    <button type="button" @click="switchMode()" :disabled="loading" :class="btnClass" class="darkmode-toggler p-1 rounded-full text-gray-400 hover:text-gray-500 dark:hover:text-white focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-white">
         <transition name="loading-screen">
             <LoadingScreen v-if="loading" />
         </transition>

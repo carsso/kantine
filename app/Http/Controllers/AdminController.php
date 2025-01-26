@@ -61,9 +61,9 @@ class AdminController extends Controller
     public function updateMenu(UpdateMenuFormRequest $request)
     {
         $validated = $request->validated();
+        $isDirty = false;
         if($validated['date'] && count($validated['date']) > 0) {
-            foreach($validated['date'] as $idx => $date)
-            {
+            foreach($validated['date'] as $idx => $date) {
                 $menu = Menu::where('date', $date)->first();
                 if(!$menu) {
                     $menu = new Menu;
@@ -87,7 +87,14 @@ class AdminController extends Controller
                 $menu->cheeses = $validated['cheeses'][$idx] ?? [];
                 $menu->desserts = $validated['desserts'][$idx] ?? [];
                 $menu->file_id = $menu->file_id ?? null;
-                $menu->save();
+                if($menu->isDirty()) {
+                    $menu->save();
+                    $isDirty = true;
+                }
+            }
+
+            if(!$isDirty) {
+                return $this->redirectWithError('Rien à mettre à jour', redirect()->route('admin.menu', ['date' => $validated['date'][0]]), null, 'flash', true);
             }
             return $this->redirectWithSuccess('Menus mis à jour', redirect()->route('admin.menu', ['date' => $validated['date'][0]]));
         }
