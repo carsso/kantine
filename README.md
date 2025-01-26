@@ -21,8 +21,8 @@ Written in PHP/Laravel and VueJS.
 
 ## Pre-requisites
 
-- PHP >= 8.1
-- NodeJS >= 18
+- PHP >= 8.3
+- NodeJS >= 23
 - FontAwesome Pro 6 license, with a [configured .npmrc file](https://docs.fontawesome.com/web/setup/packages#project-specific-using-configuration-files)
 
 ## Deployment
@@ -89,6 +89,12 @@ php artisan storage:link
 php artisan queue:listen
 ```
 
+#### Run reverb server
+
+```sh
+php artisan reverb:start
+```
+
 ## Development
 
 #### Clone repository (main branch)
@@ -145,6 +151,12 @@ npm run dev
 
 ```sh
 php artisan queue:listen
+```
+
+#### Run reverb server
+
+```sh
+php artisan reverb:start
 ```
 
 ## License
