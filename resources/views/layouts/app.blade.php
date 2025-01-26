@@ -17,6 +17,12 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @yield('meta')
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
+    <script>
+        window.VITE_REVERB_APP_KEY = "{{ env('VITE_REVERB_APP_KEY') }}";
+        window.VITE_REVERB_HOST = "{{ env('VITE_REVERB_HOST') }}";
+        window.VITE_REVERB_PORT = "{{ env('VITE_REVERB_PORT') }}";
+        window.VITE_REVERB_SCHEME = "{{ env('VITE_REVERB_SCHEME') }}";
+    </script>
     @vite(['resources/css/base.css', 'resources/scss/app.scss', 'resources/js/app.js'])
 
     @if (strtoupper(config('app.env')) != 'PRODUCTION')
