@@ -18,7 +18,7 @@
                 <div class="mb-3">
                     <label for="email" class="block text-sm font-medium leading-6">{{ __('Email Address') }}</label>
                     <div class="mt-2">
-                        <input id="email" type="email" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus class="block w-full rounded-md border-0 py-1.5 dark:bg-white/5 text-gray-900 dark:text-white shadow-xs ring-1 ring-inset @error('email') ring-red-700 @else ring-gray-300 dark:ring-white/10 @enderror placeholder:text-gray-400 dark:placeholder:text-white focus:ring-2 focus:ring-inset focus:ring-indigo-600 dark:focus:ring-indigo-500 sm:text-sm sm:leading-6">
+                        <input id="email" type="email" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus class="block w-full rounded-md border-0 px-2 py-1.5 dark:bg-white/5 text-gray-900 dark:text-white shadow-xs ring-1 ring-inset @error('email') ring-red-700 @else ring-gray-300 dark:ring-white/10 @enderror placeholder:text-gray-400 dark:placeholder:text-white focus:ring-2 focus:ring-inset focus:ring-indigo-600 dark:focus:ring-indigo-500 sm:text-sm sm:leading-6">
 
                         @error('email')
                             <div class="rounded-md bg-red-50 dark:bg-red-800 text-xs font-medium text-red-800 dark:text-red-50 p-2 mt-1">
@@ -31,7 +31,7 @@
                 <div class="mb-3">
                     <label for="password" class="block text-sm font-medium leading-6">{{ __('Password') }}</label>
                     <div class="mt-2">
-                        <input id="password" type="password" name="password" required autocomplete="current-password" class="block w-full rounded-md border-0 py-1.5 dark:bg-white/5 text-gray-900 dark:text-white shadow-xs ring-1 ring-inset @error('password') ring-red-700 @else ring-gray-300 dark:ring-white/10 @enderror placeholder:text-gray-400 dark:placeholder:text-white focus:ring-2 focus:ring-inset focus:ring-indigo-600 dark:focus:ring-indigo-500 sm:text-sm sm:leading-6">
+                        <input id="password" type="password" name="password" required autocomplete="current-password" class="block w-full rounded-md border-0 px-2 py-1.5 dark:bg-white/5 text-gray-900 dark:text-white shadow-xs ring-1 ring-inset @error('password') ring-red-700 @else ring-gray-300 dark:ring-white/10 @enderror placeholder:text-gray-400 dark:placeholder:text-white focus:ring-2 focus:ring-inset focus:ring-indigo-600 dark:focus:ring-indigo-500 sm:text-sm sm:leading-6">
 
                         @error('password')
                             <div class="rounded-md bg-red-50 dark:bg-red-800 text-xs font-medium text-red-800 dark:text-red-50 p-2 mt-1">
