@@ -40,10 +40,14 @@ jobs:
     - run: npm run build --verbose
     - name: Commit built assets
       run: |
-        git remote add deployorigin ${{ vars.DEPLOY_REPO }}
+        git remote add deploy_origin ${{ vars.DEPLOY_REPO }}
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git checkout -B deploy
+        echo "Checking out deploy branch"
+        git checkout -B deploy-build
+        echo "Adding public assets"
         git add -f public/
+        echo "Committing built assets"
         git commit -m "Build front-end assets - ${{ github.sha }}"
-        git push -f deployorigin deploy
+        echo "Pushing built assets"
+        git push -f deploy_origin deploy-build:deploy
