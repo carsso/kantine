@@ -67,7 +67,7 @@ composer install --no-interaction --prefer-dist --optimize-autoloader
 
 ```sh
 python3 -m venv scripts/
-scripts/bin/pip3 install -r scripts/requirements.txt
+scripts/bin/pip3 install -r scripts/requirements.txt -U
 scripts/bin/python3
 ```
 
@@ -137,7 +137,7 @@ php artisan storage:link
 
 ```sh
 python3 -m venv scripts/
-scripts/bin/pip3 install -r scripts/requirements.txt
+scripts/bin/pip3 install -r scripts/requirements.txt -U
 scripts/bin/python3
 ```
 
