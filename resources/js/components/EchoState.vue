@@ -1,5 +1,6 @@
 <template>
-    <div class="echo-state fixed right-3 bottom-3 z-9999 text-xs">
+    <div class="echo-state fixed right-3 bottom-3 z-9999 text-xs"
+        :title="'État du websocket : ' + $root.echoState">
         <i v-if="$root.echoState === 'connected'"
             class="fa-regular fa-circle text-[#A6D64D]"></i>
         <i v-else-if="$root.echoState === 'connecting'"
