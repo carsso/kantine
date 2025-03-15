@@ -30,7 +30,7 @@ class SetSuperAdmin extends Command
      */
     public function handle()
     {
-        Log::info('Setting Super Admin role to user');
+        $this->info('Setting Super Admin role to user');
         // create super admin role if not exists
         if (!Role::where('name', 'Super Admin')->exists()) {
             Role::create(['name' => 'Super Admin']);

@@ -5,25 +5,46 @@
             :id="name+'_'+index"
             type="hidden"
             :name="name+'[]'"
-            v-model="inputDishes[index]" />
+            :value="inputDishes[index]" />
+        <input
+            v-for="(dish, index) in inputDishesTags" :key="index"
+            :id="nameTags+'_'+index"
+            type="hidden"
+            :name="nameTags+'[]'"
+            :value="reduce(inputDishesTags)[index]" />
         <div
             v-for="(dish, index) in inputDishes" :key="index" class="flex items-center mb-1">
-            <span v-if="specialIndexes && Object.keys(specialIndexes).find(key => inputDishes.length + specialIndexes[key] === index)" class="text-gray-500 text-xs mr-2">
-                {{ Object.keys(specialIndexes).find(key => inputDishes.length + specialIndexes[key] === index) }}
-            </span>
-            <v-select
-                v-model="inputDishes[index]"
-                taggable
-                class="block w-full border px-2 py-1 border-gray-200 shadow-xs rounded-md text-sm leading-none focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-400"
-                :options="filteredDishes"
-                @search="search">
-                <template v-slot:option="option">
-                    {{ option.label }}
-                </template>
-                <template v-slot:no-options>
-                    Aucune option trouvée
-                </template>
-            </v-select>
+            <div
+                class="block w-full">
+                <v-select
+                    v-model="inputDishes[index]"
+                    taggable
+                    class="admin-dishes-input-dish block w-full border px-2 py-1 border-gray-200 shadow-xs rounded-md text-sm leading-none focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-400"
+                    :options="filteredDishes"
+                    @search="search">
+                    <template v-slot:option="option">
+                        {{ option.label }}
+                    </template>
+                    <template v-slot:no-options>
+                        Aucune option trouvée
+                    </template>
+                </v-select>
+                <div class="w-full flex items-center">
+                    <div class="border-l-2 border-gray-200 pl-1 pr-2 text-xs">Tags</div>
+                    <v-select
+                    v-model="inputDishesTags[index]"
+                    taggable
+                    multiple
+                    class="admin-dishes-input-dish-tag block w-full border px-0.5 py-0.5 border-gray-200 shadow-xs rounded-md text-xs text-[10px] leading-none focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-400"
+                    :options="filteredDishesTags"
+                    label="label"
+                    @search="searchTag">
+                    <template v-slot:no-options>
+                        Aucune option trouvée
+                    </template>
+                </v-select>
+                </div>
+            </div>
             <button
                 type="button"
                 v-if="!dish && index !== inputDishes.length && inputDishes.length !== 1"
@@ -43,6 +64,7 @@
 </template>
 
 <script>
+import { reduce } from 'lodash';
 import vSelect from 'vue-select';
 
 export default {
@@ -58,7 +80,15 @@ export default {
             type: String,
             required: true,
         },
+        nameTags: {
+            type: String,
+            required: true,
+        },
         dishes: {
+            type: Array,
+            required: true,
+        },
+        dishesTags: {
             type: Array,
             required: true,
         },
@@ -66,25 +96,48 @@ export default {
             type: Array,
             required: true,
         },
-        specialIndexes: {
+        autocompleteDishesTags: {
             type: Object,
+            required: true,
+        },
+        placeholder: {
+            type: String,
             required: false,
-            default: () => {},
+            default: '',
         },
     },
 
     data: function () {
         let filteredDishes = this.autocompleteDishes;
-        let inputDishes = this.dishes;
+        let filteredDishesTags = this.autocompleteDishesTags;
+        let inputDishes = this.dishes.length ? this.dishes : [''];
+        let inputDishesTags = this.dishesTags.length ? this.dishesTags : [];
+        inputDishesTags = inputDishesTags.map((tags) => {
+            return tags.map((tag) => {
+                return filteredDishesTags.find(t => t.value === tag)
+            });
+        });
         return {
             filteredDishes: filteredDishes,
-            inputDishes: inputDishes.length ? inputDishes : [''],
+            filteredDishesTags: filteredDishesTags,
+            inputDishes: inputDishes,
+            inputDishesTags: inputDishesTags,
         }
     },
 
     methods: {
         search: function (text) {
             this.filteredDishes = this.autocompleteDishes;
+        },
+        searchTag: function (text) {
+            this.filteredDishesTags = this.autocompleteDishesTags;
+        },
+        reduce: function (input) {
+            return input.map((tags) => {
+                return tags.map((tag) => {
+                    return tag.value;
+                });
+            });
         },
     },
 };
@@ -102,8 +155,20 @@ export default {
     @apply border-none dark:text-gray-400 text-sm leading-none my-0 py-0.5;
 }
 
+.admin-dishes-input .admin-dishes-input-dish-tag .vs__selected-options :not(#\#).vs__selected {
+    @apply mt-0 text-[10px];
+}
+
 .admin-dishes-input .vs__selected-options {
     @apply flex-nowrap;
+}
+
+.admin-dishes-input .vs__selected-options :not(#\#).vs__selected {
+    @apply mx-0.5 px-0.5;
+}
+
+.admin-dishes-input .vs__selected-options :not(#\#).vs__selected .vs__deselect {
+    @apply ml-1;
 }
 
 .admin-dishes-input .vs__search {

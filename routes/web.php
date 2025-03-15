@@ -29,7 +29,7 @@ Route::get('/menu/{date?}', [MenuController::class, 'menu'])
 Route::get('/menus/{date?}', [MenuController::class, 'menu'])
     ->name('menus');
 
-Route::get('/notifications', [MenuController::class, 'notifications'])
+Route::get('/notifications/{date?}', [MenuController::class, 'notifications'])
     ->name('notifications');
 
 Route::get('/notifications/webex/{day}', [MenuController::class, 'webexMenu'])
@@ -46,21 +46,6 @@ Auth::routes(['verify' => true]);
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/account', [AccountController::class, 'index'])
         ->name('account');
-
-    Route::get('/file', [MenuController::class, 'files'])
-        ->name('files');
-
-    Route::get('/file/{hash}', [MenuController::class, 'file'])
-        ->name('file');
-
-    Route::get('/file/{hash}/relaunch', [MenuController::class, 'fileRelaunch'])
-        ->name('file.relaunch');
-
-    Route::post('/file/{hash}/delete', [MenuController::class, 'fileDelete'])
-        ->name('file.delete');
-
-    Route::post('/upload', [MenuController::class, 'upload'])
-        ->name('upload');
 });
 
 # admin route group with prefix

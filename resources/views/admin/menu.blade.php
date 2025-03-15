@@ -46,7 +46,7 @@
         </div>
         <div class="grid xl:grid-cols-5 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-4 mb-8">
             @foreach($menus as $idx => $menu)
-                @include('admin.includes.menu', ['idx' => $idx, 'menu' => $menu, 'autocompleteDishes' => $autocompleteDishes])
+                @include('admin.includes.menu', ['idx' => $idx, 'menu' => $menu, 'autocompleteDishes' => $autocompleteDishes, 'autocompleteDishesTags' => $autocompleteDishesTags])
             @endforeach
         </div>
         <div class="mt-2 text-right">

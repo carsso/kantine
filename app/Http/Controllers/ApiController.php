@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Menu;
+use App\Services\DayService;
 
 class ApiController extends Controller
 {
@@ -11,40 +12,16 @@ class ApiController extends Controller
         return [
             'today' => route('api.today'),
             'day' => route('api.day', date('Y-m-d')),
-            'week' => route('api.week'),
         ];
     }
 
-    public function today()
+    public function today(DayService $dayService)
     {
-        return $this->day(date('Y-m-d'));
+        return $this->day($dayService, date('Y-m-d'));
     }
 
-    public function day($dateString)
+    public function day(DayService $dayService, $dateString)
     {
-        $date = strtotime('today 10 am');
-        if(preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateString)) {
-            $date = strtotime($dateString.' 10 am');
-        }
-        $menu = Menu::where('date', date('Y-m-d', $date))->first();
-        if(!$menu) {
-            return response()->json([
-                'error' => 'Aucun menu trouvé pour cette date '.date('Y-m-d', $date),
-            ], 404);
-        }
-        return $menu;
-    }
-
-    public function week()
-    {
-        $calendarWeekFirstDay = date('Y-m-d', strtotime('monday this week 10 am'));
-        $calendarWeekLastDay = date('Y-m-d', strtotime('sunday this week 10 am'));
-        $weekMenus = Menu::whereBetween('date', [$calendarWeekFirstDay, $calendarWeekLastDay])->get();
-        if(!$weekMenus) {
-            return response()->json([
-                'error' => 'Aucun menu trouvé pour cette semaine',
-            ], 404);
-        }
-        return $weekMenus;
+        return $dayService->getDay($dateString);
     }
 }

@@ -1,17 +1,17 @@
 
-<div class="bg-white dark:bg-gray-700 rounded-lg shadow-sm px-4 py-5 text-center">
-    <h1 class="text-2xl xl:hidden 2xl:block mb-1">{{ $menu->date_carbon->translatedFormat('l j F') }}</h1>
-    <h1 class="text-2xl hidden xl:block 2xl:hidden mb-1">{{ $menu->date_carbon->translatedFormat('D j M') }}</h1>
-    <input id="date[{{ $idx }}]" type="hidden" name="date[{{ $idx }}]" value="{{ $menu->date }}">
+<div class="bg-white dark:bg-gray-700 rounded-lg shadow-sm px-4 py-5">
+    <h1 class="text-2xl xl:hidden 2xl:block mb-1">{{ $menu['date_carbon']->translatedFormat('l j F') }}</h1>
+    <h1 class="text-2xl hidden xl:block 2xl:hidden mb-1">{{ $menu['date_carbon']->translatedFormat('D j M') }}</h1>
+    <input id="date[{{ $idx }}]" type="hidden" name="date[{{ $idx }}]" value="{{ $menu['date'] }}">
     <div class="mb-3 leading-snug text-xs text-gray-500">
-        <a href="{{ route('dashboard', ['date' => $menu->date_carbon->format('Y-m-d')]) }}" target="_blank" class="hover:text-indigo-500">
+        <a href="{{ route('dashboard', ['date' => $menu['date_carbon']->format('Y-m-d')]) }}" target="_blank" class="hover:text-indigo-500">
             <i class="fa-solid fa-up-right-from-square"></i>
-            Aperçu du dashboard pour ce jour
+            Aperçu du dashboard
         </a>
     </div>
     <div class="mt-2">
         <label for="information" class="block text-sm font-semibold">Information :</label>
-        <textarea id="information[{{ $idx }}]" rows="3" type="text" name="information[{{ $idx }}]" value="{{ old('information') ?? $menu->information }}" class="block w-full px-2 py-0.5 border border-gray-200 shadow-xs rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-400"></textarea>
+        <textarea id="information[{{ $idx }}]" rows="3" type="text" name="information[{{ $idx }}]" value="{{ $menu['information']['information'] ?? '' }}" class="block w-full px-2 py-0.5 border border-gray-200 shadow-xs rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-400"></textarea>
         @error('information')
             <div class="rounded-md bg-red-50 dark:bg-red-800 text-xs font-medium text-red-800 dark:text-red-50 p-2 mt-1">
                 {{ $message }}
@@ -21,10 +21,9 @@
     <div class="mt-2">
         <label for="style" class="block text-sm font-semibold">Style visuel :</label>
         <div class="text-gray-500 text-xs">
-            Aperçu des styles : 
             @foreach(array_keys(config('tsparticles.config', [])) as $style)
                 @if(!$loop->first) - @endif
-                <a href="{{ route('dashboard', ['date' => $menu->date_carbon->format('Y-m-d'), 'style' => $style]) }}" target="_blank" class="hover:text-indigo-500">
+                <a href="{{ route('dashboard', ['date' => $menu['date_carbon']->format('Y-m-d'), 'style' => $style]) }}" target="_blank" class="hover:text-indigo-500">
                     <i class="fa-solid fa-magnifying-glass"></i>
                     {{ config('tsparticles.config.'.$style.'.name', $style) }}
                 </a>
@@ -33,7 +32,7 @@
         <select id="style[{{ $idx }}]" type="text" name="style[{{ $idx }}]" class="block w-full px-1 py-1 border border-gray-200 shadow-xs rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-400">
             <option value=""></option>
             @foreach(array_keys(config('tsparticles.config', [])) as $style)
-                <option value="{{ $style }}" @if($style == (old('style') ?? $menu->style)) selected @endif>
+                <option value="{{ $style }}" @if($style == ($menu['information']['style'] ?? '')) selected @endif>
                     {{ config('tsparticles.config.'.$style.'.name', $style) }}
                 </option>
             @endforeach
@@ -46,95 +45,61 @@
     </div>
     <div class="mt-2">
         <label for="event_name" class="block font-semibold">Événement :</label>
-        <input id="event_name[{{ $idx }}]" type="text" name="event_name[{{ $idx }}]" value="{{ old('event_name') ?? $menu->event_name }}" class="block w-full px-2 py-0.5 border border-gray-200 shadow-xs rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-400">
+        <input id="event_name[{{ $idx }}]" type="text" name="event_name[{{ $idx }}]" value="{{ $menu['information']['event_name'] ?? '' }}" class="block w-full px-2 py-0.5 border border-gray-200 shadow-xs rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-400">
         @error('event_name')
             <div class="rounded-md bg-red-50 dark:bg-red-800 text-xs font-medium text-red-800 dark:text-red-50 p-2 mt-1">
                 {{ $message }}
             </div>
         @enderror
     </div>
-    <div class="mt-2">
-        <label for="starters" class="block font-semibold">Entrées :</label>
-        <admin-dishes-input
-            name="starters[{{ $idx }}]"
-            :dishes='@json(old('starters') ?? $menu->starters ?? [])'
-            :autocomplete-dishes='@json($autocompleteDishes['starters'])'>
-        </admin-dishes-input>
-        @error('starters')
-            <div class="rounded-md bg-red-50 dark:bg-red-800 text-xs font-medium text-red-800 dark:text-red-50 p-2 mt-1">
-                {{ $message }}
-            </div>
-        @enderror
-    </div>
-    <div class="mt-2">
-        <label for="liberos" class="block font-semibold">Libéro :</label>
-        <admin-dishes-input
-            name="liberos[{{ $idx }}]"
-            :dishes='@json(old('liberos') ?? $menu->liberos ?? [])'
-            :autocomplete-dishes='@json($autocompleteDishes['liberos'])'>
-        </admin-dishes-input>
-        @error('liberos')
-            <div class="rounded-md bg-red-50 dark:bg-red-800 text-xs font-medium text-red-800 dark:text-red-50 p-2 mt-1">
-                {{ $message }}
-            </div>
-        @enderror
-    </div>
-    <div class="mt-2">
-        <label for="starters" class="block font-semibold">Plats :</label>
-        <div class="text-gray-500 text-xs">
-            L'ordre est important.<br />
-            Avant-dernier : plat végé.<br />
-            Dernier : plat halal
+    @error('dishes')
+        <div class="rounded-md bg-red-50 dark:bg-red-800 text-xs font-medium text-red-800 dark:text-red-50 p-2 mt-1">
+            {{ $message }}
         </div>
-        <admin-dishes-input
-            name="mains[{{ $idx }}]"
-            :dishes='@json(old('mains') ?? $menu->mains ?? [])'
-            :special-indexes='@json($menu->getSpecialIndexesDefinitionHumanReadable('mains', true))'
-            :autocomplete-dishes='@json($autocompleteDishes['mains'])'>
-        </admin-dishes-input>
-        @error('mains')
-            <div class="rounded-md bg-red-50 dark:bg-red-800 text-xs font-medium text-red-800 dark:text-red-50 p-2 mt-1">
-                {{ $message }}
+    @enderror
+    @foreach($categories as $type => $rootCategories)
+        <div class="mt-2">
+            {{ config('kantine.dishes_types.'.$type, $type) }}
+            <div class="ml-1 border-l-2 border-[#147DE8] pl-1">
+                @foreach($rootCategories as $rootCategory)
+                    {{ $rootCategory->name }}
+                    <div class="ml-1 border-l-2 border-[#ED733D] pl-1">
+                        @foreach($rootCategory->children as $category)
+                            @php
+                                $dishesCollection = $menu['dishes'][$type][$rootCategory->name_slug][$category->name_slug] ?? null;
+                                $dishes = $dishesCollection ? $dishesCollection->pluck('name')->toArray() : [];
+                                $dishesTags = $dishesCollection ? $dishesCollection->pluck('tags')->toArray() : [];
+                                $inputName = 'dishes['.$idx.']['.$category->id.']';
+                                $inputNameTags = 'dishes_tags['.$idx.']['.$category->id.']';
+                            @endphp
+                            @if($dishes || !$category->hidden)
+                                <div class="ml-1">
+                                    <label for="{{ $inputName }}" class="block font-semibold">{{ $category->name }} :</label>
+                                    <admin-dishes-input
+                                        name="{{ $inputName }}"
+                                        name-tags="{{ $inputNameTags }}"
+                                        placeholder="Entrez un nom..."
+                                        :dishes='@json(old($inputName) ?? $dishes)'
+                                        :dishes-tags='@json(old($inputNameTags) ?? $dishesTags)'
+                                        :autocomplete-dishes='@json($autocompleteDishes)'
+                                        :autocomplete-dishes-tags='@json($autocompleteDishesTags)'>
+                                    </admin-dishes-input>
+                                    @error($inputName)
+                                        <div class="rounded-md bg-red-50 dark:bg-red-800 text-xs font-medium text-red-800 dark:text-red-50 p-2 mt-1">
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
+                                    @error($inputNameTags)
+                                        <div class="rounded-md bg-red-50 dark:bg-red-800 text-xs font-medium text-red-800 dark:text-red-50 p-2 mt-1">
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
+                                </div>
+                            @endif
+                        @endforeach
+                    </div>
+                @endforeach
             </div>
-        @enderror
-    </div>
-    <div class="mt-2">
-        <label for="starters" class="block font-semibold">Garnitures :</label>
-        <admin-dishes-input
-            name="sides[{{ $idx }}]"
-            :dishes='@json(old('sides') ?? $menu->sides ?? [])'
-            :autocomplete-dishes='@json($autocompleteDishes['sides'])'>
-        </admin-dishes-input>
-        @error('sides')
-            <div class="rounded-md bg-red-50 dark:bg-red-800 text-xs font-medium text-red-800 dark:text-red-50 p-2 mt-1">
-                {{ $message }}
-            </div>
-        @enderror
-    </div>
-    <div class="mt-2">
-        <label for="starters" class="block font-semibold">Fromages / Laitages :</label>
-        <admin-dishes-input
-            name="cheeses[{{ $idx }}]"
-            :dishes='@json(old('cheeses') ?? $menu->cheeses ?? [])'
-            :autocomplete-dishes='@json($autocompleteDishes['cheeses'])'>
-        </admin-dishes-input>
-        @error('cheeses')
-            <div class="rounded-md bg-red-50 dark:bg-red-800 text-xs font-medium text-red-800 dark:text-red-50 p-2 mt-1">
-                {{ $message }}
-            </div>
-        @enderror
-    </div>
-    <div class="mt-2">
-        <label for="starters" class="block font-semibold">Desserts :</label>
-        <admin-dishes-input
-            name="desserts[{{ $idx }}]"
-            :dishes='@json(old('desserts') ?? $menu->desserts ?? [])'
-            :autocomplete-dishes='@json($autocompleteDishes['desserts'])'>
-        </admin-dishes-input>
-        @error('desserts')
-            <div class="rounded-md bg-red-50 dark:bg-red-800 text-xs font-medium text-red-800 dark:text-red-50 p-2 mt-1">
-                {{ $message }}
-            </div>
-        @enderror
-    </div>
+        </div>
+    @endforeach
 </div>

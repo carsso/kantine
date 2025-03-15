@@ -2,13 +2,13 @@
 
 namespace App\Jobs;
 
+use App\Models\DishCategory;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use App\Models\Menu;
 use App\Libraries\WebexApi;
 use Illuminate\Support\Facades\Log;
 
@@ -26,7 +26,7 @@ class ProcessWebexMenuNotification implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(public array $room, public ?Menu $menu, public ?string $date, public ?bool $notifyUpdate = false)
+    public function __construct(public array $room, public array $menu, public ?string $date, public ?bool $notifyUpdate = false)
     {
         $this->room = $room;
         $this->menu = $menu;
@@ -53,7 +53,14 @@ class ProcessWebexMenuNotification implements ShouldQueue
         }
         $api = new WebexApi;
         $date = Carbon::parse($this->date);
-        $html = view('webex.menu', ['menu' => $this->menu, 'date' => $date])->render();
+        $categories = DishCategory::whereNull('parent_id')
+            ->with(['children' => function($query) {
+                $query->orderBy('sort_order');
+            }])
+            ->orderBy('sort_order')
+            ->get()
+            ->groupBy('type');
+        $html = view('webex.menu', ['menu' => $this->menu, 'date' => $date, 'categories' => $categories])->render();
         Log::info('Working on Webex room "' . $this->room['title'] .'" ' . $this->room['id']);
         $messages = $api->getMessages($this->room['id']);
         sleep(5);

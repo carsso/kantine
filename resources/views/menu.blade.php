@@ -27,7 +27,15 @@
     @if(count($menus))
         <div class="grid xl:grid-cols-5 lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-4 mb-6">
             @foreach($menus as $menu)
-                @include('includes.menu', ['menu' => $menu])
+                @if(isset($menu['date']))
+                    @include('includes.menu', ['day' => $menu])
+                @else
+                    <div class="bg-white dark:bg-gray-700 rounded-lg shadow-sm px-4 py-5 text-center border-t-4 border-[#147DE8]">
+                        <p class="text-2xl text-gray-500">
+                            <i>Aucun menu pour ce jour</i>
+                        </p>
+                    </div>
+                @endif
             @endforeach
         </div>
     @else

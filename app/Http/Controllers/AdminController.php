@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 use App\Http\Requests\UpdateMenuFormRequest;
 use App\Libraries\WebexApi;
+use App\Models\Dish;
+use App\Models\DishCategory;
+use App\Models\Information;
+use App\Services\DayService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -20,7 +24,7 @@ class AdminController extends Controller
     {
         return view('admin.index');
     }
-    public function menu($dateString = null)
+    public function menu(DayService $dayService, $dateString = null)
     {
         $dateToday = strtotime('today 10 am');
         $date = $dateToday;
@@ -30,73 +34,87 @@ class AdminController extends Controller
         if(preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateString)) {
             $date = strtotime($dateString.' 10 am');
         }
-        $menu = Menu::where('date', '>=', date('Y-m-d', $date))->where('mains', '!=', '[]')->where('sides', '!=', '[]')->orderBy('date', 'asc')->first();
-        if($menu) {
-            $date = strtotime($menu->date.' 10 am');
+        $dish = Dish::where('date', '>=', date('Y-m-d', $date))->orderBy('date', 'asc')->first();
+        if($dish) {
+            $date = strtotime($dish->date.' 10 am');
         }
         $mondayTime = strtotime('monday this week 10 am', $date);
-        $sundayTime = strtotime('sunday this week 10 am', $date);
+        $fridayTime = strtotime('friday this week 10 am', $date);
         $calendarWeekFirstDay = date('Y-m-d', $mondayTime);
-        $calendarWeekLastDay = date('Y-m-d', $sundayTime);
-        $weekMenus = Menu::whereBetween('date', [$calendarWeekFirstDay, $calendarWeekLastDay])->get();
-        if($weekMenus->count() == 0) {
-            foreach(range(0, 4) as $day) {
-                $menu = new Menu;
-                $menu->date = date('Y-m-d', strtotime("+$day day", $mondayTime));
-                $weekMenus->push($menu);
-            }
+        $calendarWeekLastDay = date('Y-m-d', $fridayTime);
+        $menus = [];
+        for($date = Carbon::parse($calendarWeekFirstDay); $date->lte(Carbon::parse($calendarWeekLastDay)); $date->addDay()) {
+            $menu = $dayService->getDay($date->format('Y-m-d'));
+            $menus[$date->format('Y-m-d')] = $menu;
         }
         $prevWeek = date('Y-m-d', strtotime('-1 week', $mondayTime));
         $nextWeek = date('Y-m-d', strtotime('+1 week', $mondayTime));
-        $autocompleteDishes = [];
-        foreach(['starters', 'liberos', 'mains', 'sides', 'cheeses', 'desserts'] as $type) {
-            $autocompleteDishes[$type] = Menu::select($type)->orderBy('id', 'desc')->limit(300)->get()->pluck($type)->filter()->flatMap(function($item) {
-                return $item;
-            })->unique()->sort()->values()->toArray();
+        $autocompleteDishes = Dish::orderBy('id', 'desc')->limit(300)->get()->pluck('name')->unique()->sort()->values()->toArray();
+        $autocompleteDishesTags = collect(Dish::getTagsTranslations(false))
+            ->map(function($value, $key) {
+                return ['label' => $value, 'value' => $key];
+            })->values()->all();
+        $categories = DishCategory::whereNull('parent_id')
+            ->with(['children' => function($query) {
+                $query->orderBy('sort_order');
+            }])
+            ->orderBy('sort_order')
+            ->get()
+            ->groupBy('type');
 
-        }
-        return view('admin.menu', ['menus' => $weekMenus, 'weekMonday' => Carbon::parse($mondayTime), 'weekSunday' => Carbon::parse($sundayTime), 'autocompleteDishes' => $autocompleteDishes, 'week' => $calendarWeekFirstDay, 'prevWeek' => $prevWeek, 'nextWeek' => $nextWeek]);
+        return view('admin.menu', ['menus' => $menus, 'categories' => $categories, 'weekMonday' => Carbon::parse($mondayTime), 'autocompleteDishes' => $autocompleteDishes, 'autocompleteDishesTags' => $autocompleteDishesTags, 'week' => $calendarWeekFirstDay, 'prevWeek' => $prevWeek, 'nextWeek' => $nextWeek]);
     }
 
     public function updateMenu(UpdateMenuFormRequest $request)
     {
         $validated = $request->validated();
-        $isDirty = false;
         if($validated['date'] && count($validated['date']) > 0) {
-            foreach($validated['date'] as $idx => $date) {
-                $menu = Menu::where('date', $date)->first();
-                if(!$menu) {
-                    $menu = new Menu;
+            $date = array_values($validated['date'])[0];
+            $ucfirst = function($s) {
+                return mb_strtoupper( mb_substr( $s, 0, 1 )) . mb_substr( $s, 1 );
+            };
+            foreach ($validated['dishes'] as $date => $categories) {
+                foreach ($categories as $categoryId => $dishes) {
+                    $validated['dishes'][$date][$categoryId] = array_map($ucfirst, $dishes);
+                    $validated['dishes'][$date][$categoryId] = array_filter($validated['dishes'][$date][$categoryId]);
                 }
-                $ucfirst = function($s) {
-                    return mb_strtoupper( mb_substr( $s, 0, 1 )) . mb_substr( $s, 1 );
-                };
-                foreach (['starters', 'liberos', 'mains', 'sides', 'cheeses', 'desserts'] as $type) {
-                    if(isset($validated[$type][$idx])) {
-                        $validated[$type][$idx] = array_map($ucfirst, array_values(array_filter($validated[$type][$idx])));
+            }
+            foreach ($validated['dishes'] as $date => $categories) {
+                $dishIds = [];
+                foreach ($categories as $categoryId => $dishes) {
+                    foreach($dishes as $idx => $dish) {
+                        $dish = Dish::firstOrCreate([
+                            'date' => $date,
+                            'dishes_category_id' => $categoryId,
+                            'name' => $dish,
+                        ]);
+                        $tags = $validated['dishes_tags'][$date][$categoryId][$idx] ?? '';
+                        $tags = $tags ? explode(',', $tags) : [];
+                        $dish->tags = $tags;
+                        $dish->save();
+                        $dishIds[] = $dish->id;
                     }
                 }
-                $menu->date = $date;
-                $menu->event_name = $validated['event_name'][$idx] ?? '';
-                $menu->information = $validated['information'][$idx] ? $validated['information'][$idx] : null;
-                $menu->style = $validated['style'][$idx] ? $validated['style'][$idx] : null;
-                $menu->starters = $validated['starters'][$idx] ?? [];
-                $menu->liberos = $validated['liberos'][$idx] ?? [];
-                $menu->mains = $validated['mains'][$idx] ?? [];
-                $menu->sides = $validated['sides'][$idx] ?? [];
-                $menu->cheeses = $validated['cheeses'][$idx] ?? [];
-                $menu->desserts = $validated['desserts'][$idx] ?? [];
-                $menu->file_id = $menu->file_id ?? null;
-                if($menu->isDirty()) {
-                    $menu->save();
-                    $isDirty = true;
+                Dish::where('date', $date)
+                    ->whereNotIn('id', values: $dishIds)
+                    ->delete();
+            }
+            $fields = ['event_name', 'information', 'style'];
+            foreach ($fields as $field) {
+                if(isset($validated[$field])) {
+                    foreach ($validated[$field] as $date => $value) {
+                        $information = Information::firstOrCreate([
+                            'date' => $date,
+                        ]);
+                        $information->$field = $value;
+                        $information->save();
+                    }
                 }
             }
-
-            if(!$isDirty) {
-                return $this->redirectWithError('Rien à mettre à jour', redirect()->route('admin.menu', ['date' => $validated['date'][0]]), null, 'flash', true);
-            }
-            return $this->redirectWithSuccess('Menus mis à jour', redirect()->route('admin.menu', ['date' => $validated['date'][0]]));
+            return $this->redirectWithSuccess(
+                'Menus mis à jour',
+                redirect()->route('admin.menu', ['date' => $date])
+            );
         }
         return $this->backWithError('Rien à mettre à jour');
    }
@@ -117,11 +135,11 @@ class AdminController extends Controller
         return view('admin.webex', ['rooms' => $rooms]);
     }
 
-    public function webexNotify()
+    public function webexNotify(DayService $dayService)
     {
         $date = date('Y-m-d');
         Log::info('Sending Webex notifications for menu of ' . $date . ' to all rooms');
-        $menu = Menu::where('date', $date)->where('mains', '!=', '[]')->where('sides', '!=', '[]')->first();
+        $menu = $dayService->getDay($date);
 
         if(!config('services.webex.bearer_token')) {
             Log::info('Webex bearer token not set, aborting');

@@ -2,7 +2,6 @@
 
 namespace App\Events;
 
-use App\Models\Menu;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
@@ -14,16 +13,16 @@ class MenuUpdatedEvent implements ShouldBroadcastNow
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
-     * @var Menu
+     * @var array
      */
     public $menu;
 
     /**
      * Create a new event instance.
      *
-     * @param Menu $menu
+     * @param array $menu
      */
-    public function __construct(Menu $menu)
+    public function __construct(array $menu)
     {
         $this->menu = $menu;
     }

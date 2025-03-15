@@ -17,7 +17,7 @@
                         {{ config('app.name') }} 10:30
                     </div>
                     <div class="border-l-4 border-[#147DE8] pl-2">
-                        @include('webex.menu', ['menu' => $menu, 'date' => $date, 'hideMention' => true])
+                        @include('webex.menu', ['menu' => $menu, 'date' => $date, 'hideMention' => true, 'categories' => $categories])
                     </div>
                 </div>
             </div>

@@ -14,6 +14,7 @@
         "laravel/ui": "^4.6",
         "smalot/pdfparser": "^2.11",
         "spatie/laravel-permission": "^6.10",
+        "spatie/laravel-sluggable": "^3.7",
         "symfony/process": "^7.2"
     },
     "require-dev": {

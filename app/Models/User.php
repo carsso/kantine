@@ -53,9 +53,4 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return 'https://www.gravatar.com/avatar/'.md5(strtolower(trim($this->email))).'?d=identicon';
     }
-
-    public function files(): HasMany
-    {
-        return $this->hasMany(File::class);
-    }
 }

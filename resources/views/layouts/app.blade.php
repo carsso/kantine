@@ -57,6 +57,12 @@
             </main>
         </div>
         <echo-state></echo-state>
+        <span class="text-[#A6D64D]"></span>
+        <span class="text-[#4AB0F5]"></span>
+        <span class="text-[#ED733D]"></span>
+        <span class="text-[#FFD124]"></span>
+        <span class="text-[#73E3FF]"></span>
+        <span class="text-[#147DE8]"></span>
     </body>
 @endsection
 @yield('body')

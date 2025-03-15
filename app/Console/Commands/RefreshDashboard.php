@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Events\DashboardRefreshEvent;
 use App\Events\MenuUpdatedEvent;
 use App\Models\Menu;
+use App\Services\DayService;
 use Illuminate\Console\Command;
 
 class RefreshDashboard extends Command
@@ -28,10 +29,10 @@ class RefreshDashboard extends Command
      *
      * @return int
      */
-    public function handle()
+    public function handle(DayService $dayService)
     {
         if($date = $this->argument('date')) {
-            $menu = Menu::where('date', $date)->first();
+            $menu = $dayService->getDay($date);
             if(!$menu) {
                 $this->error('Menu not found for date: ' . $date);
                 return 1;
