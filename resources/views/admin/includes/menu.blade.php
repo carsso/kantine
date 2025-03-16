@@ -29,7 +29,7 @@
                 </a>
             @endforeach
         </div>
-        <select id="style[{{ $idx }}]" type="text" name="style[{{ $idx }}]" class="block w-full px-1 py-1 border border-gray-200 shadow-xs rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-400">
+        <select id="style[{{ $idx }}]" name="style[{{ $idx }}]" class="block w-full px-1 py-1 border border-gray-200 shadow-xs rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-400">
             <option value=""></option>
             @foreach(array_keys(config('tsparticles.config', [])) as $style)
                 <option value="{{ $style }}" @if($style == ($menu['information']['style'] ?? '')) selected @endif>

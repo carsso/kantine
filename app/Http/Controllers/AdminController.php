@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Events\MenuUpdatedEvent;
 use App\Http\Requests\UpdateMenuFormRequest;
 use App\Libraries\WebexApi;
 use App\Models\Dish;
@@ -65,7 +66,7 @@ class AdminController extends Controller
         return view('admin.menu', ['menus' => $menus, 'categories' => $categories, 'weekMonday' => Carbon::parse($mondayTime), 'autocompleteDishes' => $autocompleteDishes, 'autocompleteDishesTags' => $autocompleteDishesTags, 'week' => $calendarWeekFirstDay, 'prevWeek' => $prevWeek, 'nextWeek' => $nextWeek]);
     }
 
-    public function updateMenu(UpdateMenuFormRequest $request)
+    public function updateMenu(DayService $dayService, UpdateMenuFormRequest $request)
     {
         $validated = $request->validated();
         if($validated['date'] && count($validated['date']) > 0) {
@@ -108,6 +109,16 @@ class AdminController extends Controller
                         ]);
                         $information->$field = $value;
                         $information->save();
+                    }
+                }
+            }
+            foreach ($validated['date'] as $date) {
+                $menu = $dayService->getDay($date);
+                if($menu) {
+                    try {
+                        MenuUpdatedEvent::dispatch($menu);
+                    } catch (\Exception $e) {
+                        Log::error($e);
                     }
                 }
             }

@@ -21,28 +21,28 @@
                     taggable
                     class="admin-dishes-input-dish block w-full border px-2 py-1 border-gray-200 shadow-xs rounded-md text-sm leading-none focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-400"
                     :options="filteredDishes"
+                    label="label"
                     @search="search">
-                    <template v-slot:option="option">
-                        {{ option.label }}
-                    </template>
                     <template v-slot:no-options>
                         Aucune option trouvée
                     </template>
                 </v-select>
                 <div class="w-full flex items-center">
                     <div class="border-l-2 border-gray-200 pl-1 pr-2 text-xs">Tags</div>
-                    <v-select
-                    v-model="inputDishesTags[index]"
-                    taggable
-                    multiple
-                    class="admin-dishes-input-dish-tag block w-full border px-0.5 py-0.5 border-gray-200 shadow-xs rounded-md text-xs text-[10px] leading-none focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-400"
-                    :options="filteredDishesTags"
-                    label="label"
-                    @search="searchTag">
-                    <template v-slot:no-options>
-                        Aucune option trouvée
-                    </template>
-                </v-select>
+                    <div class="block w-full">
+                        <v-select
+                            v-model="inputDishesTags[index]"
+                            taggable
+                            multiple
+                            class="admin-dishes-input-dish-tag block w-full border px-0.5 py-0.5 border-gray-200 shadow-xs rounded-md text-xs text-[10px] leading-none focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-400"
+                            :options="filteredDishesTags"
+                            label="label"
+                            @search="searchTag">
+                            <template v-slot:no-options>
+                                Aucune option trouvée
+                            </template>
+                        </v-select>
+                    </div>
                 </div>
             </div>
             <button

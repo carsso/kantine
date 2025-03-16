@@ -298,17 +298,4 @@ class Menu extends Model
         }
         return null;
     }
-
-    public function save(array $options = []): bool
-    {
-        $saved = parent::save($options);
-        if ($saved) {
-            try {
-                MenuUpdatedEvent::dispatch($this);
-            } catch (\Exception $e) {
-                Log::error($e);
-            }
-        }
-        return $saved;
-    }
 }
