@@ -49,7 +49,7 @@
                 @if($dishes || !$category->hidden)
                     <div class="mt-2">
                         <div class="font-semibold text-[{{ $category->color }}]">
-                            <i class="fa-solid {{ $category->color }}"></i> {{ $category->name }}
+                            <i class="fa-solid {{ $category->icon }}"></i> {{ $category->name }}
                             @if($dishes && (count($dishes) != 1 || strtolower($dishes[0]['name']) != strtolower($category->name)))
                                 :
                             @endif
