@@ -28,7 +28,7 @@
                     </template>
                 </v-select>
                 <div class="w-full flex items-center">
-                    <div class="border-l-2 border-gray-200 pl-1 pr-2 text-xs">Tags</div>
+                    <div class="border-l-1 border-gray-300 dark:border-gray-400 ml-0.5 px-2 text-xs dark:text-gray-400">Tags</div>
                     <div class="block w-full">
                         <v-select
                             v-model="inputDishesTags[index]"
@@ -163,8 +163,8 @@ export default {
     @apply flex-nowrap;
 }
 
-.admin-dishes-input .vs__selected-options :not(#\#).vs__selected {
-    @apply mx-0.5 px-0.5;
+.admin-dishes-input .vs--multiple .vs__selected-options :not(#\#).vs__selected {
+    @apply mx-0.5 px-0.5 bg-gray-200 text-gray-600 dark:bg-gray-400 dark:text-gray-800;
 }
 
 .admin-dishes-input .vs__selected-options :not(#\#).vs__selected .vs__deselect {
