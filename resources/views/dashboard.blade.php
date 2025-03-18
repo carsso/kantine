@@ -18,7 +18,7 @@
             </div>
         @endif
         <main class="relative flex flex-row items-center text-[40px] text-left h-full w-full leading-[1.2]">
-            <div class="basis-1/6 px-8 text-right">
+            <div class="basis-1/6 pr-12 text-right">
                 <div class="text-8xl font-black">Menu</div>
                 @if($diff)
                     <div class="text-4xl font-extralight italic">{{ $diff }}</div>
@@ -35,11 +35,11 @@
                     </div>
                 @endif
             </div>
-            <div class="basis-5/6 border-l-4 @if($menu) {{ $menu['is_fries_day'] ? 'border-[#ED733D]' : ($menu['information'] && $menu['information']['event_name'] ? 'border-[#FFD124]' : 'border-[#147DE8]') }} @else border-white @endif">
+            <div class="basis-5/6 pl-8 border-l-4 @if($menu) {{ $menu['is_fries_day'] ? 'border-[#ED733D]' : ($menu['information'] && $menu['information']['event_name'] ? 'border-[#FFD124]' : 'border-[#147DE8]') }} @else border-white @endif">
                 @if($menu)
                     <div class="flex flex-row place-content-center">
                         @foreach([0, 1] as $colidx)
-                            <div class="basis-1/2 px-8 flex flex-col place-content-center">
+                            <div class="basis-1/2 px-4 flex flex-col place-content-center">
                                 @php
                                     $j = 0;
                                     $is_first_element = true;
