@@ -1,4 +1,4 @@
-<div class="bg-white dark:bg-gray-700 rounded-lg shadow-sm px-4 py-5 text-left border-t-4 {{ $menu['is_fries_day'] || $menu['is_burgers_day'] ? 'border-[#ED733D]' : ($menu['information'] && $menu['information']['event_name'] ? 'border-[#FFD124]' : 'border-[#147DE8]') }}">
+<div class="bg-white dark:bg-gray-700 rounded-lg shadow-sm px-6 py-5 text-left border-t-4 {{ $menu['is_fries_day'] || $menu['is_burgers_day'] ? 'border-[#ED733D]' : ($menu['information'] && $menu['information']['event_name'] ? 'border-[#FFD124]' : 'border-[#147DE8]') }}">
     <h1 class="text-2xl xl:hidden 2xl:block mb-3">{{ $menu['date_carbon']->translatedFormat('l j F') }}</h1>
     <h1 class="text-2xl hidden xl:block 2xl:hidden mb-3">{{ $menu['date_carbon']->translatedFormat('D j M') }}</h1>
     @if($menu['information'] && $menu['information']['information_html'])
@@ -56,12 +56,12 @@
                                 <i class="fa-solid {{ $rootCategory->icon }}"></i> {{ $rootCategory->name }} :
                             </div>
                         @else
-                            <div class="font-light text-sm text-[{{ $rootCategory->color }}]">
+                            <div class="font-light text-sm text-[{{ $rootCategory->color }}] ml-2">
                                 {{ $category->name }} :
                             </div>
                         @endif
                         @foreach($dishes as $dish)
-                            <div class="leading-snug">
+                            <div class="leading-snug ml-4">
                                 -
                                 @if($dish['name'] == 'Frites')
                                     <i class="fa-solid fa-french-fries"></i>
