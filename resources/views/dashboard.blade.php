@@ -65,12 +65,12 @@
                                                                 $dish = $dishes[0];
                                                             @endphp
                                                             @if(strtolower($dishes[0]['name']) == strtolower($category->name))
-                                                                <div class="font-bold text-5xl mb-2 text-[{{ $rootCategory->color }}]">
+                                                                <div class="font-bold text-6xl mb-2 text-[{{ $rootCategory->color }}]">
                                                                     <i class="fa-thin {{ $rootCategory->icon }}"></i> {{ $rootCategory->name }}
                                                                 </div>
                                                             @else
                                                                 <div>
-                                                                    <span class="font-bold text-5xl mb-2 text-[{{ $rootCategory->color }}]">
+                                                                    <span class="font-bold text-6xl mb-2 text-[{{ $rootCategory->color }}]">
                                                                         <i class="fa-thin {{ $rootCategory->icon }}"></i> {{ $rootCategory->name }} :
                                                                     </span>
                                                                     {{ $dish['name'] }}
@@ -83,7 +83,7 @@
                                                             @endif
                                                         @else
                                                             @if(!$i)
-                                                                <div class="font-bold text-5xl mb-2 text-[{{ $rootCategory->color }}]">
+                                                                <div class="font-bold text-6xl mb-2 text-[{{ $rootCategory->color }}]">
                                                                     <i class="fa-thin {{ $rootCategory->icon }}"></i> {{ $rootCategory->name }} :
                                                                 </div>
                                                             @else
