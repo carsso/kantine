@@ -17,8 +17,8 @@
                 </vue-particles>
             </div>
         @endif
-        <main class="relative flex flex-row items-center text-[40px] text-center h-full w-full leading-[1.2]">
-            <div class="basis-1/6 px-8">
+        <main class="relative flex flex-row items-center text-[40px] text-left h-full w-full leading-[1.2]">
+            <div class="basis-1/6 px-8 text-right">
                 <div class="text-8xl font-black">Menu</div>
                 @if($diff)
                     <div class="text-4xl font-extralight italic">{{ $diff }}</div>
@@ -93,6 +93,7 @@
                                                             @endif
                                                             @foreach($dishes as $dish)
                                                                 <div>
+                                                                    -
                                                                     @if($dish['name'] == 'Frites')
                                                                         <i class="fa-solid fa-french-fries"></i>
                                                                     @elseif($dish['name'] == 'Frites')
