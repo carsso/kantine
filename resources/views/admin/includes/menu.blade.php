@@ -57,13 +57,19 @@
             {{ $message }}
         </div>
     @enderror
+    @php
+        $j = 0;
+    @endphp
     @foreach($categories as $type => $rootCategories)
         <div class="mt-2">
             {{ config('kantine.dishes_types.'.$type, $type) }}
-            <div class="ml-1 border-l-2 border-[#147DE8] pl-1">
+            <div class="ml-1 border-l-2 border-gray-300 dark:border-gray-400 pl-1">
                 @foreach($rootCategories as $rootCategory)
+                    @php
+                        $j++;
+                    @endphp
                     {{ $rootCategory->name }}
-                    <div class="ml-1 border-l-2 border-[#ED733D] pl-1">
+                    <div class="ml-1 border-l-2 {{ ['border-[#A6D64D]', 'border-[#FFD124]', 'border-[#4AB0F5]', 'border-[#ED733D]'][$j % 4] }} pl-1">
                         @foreach($rootCategory->children as $category)
                             @php
                                 $dishesCollection = $menu['dishes'][$type][$rootCategory->name_slug][$category->name_slug] ?? null;
