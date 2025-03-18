@@ -1,7 +1,7 @@
 @extends('layouts.app-with-navbar')
 
 @section('content')
-<div class="container-2xl 2xl:container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="container-2xl 2xl:container-full mx-auto px-4 sm:px-6 lg:px-8">
     <h1 class="lg:hidden text-2xl text-center mb-4">
         Menus de la semaine {{ $weekMonday->translatedFormat('W (Y)') }}
     </h1>

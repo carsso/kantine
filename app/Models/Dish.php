@@ -55,6 +55,9 @@ class Dish extends Model
         return [
             'halal' => 'Halal',
             'vegetarian' => $short ? 'Végé.' : 'Végétarien',
+            'fish' => 'Poisson',
+            'france' => $short ? 'Orig. France' : 'Origine France',
+            'regional' => 'Régional'
         ];
     }
 

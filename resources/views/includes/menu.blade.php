@@ -42,44 +42,44 @@
 
     @foreach($categories as $type => $rootCategories)
         @foreach($rootCategories as $rootCategory)
+            @php
+                $i = 0;
+            @endphp
             @foreach($rootCategory->children as $category)
                 @php
                     $dishes = $menu['dishes'][$type][$rootCategory->name_slug][$category->name_slug] ?? [];
                 @endphp
-                @if($dishes || !$category->hidden)
-                    <div class="mt-2">
-                        <div class="font-semibold text-[{{ $category->color }}]">
-                            <i class="fa-solid {{ $category->icon }}"></i> {{ $category->name }}
-                            @if($dishes && (count($dishes) != 1 || strtolower($dishes[0]['name']) != strtolower($category->name)))
-                                :
-                            @endif
-                        </div>
-                        @if(!$dishes)
-                            @if($menu['date_carbon']->startOfDay()->isPast())
-                                <div class="text-gray-500 leading-snug">Aucun</div>
-                            @else
-                                <div class="text-gray-500 leading-snug">...</div>
-                            @endif
+                @if($dishes)
+                    <div class="@if(!$i) mt-4 @endif">
+                        @if(!$i)
+                            <div class="font-semibold text-[{{ $rootCategory->color }}]">
+                                <i class="fa-solid {{ $rootCategory->icon }}"></i> {{ $rootCategory->name }} :
+                            </div>
+                        @else
+                            <div class="font-light text-sm text-[{{ $rootCategory->color }}]">
+                                {{ $category->name }} :
+                            </div>
                         @endif
-                        @if($dishes && (count($dishes) != 1 || strtolower($dishes[0]['name']) != strtolower($category->name)))
-                            @foreach($dishes as $dish)
-                                <div class="leading-snug">
-                                    @if($dish['name'] == 'Frites')
-                                        <i class="fa-solid fa-french-fries"></i>
-                                    @elseif($dish['name'] == 'Frites')
-                                        <i class="fa-solid fa-burger-cheese"></i>
-                                    @endif
-                                    {{ $dish['name'] }}
-                                    @if($dish['tags'])
-                                        <i class="text-gray-500 text-xs">
-                                            ({{ collect($dish['tags'])->map(fn($tag) => \App\Models\Dish::getTagTranslation($tag))->join(', ') }})
-                                        </i>
-                                    @endif
-                                </div>
-                            @endforeach
-                        @endif
+                        @foreach($dishes as $dish)
+                            <div class="leading-snug">
+                                @if($dish['name'] == 'Frites')
+                                    <i class="fa-solid fa-french-fries"></i>
+                                @elseif($dish['name'] == 'Frites')
+                                    <i class="fa-solid fa-burger-cheese"></i>
+                                @endif
+                                {{ $dish['name'] }}
+                                @if($dish['tags'])
+                                    <i class="text-gray-500 text-xs">
+                                        ({{ collect($dish['tags'])->map(fn($tag) => \App\Models\Dish::getTagTranslation($tag))->join(', ') }})
+                                    </i>
+                                @endif
+                            </div>
+                        @endforeach
                     </div>
                 @endif
+                @php
+                    $i++;
+                @endphp
             @endforeach
         @endforeach
     @endforeach

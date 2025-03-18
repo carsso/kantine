@@ -27,43 +27,43 @@
 
             @foreach($categories as $type => $rootCategories)
                 @foreach($rootCategories as $rootCategory)
+                    @php
+                        $i = 0;
+                    @endphp
                     @foreach($rootCategory->children as $category)
                         @php
                             $dishes = $menu['dishes'][$type][$rootCategory->name_slug][$category->name_slug] ?? [];
                         @endphp
-                        @if($dishes || !$category->hidden)
-                            <strong>
-                                {{ $category->emoji }} {{ $category->name }}
-                                @if($dishes && (count($dishes) != 1 || strtolower($dishes[0]['name']) != strtolower($category->name)))
-                                    :
-                                @endif
-                            </strong><br />
-                            @if(!$dishes)
-                                @if($menu['date_carbon']->startOfDay()->isPast())
-                                    &nbsp;&nbsp;&nbsp;&nbsp;- Aucun<br />
-                                @else
-                                    &nbsp;&nbsp;&nbsp;&nbsp;- ...<br />
-                                @endif
+                        @if($dishes)
+                            @if(!$i)
+                                <strong>
+                                    {{ $rootCategory->emoji }} {{ $rootCategory->name }} :
+                                </strong><br />
+                            @else
+                                <span>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;{{ $category->name }} :
+                                </span><br />
                             @endif
-                            @if($dishes && (count($dishes) != 1 || strtolower($dishes[0]['name']) != strtolower($category->name)))
-                                @foreach($dishes as $dish)
-                                    <span>
-                                        &nbsp;&nbsp;&nbsp;&nbsp;-
-                                        @if($dish['name'] == 'Frites')
-                                            🍟
-                                        @elseif($dish['name'] == 'Burger')
-                                            🍔
-                                        @endif
-                                        {{ $dish['name'] }}
-                                        @if($dish['tags'])
-                                            <i>
-                                                ({{ collect($dish['tags'])->map(fn($tag) => \App\Models\Dish::getTagTranslation($tag))->join(', ') }})
-                                            </i>
-                                        @endif
-                                    </span><br />
-                                @endforeach
-                            @endif
+                            @foreach($dishes as $dish)
+                                <span>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-
+                                    @if($dish['name'] == 'Frites')
+                                        🍟
+                                    @elseif($dish['name'] == 'Burger')
+                                        🍔
+                                    @endif
+                                    {{ $dish['name'] }}
+                                    @if($dish['tags'])
+                                        <i>
+                                            ({{ collect($dish['tags'])->map(fn($tag) => \App\Models\Dish::getTagTranslation($tag))->join(', ') }})
+                                        </i>
+                                    @endif
+                                </span><br />
+                            @endforeach
                         @endif
+                        @php
+                            $i++;
+                        @endphp
                     @endforeach
                 @endforeach
             @endforeach
