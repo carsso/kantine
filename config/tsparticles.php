@@ -3,9 +3,6 @@
 
 $particlesOptionsSnow = [
     'name' => 'Neige',
-    'background' => [
-        'color' => '#000E9C',
-    ],
     "particles" => [
         "number" => [
             "value" => 100,
@@ -40,9 +37,6 @@ $particlesOptionsSnow = [
 ];
 $particlesOptionsFire = [
     'name' => 'Braises',
-    'background' => [
-        'color' => '#000E9C',
-    ],
     "fpsLimit" => 40,
     "particles" => [
         "number" => [
@@ -52,7 +46,14 @@ $particlesOptionsFire = [
             ],
         ],
         "color" => [
-            "value" => ["#4a90e2", "#50e3c2", "#003f5c", "#2f4b7c", "#6aafd8"]
+            "value" => [
+                '#A6D64D',
+                '#4AB0F5',
+                '#ED733D',
+                '#FFD124',
+                '#73E3FF',
+                '#147DE8',
+            ]
         ],
         "opacity" => [
             "value" => ["min" => 0.4, "max" => 0.8],
@@ -67,11 +68,10 @@ $particlesOptionsFire = [
         ],
     ],
 ];
+
+
 $particlesOptionsLinks = [
     'name' => 'Liens',
-    'background' => [
-        'color' => '#000E9C',
-    ],
     "particles" => [
         "number" => [
             "value" => 100,
@@ -94,9 +94,6 @@ $particlesOptionsLinks = [
 ];
 $particlesOptionsTriangles = [
     'name' => 'Triangles',
-    'background' => [
-        'color' => '#000E9C',
-    ],
     "particles" => [
         "number" => [
             "value" => 100,
@@ -124,9 +121,6 @@ $particlesOptionsTriangles = [
 ];
 $particlesOptionsBalls = [
     'name' => 'Balles',
-    'background' => [
-        'color' => '#000E9C',
-    ],
     'particles' => [
         'destroy' => [
             'mode' => 'split',
@@ -165,15 +159,12 @@ $particlesOptionsBalls = [
         ],
         'color' => [
             'value' => [
-                '#3998D0',
-                '#2EB6AF',
-                '#A9BD33',
-                '#FEC73B',
-                '#F89930',
-                '#F45623',
-                '#D62E32',
-                '#EB586E',
-                '#9952CF',
+                '#A6D64D',
+                '#4AB0F5',
+                '#ED733D',
+                '#FFD124',
+                '#73E3FF',
+                '#147DE8',
             ],
         ],
         'shape' => [
@@ -199,6 +190,74 @@ $particlesOptionsBalls = [
         ],
     ],
 ];
+$particlesOptionsParty = [
+    'name' => 'Party',
+    "fpsLimit" => 120,
+    'particles' => [
+        'number' => [
+            'value' => 0,
+            'limit' => [
+                'mode' => 'delete',
+                'value' => 200,
+            ],
+        ],
+        'color' => [
+            'value' => [
+                '#A6D64D',
+                '#4AB0F5',
+                '#ED733D',
+                '#FFD124',
+                '#73E3FF',
+                '#147DE8',
+            ],
+            'animation' => [
+                'h' => [
+                    'speed' => 10,
+                ],
+                's' => [
+                    'speed' => 1,
+                ],
+                'l' => [
+                    'speed' => 1,
+                ],
+            ],
+        ],
+        'size' => [
+            'value' => 3,
+        ],
+        'move' => [
+            'enable' => true,
+            'direction' => 'top',
+            'speed' => [
+                'min' => 10,
+                'max' => 25,
+            ],
+            'gravity' => [
+                'enable' => true,
+                'acceleration' => 9.81,
+                'inverse' => false,
+                'maxSpeed' => 15,
+            ],
+            'outModes' => [
+                'default' => 'destroy',
+                'bottom' => 'destroy',
+                'left' => 'destroy',
+                'right' => 'destroy',
+                'top' => 'none',
+            ],
+        ],
+    ],
+    'emitters' => [
+        'rate' => [
+            'quantity' => 6,
+            'delay' => 0.2,
+        ],
+        'position' => [
+            'x' => 50,
+            'y' => 100,
+        ],
+    ],
+];
 
 return [
     'config' => [
@@ -207,5 +266,6 @@ return [
         'links' => $particlesOptionsLinks,
         'triangles' => $particlesOptionsTriangles,
         'balls' => $particlesOptionsBalls,
+        'party' => $particlesOptionsParty,
     ],
 ];
