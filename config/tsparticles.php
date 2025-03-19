@@ -191,7 +191,7 @@ $particlesOptionsBalls = [
     ],
 ];
 $particlesOptionsParty = [
-    'name' => 'Party',
+    'name' => 'Confettis',
     "fpsLimit" => 120,
     'particles' => [
         'number' => [
