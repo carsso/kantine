@@ -40,7 +40,7 @@ class Information extends Model
      *
      * @var array
      */
-    protected $hidden = ['id', 'created_at', 'updated_at'];
+    protected $hidden = ['id', 'created_at', 'updated_at', 'tenant_id'];
 
     /**
      * The attributes that should be appended to arrays.

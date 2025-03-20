@@ -42,7 +42,7 @@ class Dish extends Model
      *
      * @var array
      */
-    protected $hidden = ['id', 'created_at', 'updated_at', 'dishes_category_id'];
+    protected $hidden = ['id', 'created_at', 'updated_at', 'dishes_category_id', 'tenant_id'];
 
     /**
      * The attributes that should be appended to arrays.
