@@ -80,7 +80,9 @@
                             @endphp
                             @if($dishes || !$category->hidden)
                                 <div class="ml-1">
-                                    <label for="{{ $inputName }}" class="block font-semibold">{{ $category->name }} :</label>
+                                    @if($category->name != $rootCategory->name)
+                                        <label for="{{ $inputName }}" class="block font-semibold">{{ $category->name }} :</label>
+                                    @endif
                                     <admin-dishes-input
                                         name="{{ $inputName }}"
                                         name-tags="{{ $inputNameTags }}"
