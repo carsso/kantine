@@ -38,15 +38,15 @@ class AdminController extends Controller
         if(date('H') >= 15) {
             $date = strtotime('+1 day', $date);
         }
-        if(preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateString)) {
-            $date = strtotime($dateString.' 10 am');
-        }
         $dish = Dish::where('tenant_id', $tenant->id)
             ->where('date', '>=', date('Y-m-d', $date))
             ->orderBy('date', 'asc')
             ->first();
         if($dish) {
             $date = strtotime($dish->date.' 10 am');
+        }
+        if(preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateString)) {
+            $date = strtotime($dateString.' 10 am');
         }
         $mondayTime = strtotime('monday this week 10 am', $date);
         $fridayTime = strtotime('friday this week 10 am', $date);
