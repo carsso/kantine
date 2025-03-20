@@ -89,8 +89,7 @@ class AdminController extends Controller
         }
         $prevWeek = date('Y-m-d', strtotime('-1 week', $mondayTime));
         $nextWeek = date('Y-m-d', strtotime('+1 week', $mondayTime));
-        $autocompleteDishes = Dish::where('tenant_id', $tenant->id)
-            ->orderBy('id', 'desc')
+        $autocompleteDishes = Dish::orderBy('id', 'desc')
             ->limit(300)
             ->get()
             ->pluck('name')
