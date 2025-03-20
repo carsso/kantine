@@ -16,7 +16,7 @@ class ValidateTenant
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $tenantSlug = $request->route('tenant');
+        $tenantSlug = $request->route('tenantSlug');
         $tenant = Tenant::where('slug', $tenantSlug)->first();
 
         if (!$tenant) {
@@ -24,7 +24,7 @@ class ValidateTenant
         }
 
         if (!$tenant->is_active) {
-            if(auth()->check() && auth()->user()->hasRole('Super Admin')) {
+            if(auth()->check() && auth()->user()->hasPermissionTo('tenant-admin-' . $tenant->slug)) {
                 session()->flash('flash_warning', 'La cantine ' . $tenant->name . ' est actuellement désactivée et n\'est pas visible publiquement. Toutefois, en tant qu\'administrateur, vous pouvez y accéder quand même.');
             } else {
                 abort(404, 'Cantine non trouvée');

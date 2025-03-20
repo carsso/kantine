@@ -73,7 +73,7 @@ class ProcessWebexMenuNotification implements ShouldQueue
             if($message['personEmail'] !== $this->tenant->webex_bot_name) {
                 continue;
             }
-            if(str_contains($message['text'], route('menus', ['tenant' => $this->tenant->slug, 'date' => $this->date]))) {
+            if(str_contains($message['text'], route('menus', ['tenantSlug' => $tenant->slugthis->tenant->slug, 'date' => $this->date]))) {
                 Log::info('Updating message in Webex room "' . $this->room['title'] .'" ' . $this->room['id']);
                 Log::info($html);
                 try {

@@ -11,8 +11,10 @@ use App\Models\Tenant;
 
 class MenuController extends Controller
 {
-    public function menu(DayService $dayService, $tenant, $dateString = null)
+    public function menu(Request $request, DayService $dayService)
     {
+        $tenant = $request->route('tenant');
+        $dateString = $request->route('date');
         $dateToday = strtotime('today 10 am');
         $date = $dateToday;
         if(date('H') >= 15) {
@@ -50,8 +52,10 @@ class MenuController extends Controller
         return view('menu', ['tenant' => $tenant, 'menus' => $menus, 'categories' => $categories, 'weekMonday' => Carbon::parse($mondayTime), 'prevWeek' => $prevWeek, 'nextWeek' => $nextWeek]);
     }
 
-    public function dashboard(Request $request, DayService $dayService, $tenant, $dateString = null)
+    public function dashboard(Request $request, DayService $dayService)
     {
+        $tenant = $request->route('tenant');
+        $dateString = $request->route('date');
         $dateToday = strtotime('today 10 am');
         $date = $dateToday;
         if(date('H') >= 15) {
@@ -97,8 +101,10 @@ class MenuController extends Controller
         return view('dashboard', ['tenant' => $tenant, 'menu' => $menu, 'categories' => $categories, 'diff' => $diff, 'day' => $day, 'particlesOptions' => $particlesOptions, 'generationDate' => $generationDate]);
     }
 
-    public function webexMenu(DayService $dayService, $tenant, $dateString = null)
+    public function webexMenu(Request $request, DayService $dayService)
     {
+        $tenant = $request->route('tenant');
+        $dateString = $request->route('date');
         $dateToday = strtotime('today 10 am');
         $date = $dateToday;
         if(date('H') >= 15) {
@@ -127,8 +133,10 @@ class MenuController extends Controller
         return view('webex.menu', ['tenant' => $tenant, 'menu' => $menu, 'date' => Carbon::parse($date), 'categories' => $categories]);
     }
 
-   public function notifications(DayService $dayService, $tenant, $dateString = null)
+   public function notifications(Request $request, DayService $dayService)
    {
+        $tenant = $request->route('tenant');
+        $dateString = $request->route('date');
         $dateToday = strtotime('today 10 am');
         $date = $dateToday;
         if(date('H') >= 15) {

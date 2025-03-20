@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Menu;
 use App\Models\Tenant;
 use App\Services\DayService;
+use Illuminate\Http\Request;
 
 class ApiController extends Controller
 {
@@ -15,21 +16,24 @@ class ApiController extends Controller
         
         foreach ($tenants as $tenant) {
             $routes[$tenant->slug] = [
-                'today' => route('api.today', ['tenant' => $tenant->slug]),
-                'day' => route('api.day', ['tenant' => $tenant->slug, 'day' => date('Y-m-d')]),
+                'today' => route('api.today', ['tenantSlug' => $tenant->slug]),
+                'day' => route('api.day', ['tenantSlug' => $tenant->slug, 'day' => date('Y-m-d')]),
             ];
         }
 
         return $routes;
     }
 
-    public function today(DayService $dayService, $tenant)
+    public function today(Request $request, DayService $dayService)
     {
-        return $this->day($dayService,  $tenant, date('Y-m-d'));
+        $tenant = $request->route('tenant');
+        return $this->day($request, $dayService);
     }
 
-    public function day(DayService $dayService, $tenant, $dateString)
+    public function day(Request $request, DayService $dayService)
     {
+        $tenant = $request->route('tenant');
+        $dateString = $request->route('dateString');
         return $dayService->getDay($tenant, $dateString);
     }
 }

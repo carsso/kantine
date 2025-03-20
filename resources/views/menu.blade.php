@@ -7,7 +7,7 @@
     </h1>
     <div class="flex mb-4">
         <div class="flex-none w-48 text-left">
-            <a href="{{ route('menus', ['tenant' => request()->tenant->slug, 'date' => $prevWeek]) }}" class="px-2 py-1 border border-transparent text-sm leading-4 font-medium rounded-md shadow-xs text-white bg-gray-600 hover:bg-gray-700 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+            <a href="{{ route('menus', ['tenantSlug' => request()->tenant->slug, 'date' => $prevWeek]) }}" class="px-2 py-1 border border-transparent text-sm leading-4 font-medium rounded-md shadow-xs text-white bg-gray-600 hover:bg-gray-700 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                 <i class="fas fa-circle-arrow-left mr-2"></i>
                 Semaine précédente
             </a>
@@ -18,7 +18,7 @@
             </h1>
         </div>
         <div class="flex-none w-48 text-right">
-            <a href="{{ route('menus', ['tenant' => request()->tenant->slug, 'date' => $nextWeek]) }}" class="px-2 py-1 border border-transparent text-sm leading-4 font-medium rounded-md shadow-xs text-white bg-gray-600 hover:bg-gray-700 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+            <a href="{{ route('menus', ['tenantSlug' => request()->tenant->slug, 'date' => $nextWeek]) }}" class="px-2 py-1 border border-transparent text-sm leading-4 font-medium rounded-md shadow-xs text-white bg-gray-600 hover:bg-gray-700 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
                 Semaine suivante
                 <i class="fas fa-circle-arrow-right ml-2"></i>
             </a>

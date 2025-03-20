@@ -20,7 +20,7 @@ class AdminController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['role:Super Admin']);
+        $this->middleware(['permission:admin']);
     }
 
     public function index()
@@ -29,8 +29,9 @@ class AdminController extends Controller
         return view('admin.index', ['tenants' => $tenants]);
     }
 
-    public function store(Request $request, $tenant)
+    public function store(Request $request)
     {
+        $tenant = $request->route('tenant');
         $request->validate([
             'date' => 'required|date',
             'dishes' => 'required|array',
@@ -47,22 +48,14 @@ class AdminController extends Controller
             $dish->save();
         }
 
-        return redirect()->route('admin.index', ['tenant' => $tenant->slug, 'date' => $date->format('Y-m-d')])
+        return redirect()->route('admin.index', ['tenantSlug' => $tenant->slug, 'date' => $date->format('Y-m-d')])
             ->with('success', 'Menu mis à jour avec succès');
     }
 
-    public function destroy($tenant, $id)
+    public function menu(Request $request, DayService $dayService)
     {
-        $dish = Dish::where('tenant_id', $tenant->id)
-            ->findOrFail($id);
-        $dish->date = null;
-        $dish->save();
-
-        return redirect()->back()->with('success', 'Plat retiré du menu avec succès');
-    }
-
-    public function menu(DayService $dayService, $tenant, $dateString = null)
-    {
+        $tenant = $request->route('tenant');
+        $dateString = $request->route('date');
         $dateToday = strtotime('today 10 am');
         $date = $dateToday;
         if(date('H') >= 15) {
@@ -113,8 +106,9 @@ class AdminController extends Controller
         return view('admin.menu', ['tenant' => $tenant, 'menus' => $menus, 'categories' => $categories, 'weekMonday' => Carbon::parse($mondayTime), 'autocompleteDishes' => $autocompleteDishes, 'autocompleteDishesTags' => $autocompleteDishesTags, 'week' => $calendarWeekFirstDay, 'prevWeek' => $prevWeek, 'nextWeek' => $nextWeek]);
     }
 
-    public function updateMenu(DayService $dayService, UpdateMenuFormRequest $request, $tenant)
+    public function updateMenu(UpdateMenuFormRequest $request, DayService $dayService)
     {
+        $tenant = $request->route('tenant');
         $validated = $request->validated();
         if($validated['date'] && count($validated['date']) > 0) {
             $date = array_values($validated['date'])[0];
@@ -173,14 +167,15 @@ class AdminController extends Controller
             }
             return $this->redirectWithSuccess(
                 'Menus mis à jour',
-                redirect()->route('admin.menu', ['tenant' => $tenant->slug, 'date' => $date])
+                redirect()->route('admin.menu', ['tenantSlug' => $tenant->slug, 'date' => $date])
             );
         }
         return $this->backWithError('Rien à mettre à jour');
     }
 
-    public function webex($tenant)
+    public function webex(Request $request)
     {
+        $tenant = $request->route('tenant');
         if (!$tenant->webex_bearer_token) {
             throw new HttpException(403, 'Webex configuration not found for tenant', null, []);
         }
@@ -195,11 +190,12 @@ class AdminController extends Controller
         return view('admin.webex', ['rooms' => $rooms, 'tenant' => $tenant]);
     }
 
-    public function webexNotify(DayService $dayService, $tenant)
+    public function webexNotify(Request $request, DayService $dayService)
     {
+        $tenant = $request->route('tenant');
         if (!$tenant->webex_bearer_token) {
             Log::info('Webex configuration not found for tenant, aborting');
-            return $this->redirectWithError('Configuration Webex non trouvée', redirect()->route('admin.webex', ['tenant' => $tenant->slug]));
+            return $this->redirectWithError('Configuration Webex non trouvée', redirect()->route('admin.webex', ['tenantSlug' => $tenant->slug]));
         }
 
         $date = date('Y-m-d');
@@ -208,7 +204,7 @@ class AdminController extends Controller
 
         if(!$menu) {
             Log::info('No menu for date '.$date.', aborting');
-            return $this->redirectWithError('Aucun menu pour le '.$date, redirect()->route('admin.webex', ['tenant' => $tenant->slug]));
+            return $this->redirectWithError('Aucun menu pour le '.$date, redirect()->route('admin.webex', ['tenantSlug' => $tenant->slug]));
         }
         $api = new WebexApi($tenant);
         Log::info('Listing Webex rooms');
@@ -217,6 +213,6 @@ class AdminController extends Controller
             Log::info('Adding Webex room notification task to room ' . $room['title'] .' ' . $room['id']);
             ProcessWebexMenuNotification::dispatch($tenant, $room, $menu, $date, true);
         }
-        return $this->redirectWithSuccess('La mise à jour du menu va être envoyée à tous les canaux Webex. Cela peut prendre quelques instants.', redirect()->route('admin.webex', ['tenant' => $tenant->slug]));
+        return $this->redirectWithSuccess('La mise à jour du menu va être envoyée à tous les canaux Webex. Cela peut prendre quelques instants.', redirect()->route('admin.webex', ['tenantSlug' => $tenant->slug]));
     }
 }

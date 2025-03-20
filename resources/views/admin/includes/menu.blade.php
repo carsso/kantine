@@ -4,7 +4,7 @@
     <h1 class="text-2xl hidden xl:block 2xl:hidden mb-1">{{ $menu['date_carbon']->translatedFormat('D j M') }}</h1>
     <input id="date[{{ $idx }}]" type="hidden" name="date[{{ $idx }}]" value="{{ $menu['date'] }}">
     <div class="mb-3 leading-snug text-xs text-gray-500">
-        <a href="{{ route('dashboard', ['tenant' => request()->tenant->slug, 'date' => $menu['date_carbon']->format('Y-m-d')]) }}" target="_blank" class="hover:text-indigo-500">
+        <a href="{{ route('dashboard', ['tenantSlug' => request()->tenant->slug, 'date' => $menu['date_carbon']->format('Y-m-d')]) }}" target="_blank" class="hover:text-indigo-500">
             <i class="fa-solid fa-up-right-from-square"></i>
             Aperçu du dashboard
         </a>
@@ -23,7 +23,7 @@
         <div class="text-gray-500 text-xs">
             @foreach(array_keys(config('tsparticles.config', [])) as $style)
                 @if(!$loop->first) - @endif
-                <a href="{{ route('dashboard', ['tenant' => request()->tenant->slug, 'date' => $menu['date_carbon']->format('Y-m-d'), 'style' => $style]) }}" target="_blank" class="hover:text-indigo-500">
+                <a href="{{ route('dashboard', ['tenantSlug' => request()->tenant->slug, 'date' => $menu['date_carbon']->format('Y-m-d'), 'style' => $style]) }}" target="_blank" class="hover:text-indigo-500">
                     <i class="fa-solid fa-magnifying-glass"></i>
                     {{ config('tsparticles.config.'.$style.'.name', $style) }}
                 </a>

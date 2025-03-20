@@ -70,5 +70,6 @@ class Kernel extends HttpKernel
         'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
         'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
         'tenant' => \App\Http\Middleware\ValidateTenant::class,
+        'tenant-admin' => \App\Http\Middleware\TenantAdmin::class,
     ];
 }

@@ -33,7 +33,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('account');
 });
 
-Route::prefix('/admin')->middleware(['auth', 'verified', 'role:Super Admin'])->group(function () {
+Route::prefix('/admin')->middleware(['auth', 'verified', 'permission:admin'])->group(function () {
     Route::get('/', [AdminController::class, 'index'])
         ->name('admin');
 });
@@ -45,7 +45,7 @@ Route::redirect('/notifications/{date?}', '/roubaix/notifications/{date?}');
 Route::redirect('/notifications/webex/{date?}', '/roubaix/notifications/webex/{date?}');
 
 
-Route::prefix('{tenant}')->middleware('tenant')->group(function () {
+Route::prefix('{tenantSlug}')->middleware('tenant')->group(function () {
     Route::get('/', [MenuController::class, 'menu'])
         ->name('tenant.home');
 
@@ -58,11 +58,11 @@ Route::prefix('{tenant}')->middleware('tenant')->group(function () {
     Route::get('/notifications/{date?}', [MenuController::class, 'notifications'])
         ->name('notifications');
 
-    Route::get('/notifications/webex/{day}', [MenuController::class, 'webexMenu'])
-        ->name('notifications.webex.day');
+    Route::get('/notifications/webex/{date}', [MenuController::class, 'webexMenu'])
+        ->name('notifications.webex');
 
     # admin route group with prefix
-    Route::prefix('/admin')->middleware(['auth', 'verified', 'role:Super Admin'])->group(function () {
+    Route::prefix('/admin')->middleware(['auth', 'verified', 'tenant-admin'])->group(function () {
         Route::get('/menus/{date?}', [AdminController::class, 'menu'])
             ->name('admin.menu');
 

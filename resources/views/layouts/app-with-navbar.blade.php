@@ -8,23 +8,23 @@
             $routes = [
                 [
                     'name' => 'Menus',
-                    'route' => route('menus', ['tenant' => request()->tenant->slug]),
+                    'route' => route('menus', ['tenantSlug' => request()->tenant->slug]),
                     'active' => request()->routeIs('menus') || request()->routeIs('menu') || request()->routeIs('tenant.home'),
                 ],
                 [
                     'name' => 'Notifications',
-                    'route' => route('notifications', ['tenant' => request()->tenant->slug]),
+                    'route' => route('notifications', ['tenantSlug' => request()->tenant->slug]),
                     'active' => request()->routeIs('notifications.*') || request()->routeIs('notifications'),
                 ],
                 [
                     'name' => 'Dashboard',
-                    'route' => route('dashboard', ['tenant' => request()->tenant->slug]),
+                    'route' => route('dashboard', ['tenantSlug' => request()->tenant->slug]),
                     'active' => request()->routeIs('dashboard.*') || request()->routeIs('dashboard'),
                     'target' => '_blank',
                 ],
                 [
                     'name' => 'API',
-                    'route' => route('api.home', ['tenant' => request()->tenant->slug]),
+                    'route' => route('api.home', ['tenantSlug' => request()->tenant->slug]),
                     'active' => request()->routeIs('api.*') || request()->routeIs('api'),
                     'target' => '_blank',
                 ],
@@ -34,7 +34,7 @@
             foreach($tenants as $tenant) {
                 $routes[] = [
                     'name' => $tenant->name,
-                    'route' => route('tenant.home', ['tenant' => $tenant->slug]),
+                    'route' => route('tenant.home', ['tenantSlug' => $tenant->slug]),
                 ];
             }
         } 
@@ -55,7 +55,7 @@
                     'active' => request()->routeIs('account.*') || request()->routeIs('account')
                 ]
             ];
-            if(auth()->user()->hasRole('Super Admin')) {
+            if(auth()->user()->hasPermissionTo('admin')) {
                 $routes[] = [
                     'name' => '🔐 Administration',
                     'route' => route('admin'),

@@ -11,7 +11,7 @@
             Le menu est envoyé automatiquement chaque matin à 10:30.<br />
             Vous pouvez envoyer une mise à jour du menu sur Webex immédiatement en cliquant sur le bouton ci-dessous.
         </p>
-        <form action="{{ route('admin.webex.notify', ['tenant' => $tenant->slug]) }}" method="POST">
+        <form action="{{ route('admin.webex.notify', ['tenantSlug' => $tenant->slug]) }}" method="POST">
             @csrf
             <button type="submit"
                     class="inline-flex items-center justify-center px-2 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-gray-500"
@@ -37,7 +37,7 @@
                                     {{ config('app.name') }} - {{ $tenant->name }}
                                     {{ \Carbon\Carbon::parse($message['created'], 'UTC')->setTimezone('Europe/Paris')->format('d/m/Y H:i') }}
                                 </div>
-                                <div class="border-l-4 border-[#147DE8] pl-2 pb-2">
+                                <div class="border-l-4 border-[#147DE8] pl-2 pb-2" title="{{ $message['id'] }}">
                                     <div class="text-sm">
                                         {!! $message['html'] !!}
                                     </div>
