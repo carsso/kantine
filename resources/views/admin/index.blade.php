@@ -25,7 +25,7 @@
                 </div>
                 <div class="basis-3/4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
                     @foreach($tenants as $tenant)
-                        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+                        <div class="bg-gray-100 dark:bg-gray-800 rounded-lg shadow p-6">
                             <h2 class="text-xl font-bold mb-4">{{ $tenant->name }}</h2>
                             <p class="text-gray-600 dark:text-gray-400 mb-4">{{ $tenant->description }}</p>
                             
