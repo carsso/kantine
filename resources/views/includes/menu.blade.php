@@ -70,8 +70,8 @@
                                 @endif
                                 {{ $dish['name'] }}
                                 @if($dish['tags'])
-                                    <i class="text-gray-500 text-xs">
-                                        ({{ collect($dish['tags'])->map(fn($tag) => \App\Models\Dish::getTagTranslation($tag))->join(', ') }})
+                                    <i class="text-gray-500 dark:text-gray-400 text-xs">
+                                        ({{ collect($dish['tags'])->map(fn($tag) => \App\Models\Dish::getTagShortName($tag))->join(', ') }})
                                     </i>
                                 @endif
                             </div>

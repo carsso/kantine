@@ -51,20 +51,70 @@ class Dish extends Model
      */
     protected $appends = [];
 
-    public static function getTagsTranslations($short = true)
+    public static function getTagsDefinitions()
     {
         return [
-            'halal' => 'Halal',
-            'vegetarian' => $short ? 'Végé.' : 'Végétarien',
-            'fish' => 'Poisson',
-            'france' => $short ? 'Orig. France' : 'Origine France',
-            'regional' => 'Régional'
+            'halal' => [
+                'name' => 'Halal',
+                'name_short' => 'Halal',
+                'icon' => 'fa-square-h',
+                'emoji' => '🐐',
+                'color' => '#007e45',
+            ],
+            'vegetarian' => [
+                'name' => 'Végétarien',
+                'name_short' => 'Végé.',
+                'icon' => 'fa-seedling',
+                'emoji' => '🌱',
+                'color' => '#A6D64D',
+            ],
+            'fish' => [
+                'name' => 'Poisson',
+                'name_short' => 'Poisson',
+                'icon' => 'fa-fish-fins',
+                'emoji' => '🐟',
+                'color' => '#4AB0F5',
+            ],
+            'france' => [
+                'name' => 'Origine France',
+                'name_short' => 'Orig. France',
+                'icon' => 'fa-circle-f',
+                'emoji' => '🐓',
+                'color' => '#147DE8',
+            ],
+            'regional' => [
+                'name' => 'Régional',
+                'name_short' => 'Régional',
+                'icon' => 'fa-tractor',
+                'emoji' => '🚜',
+                'color' => '#FFD124',
+            ],
         ];
     }
 
-    public static function getTagTranslation($tag, $short = true)
+    public static function getTagName($tag)
     {
-        return self::getTagsTranslations($short)[$tag] ?? $tag;
+        return self::getTagsDefinitions()[$tag]['name'] ?? $tag;
+    }
+
+    public static function getTagShortName($tag)
+    {
+        return self::getTagsDefinitions()[$tag]['name_short'] ?? $tag;
+    }
+
+    public static function getTagIcon($tag)
+    {
+        return self::getTagsDefinitions()[$tag]['icon'] ?? 'fa-question';
+    }
+
+    public static function getTagEmoji($tag)
+    {
+        return self::getTagsDefinitions()[$tag]['emoji'] ?? '❓';
+    }
+
+    public static function getTagColor($tag)
+    {
+        return self::getTagsDefinitions()[$tag]['color'] ?? '#000000';
     }
 
     public function getDateCarbonAttribute()

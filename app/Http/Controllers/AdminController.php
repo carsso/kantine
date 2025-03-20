@@ -90,9 +90,9 @@ class AdminController extends Controller
             ->sort()
             ->values()
             ->toArray();
-        $autocompleteDishesTags = collect(Dish::getTagsTranslations(false))
+        $autocompleteDishesTags = collect(Dish::getTagsDefinitions())
             ->map(function($value, $key) {
-                return ['label' => $value, 'value' => $key];
+                return ['label' => $value['name_short'], 'value' => $key];
             })->values()->all();
         $categories = DishCategory::where('tenant_id', $tenant->id)
             ->whereNull('parent_id')

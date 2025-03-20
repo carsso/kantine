@@ -54,7 +54,7 @@
                                 {{ $dish['name'] }}
                                 @if($dish['tags'])
                                     <i>
-                                        ({{ collect($dish['tags'])->map(fn($tag) => \App\Models\Dish::getTagTranslation($tag))->join(', ') }})
+                                        ({{ collect($dish['tags'])->map(fn($tag) => \App\Models\Dish::getTagName($tag))->join(', ') }})
                                     </i>
                                 @endif
                             </span><br />
