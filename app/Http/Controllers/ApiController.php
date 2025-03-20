@@ -17,7 +17,7 @@ class ApiController extends Controller
         foreach ($tenants as $tenant) {
             $routes[$tenant->slug] = [
                 'today' => route('api.today', ['tenantSlug' => $tenant->slug]),
-                'day' => route('api.day', ['tenantSlug' => $tenant->slug, 'day' => date('Y-m-d')]),
+                'day' => route('api.day', ['tenantSlug' => $tenant->slug, 'date' => date('Y-m-d')]),
             ];
         }
 
@@ -26,14 +26,13 @@ class ApiController extends Controller
 
     public function today(Request $request, DayService $dayService)
     {
-        $tenant = $request->route('tenant');
         return $this->day($request, $dayService);
     }
 
     public function day(Request $request, DayService $dayService)
     {
         $tenant = $request->route('tenant');
-        $dateString = $request->route('dateString');
+        $dateString = $request->route('date');
         return $dayService->getDay($tenant, $dateString);
     }
 }

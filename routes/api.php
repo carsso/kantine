@@ -26,7 +26,7 @@ Route::redirect('/day/{date}', '/api/roubaix/day/{date}');
 Route::prefix('{tenantSlug}')->middleware('tenant')->group(function () {
     Route::get('/', [ApiController::class, 'home'])
         ->name('api.home');
-    Route::get('/day/{day}', [ApiController::class, 'day'])
+    Route::get('/day/{date}', [ApiController::class, 'day'])
         ->name('api.day');
 
     Route::get('/today', [ApiController::class, 'today'])
