@@ -31,6 +31,9 @@ Auth::routes(['verify' => true]);
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/account', [AccountController::class, 'index'])
         ->name('account');
+
+    Route::post('/account/tokens', [AccountController::class, 'storeToken'])->name('account.tokens.store');
+    Route::delete('/account/tokens/{token}', [AccountController::class, 'destroyToken'])->name('account.tokens.destroy');
 });
 
 Route::prefix('/admin')->middleware(['auth', 'verified', 'permission:admin'])->group(function () {

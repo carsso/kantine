@@ -35,4 +35,9 @@ class ApiController extends Controller
         $dateString = $request->route('date');
         return $dayService->getDay($tenant, $dateString);
     }
+    
+    public function user(Request $request)
+    {
+        return response()->json($request->user());
+    }
 }

@@ -29,6 +29,7 @@ class DishCategory extends Model
     protected $fillable = [
         'tenant_id',
         'name',
+        'name_slug',
         'type',
         'hidden',
         'color',

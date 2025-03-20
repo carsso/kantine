@@ -29,29 +29,6 @@ class AdminController extends Controller
         return view('admin.index', ['tenants' => $tenants]);
     }
 
-    public function store(Request $request)
-    {
-        $tenant = $request->route('tenant');
-        $request->validate([
-            'date' => 'required|date',
-            'dishes' => 'required|array',
-            'dishes.*' => 'required|exists:dishes,id'
-        ]);
-
-        $date = Carbon::parse($request->date);
-        $dishes = Dish::whereIn('id', $request->dishes)
-            ->where('tenant_id', $tenant->id)
-            ->get();
-
-        foreach($dishes as $dish) {
-            $dish->date = $date;
-            $dish->save();
-        }
-
-        return redirect()->route('admin.index', ['tenantSlug' => $tenant->slug, 'date' => $date->format('Y-m-d')])
-            ->with('success', 'Menu mis à jour avec succès');
-    }
-
     public function menu(Request $request, DayService $dayService)
     {
         $tenant = $request->route('tenant');

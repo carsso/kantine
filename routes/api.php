@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApiController;
+use App\Http\Controllers\ApiAdminController;
+use App\Http\Controllers\Api\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,8 +17,10 @@ use App\Http\Controllers\ApiController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
 });
 
 Route::redirect('/', '/api/roubaix');
@@ -31,4 +35,12 @@ Route::prefix('{tenantSlug}')->middleware('tenant')->group(function () {
 
     Route::get('/today', [ApiController::class, 'today'])
         ->name('api.today');
+        
+    Route::prefix('/admin')->middleware(['auth:sanctum', 'tenant-admin'])->group(function () {
+        Route::get('/menus/{date}', [ApiAdminController::class, 'menu'])
+            ->name('api.admin.menus.get');
+        Route::post('/menus/{date}', [ApiAdminController::class, 'updateMenuApi'])
+            ->name('api.admin.menus.update');
+    });
 });
+

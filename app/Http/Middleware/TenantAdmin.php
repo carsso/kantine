@@ -4,8 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use App\Models\Tenant;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Auth;
 
 class TenantAdmin
 {
@@ -14,18 +13,24 @@ class TenantAdmin
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next)
     {
-        $tenant = $request->route('tenant');
-        if (!$tenant) {
-            abort(404, 'Cantine non trouvée');
+        // If user is not authenticated, try Sanctum
+        if (!Auth::check()) {
+            app('auth:sanctum')->handle($request, function ($request) {
+                return $request;
+            });
         }
 
-        if(!auth()->check()) {
-            abort(403, 'Accès refusé');
+        $user = Auth::user();
+        $tenant = $request->route('tenant');
+
+        if (!$user || !$tenant) {
+            return response()->json(['error' => 'Non autorisé'], 403);
         }
-        if(!auth()->user()->hasPermissionTo('tenant-admin-' . $tenant->slug)) {
-            abort(403, 'Accès refusé');
+
+        if(!$user->hasPermissionTo('tenant-admin-' . $tenant->slug)) {
+            return response()->json(['error' => 'Non autorisé'], 403);
         }
 
         return $next($request);
