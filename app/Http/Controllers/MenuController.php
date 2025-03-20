@@ -4,18 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Dish;
 use App\Models\DishCategory;
-use App\Models\Menu;
-use App\Models\File;
-use App\Http\Requests\UploadFormRequest;
-use App\Jobs\ProcessFile;
 use App\Services\DayService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
+use App\Models\Tenant;
 
 class MenuController extends Controller
 {
-    public function menu(DayService $dayService, $dateString = null)
+    public function menu(DayService $dayService, $tenant, $dateString = null)
     {
         $dateToday = strtotime('today 10 am');
         $date = $dateToday;
@@ -25,7 +21,10 @@ class MenuController extends Controller
         if(preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateString)) {
             $date = strtotime($dateString.' 10 am');
         }
-        $dish = Dish::where('date', '>=', date('Y-m-d', $date))->orderBy('date', 'asc')->first();
+        $dish = Dish::where('tenant_id', $tenant->id)
+            ->where('date', '>=', date('Y-m-d', $date   ))
+            ->orderBy('date', 'asc')
+            ->first();
         if($dish) {
             $date = strtotime($dish->date.' 10 am');
         }
@@ -35,22 +34,23 @@ class MenuController extends Controller
         $calendarWeekLastDay = date('Y-m-d', $fridayTime);
         $menus = [];
         for($date = Carbon::parse($calendarWeekFirstDay); $date->lte(Carbon::parse($calendarWeekLastDay)); $date->addDay()) {
-            $menu = $dayService->getDay($date->format('Y-m-d'));
+            $menu = $dayService->getDay($tenant, $date->format('Y-m-d'));
             $menus[$date->format('Y-m-d')] = $menu;
         }
         $prevWeek = date('Y-m-d', strtotime('-1 week', $mondayTime));
         $nextWeek = date('Y-m-d', strtotime('+1 week', $mondayTime));
-        $categories = DishCategory::whereNull('parent_id')
+        $categories = DishCategory::where('tenant_id', $tenant->id)
+            ->whereNull('parent_id')
             ->with(['children' => function($query) {
                 $query->orderBy('sort_order');
             }])
             ->orderBy('sort_order')
             ->get()
             ->groupBy('type');
-        return view('menu', ['menus' => $menus, 'categories' => $categories, 'weekMonday' => Carbon::parse($mondayTime), 'prevWeek' => $prevWeek, 'nextWeek' => $nextWeek]);
+        return view('menu', ['tenant' => $tenant, 'menus' => $menus, 'categories' => $categories, 'weekMonday' => Carbon::parse($mondayTime), 'prevWeek' => $prevWeek, 'nextWeek' => $nextWeek]);
     }
 
-    public function dashboard(Request $request, DayService $dayService, $dateString = null)
+    public function dashboard(Request $request, DayService $dayService, $tenant, $dateString = null)
     {
         $dateToday = strtotime('today 10 am');
         $date = $dateToday;
@@ -60,7 +60,10 @@ class MenuController extends Controller
         if(preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateString)) {
             $date = strtotime($dateString.' 10 am');
         }
-        $dish = Dish::where('date', '>=', date('Y-m-d', $date))->orderBy('date', 'asc')->first();
+        $dish = Dish::where('tenant_id', $tenant->id)
+            ->where('date', '>=', date('Y-m-d', $date))
+            ->orderBy('date', 'asc')
+            ->first();
         if($dish) {
             $date = strtotime($dish->date.' 10 am');
         }
@@ -80,8 +83,9 @@ class MenuController extends Controller
 
         $generationDate = Carbon::now();
 
-        $menu = $dayService->getDay($day->format('Y-m-d'));
-        $categories = DishCategory::whereNull('parent_id')
+        $menu = $dayService->getDay($tenant, $day->format('Y-m-d'));
+        $categories = DishCategory::where('tenant_id', $tenant->id)
+            ->whereNull('parent_id')
             ->with(['children' => function($query) {
                 $query->orderBy('sort_order');
             }])
@@ -90,10 +94,10 @@ class MenuController extends Controller
             ->groupBy('type');
         $style = $menu ? $request->query('style', $menu['information']['style'] ?? 'default'): 'default';
         $particlesOptions = in_array($style, array_keys(config('tsparticles.config', []))) ? config('tsparticles.config.'.$style) : null;
-        return view('dashboard', ['menu' => $menu, 'categories' => $categories, 'diff' => $diff, 'day' => $day, 'particlesOptions' => $particlesOptions, 'generationDate' => $generationDate]);
+        return view('dashboard', ['tenant' => $tenant, 'menu' => $menu, 'categories' => $categories, 'diff' => $diff, 'day' => $day, 'particlesOptions' => $particlesOptions, 'generationDate' => $generationDate]);
     }
 
-    public function webexMenu(DayService $dayService, $dateString = null)
+    public function webexMenu(DayService $dayService, $tenant, $dateString = null)
     {
         $dateToday = strtotime('today 10 am');
         $date = $dateToday;
@@ -103,23 +107,27 @@ class MenuController extends Controller
         if(preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateString)) {
             $date = strtotime($dateString.' 10 am');
         }
-        $dish = Dish::where('date', '>=', date('Y-m-d', $date))->orderBy('date', 'asc')->first();
+        $dish = Dish::where('tenant_id', $tenant->id)
+            ->where('date', '>=', date('Y-m-d', $date))
+            ->orderBy('date', 'asc')
+            ->first();
         if($dish) {
             $date = strtotime($dish->date.' 10 am');
         }
 
-        $menu = $dayService->getDay(date('Y-m-d', $date));
-        $categories = DishCategory::whereNull('parent_id')
+        $menu = $dayService->getDay($tenant, date('Y-m-d', $date));
+        $categories = DishCategory::where('tenant_id', $tenant->id)
+            ->whereNull('parent_id')
             ->with(['children' => function($query) {
                 $query->orderBy('sort_order');
             }])
             ->orderBy('sort_order')
             ->get()
             ->groupBy('type');
-        return view('webex.menu', ['menu' => $menu, 'date' => Carbon::parse($date), 'categories' => $categories]);
+        return view('webex.menu', ['tenant' => $tenant, 'menu' => $menu, 'date' => Carbon::parse($date), 'categories' => $categories]);
     }
 
-   public function notifications(DayService $dayService, $dateString = null)
+   public function notifications(DayService $dayService, $tenant, $dateString = null)
    {
         $dateToday = strtotime('today 10 am');
         $date = $dateToday;
@@ -129,24 +137,34 @@ class MenuController extends Controller
         if(preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateString)) {
             $date = strtotime($dateString.' 10 am');
         }
-        $dish = Dish::where('date', '>=', date('Y-m-d', $date))->orderBy('date', 'asc')->first();
+        $dish = Dish::where('tenant_id', $tenant->id)
+            ->where('date', '>=', date('Y-m-d', $date))
+            ->orderBy('date', 'asc')
+            ->first();
         if($dish) {
             $date = strtotime($dish->date.' 10 am');
         }
 
-        $menu = $dayService->getDay(date('Y-m-d', $date));
-        $categories = DishCategory::whereNull('parent_id')
+        $menu = $dayService->getDay($tenant, date('Y-m-d', $date));
+        $categories = DishCategory::where('tenant_id', $tenant->id)
+            ->whereNull('parent_id')
             ->with(['children' => function($query) {
                 $query->orderBy('sort_order');
             }])
             ->orderBy('sort_order')
             ->get()
             ->groupBy('type');
-        return view('notifications', ['menu' => $menu, 'date' => Carbon::parse($date), 'categories' => $categories]);
+        return view('notifications', ['tenant' => $tenant, 'menu' => $menu, 'date' => Carbon::parse($date), 'categories' => $categories]);
    }
 
    public function legal()
    {
        return view('legal');
+   }
+
+   public function home()
+   {
+       $tenants = Tenant::where('is_active', true)->get();
+       return view('home', compact('tenants'));
    }
 }

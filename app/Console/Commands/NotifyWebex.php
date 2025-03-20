@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Tenant;
 use App\Services\DayService;
 use Illuminate\Console\Command;
 use App\Libraries\WebexApi;
@@ -15,7 +16,7 @@ class NotifyWebex extends Command
      *
      * @var string
      */
-    protected $signature = 'kantine:notify-webex';
+    protected $signature = 'kantine:notify-webex {tenant_slug}';
 
     /**
      * The console command description.
@@ -31,11 +32,16 @@ class NotifyWebex extends Command
      */
     public function handle(DayService $dayService)
     {
+        $tenant = Tenant::where('slug', $this->argument('tenant_slug'))->first();
+        if(!$tenant) {
+            $this->error('Tenant not found');
+            return 1;
+        }
         $date = date('Y-m-d');
-        $this->info('Sending Webex notifications for menu of ' . $date . ' to all rooms');
-        $menu = $dayService->getDay($date);
+        $this->info('Sending Webex notifications for menu of ' . $date . ' to all rooms for tenant ' . $tenant->name);
+        $menu = $dayService->getDay($tenant, $date);
 
-        if(!config('services.webex.bearer_token')) {
+        if(!$tenant->webex_bearer_token) {
             $this->info('Webex bearer token not set, aborting');
             return 0;
         }
@@ -47,12 +53,12 @@ class NotifyWebex extends Command
             $this->info('No dishes for date '.$date.', aborting');
             return 0;
         }
-        $api = new WebexApi;
+        $api = new WebexApi($tenant);
         $this->info('Listing Webex rooms');
         $rooms = $api->getRooms();
         foreach($rooms['items'] as $room) {
             $this->info('Adding Webex room notification task to room ' . $room['title'] .' ' . $room['id']);
-            ProcessWebexMenuNotification::dispatch($room, $menu, $date);
+            ProcessWebexMenuNotification::dispatch($tenant, $room, $menu, $date);
         }
         return 0;
     }

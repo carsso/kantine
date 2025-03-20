@@ -11,6 +11,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Libraries\WebexApi;
 use Illuminate\Support\Facades\Log;
+use App\Models\Tenant;
 
 class ProcessWebexMenuNotification implements ShouldQueue
 {
@@ -26,8 +27,9 @@ class ProcessWebexMenuNotification implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    public function __construct(public array $room, public array $menu, public ?string $date, public ?bool $notifyUpdate = false)
+    public function __construct(public Tenant $tenant, public array $room, public array $menu, public ?string $date, public ?bool $notifyUpdate = false)
     {
+        $this->tenant = $tenant;
         $this->room = $room;
         $this->menu = $menu;
         $this->date = $date;
@@ -39,10 +41,11 @@ class ProcessWebexMenuNotification implements ShouldQueue
      */
     public function handle(): void
     {
-        if(!config('services.webex.bearer_token')) {
-            Log::info('Webex bearer token not set, aborting');
+        if (!$this->tenant || !$this->tenant->webex_bearer_token) {
+            Log::info('Webex configuration not found for tenant, aborting');
             return;
         }
+
         if ($this->room['isReadOnly']) {
             Log::info('Skipping read-only Webex room "' . $this->room['title'] .'" ' . $this->room['id']);
             return;
@@ -51,25 +54,26 @@ class ProcessWebexMenuNotification implements ShouldQueue
             Log::info('No menu for date '.$this->date.', skipping');
             return;
         }
-        $api = new WebexApi;
+        $api = new WebexApi($this->tenant);
         $date = Carbon::parse($this->date);
-        $categories = DishCategory::whereNull('parent_id')
+        $categories = DishCategory::where('tenant_id', $this->tenant->id)
+            ->whereNull('parent_id')
             ->with(['children' => function($query) {
                 $query->orderBy('sort_order');
             }])
             ->orderBy('sort_order')
             ->get()
             ->groupBy('type');
-        $html = view('webex.menu', ['menu' => $this->menu, 'date' => $date, 'categories' => $categories])->render();
+        $html = view('webex.menu', ['tenant' => $this->tenant, 'menu' => $this->menu, 'date' => $date, 'categories' => $categories])->render();
         Log::info('Working on Webex room "' . $this->room['title'] .'" ' . $this->room['id']);
         $messages = $api->getMessages($this->room['id']);
         sleep(5);
         Log::info($messages);
         foreach ($messages['items'] as $message) {
-            if($message['personEmail'] !== config('services.webex.bot_name')) {
+            if($message['personEmail'] !== $this->tenant->webex_bot_name) {
                 continue;
             }
-            if(str_contains($message['text'], route('menu', ['date' => $this->date]))) {
+            if(str_contains($message['text'], route('menus', ['tenant' => $this->tenant->slug, 'date' => $this->date]))) {
                 Log::info('Updating message in Webex room "' . $this->room['title'] .'" ' . $this->room['id']);
                 Log::info($html);
                 try {
@@ -89,7 +93,7 @@ class ProcessWebexMenuNotification implements ShouldQueue
                 if(!$this->notifyUpdate) {
                     return;
                 }
-                $html = 'Menu mis à jour à ' . date('H\hi');
+                $html = 'Menu mis à jour à ' . date('H\hi') . '<@personEmail:'.$this->tenant->webex_bot_name.'| >';
                 Log::info('Posting reply message in Webex room "' . $this->room['title'] .'" ' . $this->room['id']);
                 Log::info($html);
                 $api->postMessage($this->room['id'], $html, $message['id']);

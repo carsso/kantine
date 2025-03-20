@@ -10,6 +10,14 @@
     </div>
 @endif
 
+@if(session($name . 'warning'))
+    <div class="rounded-md bg-yellow-100 dark:bg-yellow-800 p-4 mb-4">
+        <div class="text-sm font-medium text-yellow-800 dark:text-yellow-50">
+            {{ session($name . 'warning') }}
+        </div>
+    </div>
+@endif
+
 @if(session($name . 'error'))
     <div class="rounded-md bg-red-100 dark:bg-red-800 p-4 mb-4">
         <div class="text-sm font-medium text-red-800 dark:text-red-50">

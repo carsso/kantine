@@ -20,6 +20,7 @@
         <main class="relative flex flex-row items-center text-[40px] text-left h-full w-full leading-[1.2]">
             <div class="basis-1/6 pr-12 text-right">
                 <div class="text-8xl font-black">Menu</div>
+                <div class="text-4xl mb-2 font-extralight italic">{{ $tenant->name }}</div>
                 @if($diff)
                     <div class="text-4xl font-extralight italic">{{ $diff }}</div>
                 @endif

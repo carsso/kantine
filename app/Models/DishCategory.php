@@ -27,6 +27,7 @@ class DishCategory extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'tenant_id',
         'name',
         'type',
         'hidden',
@@ -68,6 +69,11 @@ class DishCategory extends Model
     public function children(): HasMany
     {
         return $this->hasMany(DishCategory::class, 'parent_id');
+    }
+
+    public function tenant(): BelongsTo
+    {
+        return $this->belongsTo(Tenant::class);
     }
 
     /**

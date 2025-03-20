@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Models\Tenant;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -12,12 +13,17 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $schedule->command('kantine:notify-webex')
-            ->weekdays()->at('10:30');
+        $tenants = Tenant::where('is_active', true)->get();
+        foreach($tenants as $tenant) {
+            if($tenant->webex_bearer_token) {
+                $schedule->command('kantine:notify-webex', ['tenant_slug' => $tenant->slug])
+                    ->weekdays()->at('10:30');
+            }
 
-        $schedule->command('kantine:refresh-dashboards')
-            ->dailyAt('00:30')
-            ->dailyAt('15:30');
+            $schedule->command('kantine:refresh-dashboard', ['tenant_slug' => $tenant->slug])
+                ->dailyAt('00:30')
+                ->dailyAt('15:30');
+        }
     }
 
     /**

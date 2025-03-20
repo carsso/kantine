@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Events\DashboardRefreshEvent;
 use App\Events\MenuUpdatedEvent;
 use App\Models\Menu;
+use App\Models\Tenant;
 use App\Services\DayService;
 use Illuminate\Console\Command;
 
@@ -15,7 +16,7 @@ class RefreshDashboard extends Command
      *
      * @var string
      */
-    protected $signature = 'kantine:refresh-dashboard {date?}';
+    protected $signature = 'kantine:refresh-dashboard {tenant_slug} {date?}';
 
     /**
      * The console command description.
@@ -32,13 +33,18 @@ class RefreshDashboard extends Command
     public function handle(DayService $dayService)
     {
         if($date = $this->argument('date')) {
-            $menu = $dayService->getDay($date);
+            $tenant = Tenant::where('slug', $this->argument('tenant_slug'))->first();
+            if(!$tenant) {
+                $this->error('Tenant not found');
+                return 1;
+            }
+            $menu = $dayService->getDay($tenant, $date);
             if(!$menu) {
                 $this->error('Menu not found for date: ' . $date);
                 return 1;
             }
             MenuUpdatedEvent::dispatch($menu);
-            $this->info('Menu updated for date: ' . $date);
+            $this->info('Menu updated for date: ' . $date . ' for tenant ' . $tenant->name);
         } else {
             DashboardRefreshEvent::dispatch();
             $this->info('Dashboard refreshed');

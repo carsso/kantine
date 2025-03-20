@@ -17,23 +17,8 @@ use App\Http\Controllers\AdminController;
 |
 */
 
-Route::get('/', [MenuController::class, 'menu'])
+Route::get('/', [MenuController::class, 'home'])
     ->name('home');
-
-Route::get('/dashboard/{date?}', [MenuController::class, 'dashboard'])
-    ->name('dashboard');
-
-Route::get('/menu/{date?}', [MenuController::class, 'menu'])
-    ->name('menu');
-
-Route::get('/menus/{date?}', [MenuController::class, 'menu'])
-    ->name('menus');
-
-Route::get('/notifications/{date?}', [MenuController::class, 'notifications'])
-    ->name('notifications');
-
-Route::get('/notifications/webex/{day}', [MenuController::class, 'webexMenu'])
-    ->name('notifications.webex.day');
 
 Route::get('/legal', [MenuController::class, 'legal'])
     ->name('legal');
@@ -48,12 +33,36 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('account');
 });
 
-# admin route group with prefix
-Route::prefix('/admin')->group(function () {
-    Route::middleware(['auth', 'verified', 'role:Super Admin'])->group(function () {
-        Route::get('/', [AdminController::class, 'index'])
-            ->name('admin');
+Route::prefix('/admin')->middleware(['auth', 'verified', 'role:Super Admin'])->group(function () {
+    Route::get('/', [AdminController::class, 'index'])
+        ->name('admin');
+});
 
+Route::redirect('/dashboard/{date?}', '/roubaix/dashboard/{date?}');
+Route::redirect('/menu/{date?}', '/roubaix/menus/{date?}');
+Route::redirect('/menus/{date?}', '/roubaix/menus/{date?}');
+Route::redirect('/notifications/{date?}', '/roubaix/notifications/{date?}');
+Route::redirect('/notifications/webex/{date?}', '/roubaix/notifications/webex/{date?}');
+
+
+Route::prefix('{tenant}')->middleware('tenant')->group(function () {
+    Route::get('/', [MenuController::class, 'menu'])
+        ->name('tenant.home');
+
+    Route::get('/dashboard/{date?}', [MenuController::class, 'dashboard'])
+        ->name('dashboard');
+
+    Route::get('/menus/{date?}', [MenuController::class, 'menu'])
+        ->name('menus');
+
+    Route::get('/notifications/{date?}', [MenuController::class, 'notifications'])
+        ->name('notifications');
+
+    Route::get('/notifications/webex/{day}', [MenuController::class, 'webexMenu'])
+        ->name('notifications.webex.day');
+
+    # admin route group with prefix
+    Route::prefix('/admin')->middleware(['auth', 'verified', 'role:Super Admin'])->group(function () {
         Route::get('/menus/{date?}', [AdminController::class, 'menu'])
             ->name('admin.menu');
 

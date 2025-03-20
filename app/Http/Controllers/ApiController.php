@@ -3,25 +3,33 @@
 namespace App\Http\Controllers;
 
 use App\Models\Menu;
+use App\Models\Tenant;
 use App\Services\DayService;
 
 class ApiController extends Controller
 {
     public function home()
     {
-        return [
-            'today' => route('api.today'),
-            'day' => route('api.day', date('Y-m-d')),
-        ];
+        $tenants = Tenant::where('is_active', true)->get();
+        $routes = [];
+        
+        foreach ($tenants as $tenant) {
+            $routes[$tenant->slug] = [
+                'today' => route('api.today', ['tenant' => $tenant->slug]),
+                'day' => route('api.day', ['tenant' => $tenant->slug, 'day' => date('Y-m-d')]),
+            ];
+        }
+
+        return $routes;
     }
 
-    public function today(DayService $dayService)
+    public function today(DayService $dayService, $tenant)
     {
-        return $this->day($dayService, date('Y-m-d'));
+        return $this->day($dayService,  $tenant, date('Y-m-d'));
     }
 
-    public function day(DayService $dayService, $dateString)
+    public function day(DayService $dayService, $tenant, $dateString)
     {
-        return $dayService->getDay($dateString);
+        return $dayService->getDay($tenant, $dateString);
     }
 }

@@ -21,6 +21,7 @@
                     taggable
                     class="admin-dishes-input-dish block w-full border px-2 py-1 border-gray-200 shadow-xs rounded-md text-sm leading-none focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-400"
                     :options="filteredDishes"
+                    placeholder="Rechercher un plat"
                     label="label"
                     @search="search">
                     <template v-slot:no-options>
@@ -32,7 +33,6 @@
                     <div class="block w-full">
                         <v-select
                             v-model="inputDishesTags[index]"
-                            taggable
                             multiple
                             class="admin-dishes-input-dish-tag block w-full border px-0.5 py-0.5 border-gray-100 shadow-xs rounded-md text-xs text-[10px] leading-none focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-400"
                             :options="filteredDishesTags"

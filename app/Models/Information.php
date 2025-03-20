@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Information extends Model
 {
@@ -18,6 +19,7 @@ class Information extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'tenant_id',
         'date',
         'event_name',
         'information',
@@ -57,5 +59,10 @@ class Information extends Model
     public function getInformationHtmlAttribute()
     {
         return nl2br(e($this->information), false);
+    }
+
+    public function tenant(): BelongsTo
+    {
+        return $this->belongsTo(Tenant::class);
     }
 } 

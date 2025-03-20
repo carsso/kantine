@@ -68,6 +68,7 @@ class Kernel extends HttpKernel
         'restrict.ip' => \App\Http\Middleware\RestrictIpAddressMiddleware::class,
         'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
         'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
-        'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,    
+        'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
+        'tenant' => \App\Http\Middleware\ValidateTenant::class,
     ];
 }

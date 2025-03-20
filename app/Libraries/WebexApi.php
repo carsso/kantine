@@ -5,16 +5,21 @@ namespace App\Libraries;
 use App\Libraries\WebexApiClient;
 use GuzzleHttp\Client as GuzzleClient;
 use Psr\Http\Message\ResponseInterface;
+use App\Models\Tenant;
 
 class WebexApi
 {
     public $client;
 
-    public function __construct()
+    public function __construct(?Tenant $tenant = null)
     {
+        if (!$tenant || !$tenant->webex_bearer_token) {
+            throw new \Exception('Webex configuration not found for tenant');
+        }
+
         $this->client = new WebexApiClient(
             new GuzzleClient(),
-            config('services.webex.bearer_token'),
+            $tenant->webex_bearer_token,
         );
     }
 

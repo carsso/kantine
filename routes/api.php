@@ -15,15 +15,20 @@ use App\Http\Controllers\ApiController;
 |
 */
 
-Route::get('/', [ApiController::class, 'home'])
-    ->name('api.home');
-
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/day/{day}', [ApiController::class, 'day'])
-    ->name('api.day');
+Route::redirect('/', '/api/roubaix');
+Route::redirect('/today', '/api/roubaix/today');
+Route::redirect('/day/{date}', '/api/roubaix/day/{date}');
 
-Route::get('/today', [ApiController::class, 'today'])
-    ->name('api.today');
+Route::prefix('{tenant}')->middleware('tenant')->group(function () {
+    Route::get('/', [ApiController::class, 'home'])
+        ->name('api.home');
+    Route::get('/day/{day}', [ApiController::class, 'day'])
+        ->name('api.day');
+
+    Route::get('/today', [ApiController::class, 'today'])
+        ->name('api.today');
+});

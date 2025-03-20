@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Dish;
 use App\Models\Information;
+use App\Models\Tenant;
 use Carbon\Carbon;
 
 class DayService
@@ -11,10 +12,11 @@ class DayService
     /**
      * Get information for the specified day
      *
+     * @param Tenant $tenant
      * @param string|Carbon $date
      * @return array
      */
-    public function getDay($dateString = null)
+    public function getDay(Tenant $tenant, $dateString = null)
     {
         $date = strtotime('today 10 am');
         if(preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateString)) {
@@ -22,10 +24,14 @@ class DayService
         }
 
         // Get information for the day
-        $information = Information::where('date', date('Y-m-d', $date))->first();
+        $information = Information::where('tenant_id', $tenant->id)
+            ->where('date', date('Y-m-d', $date))
+            ->first();
 
         // Get all dishes for the day
-        $dishes = Dish::where('date', date('Y-m-d', $date))->get();
+        $dishes = Dish::where('tenant_id', $tenant->id)
+            ->where('date', date('Y-m-d', $date))
+            ->get();
 
         // Organize dishes by category name and sort by sort_order
         $groupedDishes = $dishes->groupBy(function($dish) {
@@ -49,6 +55,7 @@ class DayService
             'date_carbon' => Carbon::parse($date),
             'dishes' => $groupedDishes,
             'information' => ($information && ($information->event_name || $information->information || $information->style)) ? $information : null,
+            'tenant' => $tenant,
         ];
         $result['is_fries_day'] = $dishes->contains(function($dish) {
             return str_contains($dish->name, 'Frites');
@@ -65,22 +72,26 @@ class DayService
             }
             return false;
         });
-        $result['next_fries_day'] = Dish::where('date', '>', date('Y-m-d', $date))
+        $result['next_fries_day'] = Dish::where('tenant_id', $tenant->id)
+            ->where('date', '>', date('Y-m-d', $date))
             ->where('name', 'like', '%Frites%')
             ->orderBy('date', 'asc')
             ->first();
-        $result['next_burgers_day'] = Dish::where('date', '>', date('Y-m-d', $date))
+        $result['next_burgers_day'] = Dish::where('tenant_id', $tenant->id)
+            ->where('date', '>', date('Y-m-d', $date))
             ->where('name', 'like', '%Burger%')
             ->orderBy('date', 'asc')
             ->first();
-        $result['next_antioxidants_day'] = Dish::where('date', '>', date('Y-m-d', $date))
+        $result['next_antioxidants_day'] = Dish::where('tenant_id', $tenant->id)
+            ->where('date', '>', date('Y-m-d', $date))
             ->where(function($query) {
                 $query->where('name', 'like', '%Haricots rouges%')
                       ->orWhere('name', 'like', '%Lentilles%');
             })
             ->orderBy('date', 'asc')
             ->first();
-        $result['next_event'] = Information::where('date', '>', date('Y-m-d', $date))
+        $result['next_event'] = Information::where('tenant_id', $tenant->id)
+            ->where('date', '>', date('Y-m-d', $date))
             ->where('event_name', '!=', null)
             ->where('event_name', '!=', '')
             ->orderBy('date', 'asc')

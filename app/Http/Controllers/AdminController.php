@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use App\Jobs\ProcessWebexMenuNotification;
 use App\Models\Menu;
+use Illuminate\Http\Request;
+use App\Models\Tenant;
 
 class AdminController extends Controller
 {
@@ -23,9 +25,43 @@ class AdminController extends Controller
 
     public function index()
     {
-        return view('admin.index');
+        $tenants = Tenant::all();
+        return view('admin.index', ['tenants' => $tenants]);
     }
-    public function menu(DayService $dayService, $dateString = null)
+
+    public function store(Request $request, $tenant)
+    {
+        $request->validate([
+            'date' => 'required|date',
+            'dishes' => 'required|array',
+            'dishes.*' => 'required|exists:dishes,id'
+        ]);
+
+        $date = Carbon::parse($request->date);
+        $dishes = Dish::whereIn('id', $request->dishes)
+            ->where('tenant_id', $tenant->id)
+            ->get();
+
+        foreach($dishes as $dish) {
+            $dish->date = $date;
+            $dish->save();
+        }
+
+        return redirect()->route('admin.index', ['tenant' => $tenant->slug, 'date' => $date->format('Y-m-d')])
+            ->with('success', 'Menu mis à jour avec succès');
+    }
+
+    public function destroy($tenant, $id)
+    {
+        $dish = Dish::where('tenant_id', $tenant->id)
+            ->findOrFail($id);
+        $dish->date = null;
+        $dish->save();
+
+        return redirect()->back()->with('success', 'Plat retiré du menu avec succès');
+    }
+
+    public function menu(DayService $dayService, $tenant, $dateString = null)
     {
         $dateToday = strtotime('today 10 am');
         $date = $dateToday;
@@ -35,7 +71,10 @@ class AdminController extends Controller
         if(preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateString)) {
             $date = strtotime($dateString.' 10 am');
         }
-        $dish = Dish::where('date', '>=', date('Y-m-d', $date))->orderBy('date', 'asc')->first();
+        $dish = Dish::where('tenant_id', $tenant->id)
+            ->where('date', '>=', date('Y-m-d', $date))
+            ->orderBy('date', 'asc')
+            ->first();
         if($dish) {
             $date = strtotime($dish->date.' 10 am');
         }
@@ -45,17 +84,26 @@ class AdminController extends Controller
         $calendarWeekLastDay = date('Y-m-d', $fridayTime);
         $menus = [];
         for($date = Carbon::parse($calendarWeekFirstDay); $date->lte(Carbon::parse($calendarWeekLastDay)); $date->addDay()) {
-            $menu = $dayService->getDay($date->format('Y-m-d'));
+            $menu = $dayService->getDay($tenant, $date->format('Y-m-d'));
             $menus[$date->format('Y-m-d')] = $menu;
         }
         $prevWeek = date('Y-m-d', strtotime('-1 week', $mondayTime));
         $nextWeek = date('Y-m-d', strtotime('+1 week', $mondayTime));
-        $autocompleteDishes = Dish::orderBy('id', 'desc')->limit(300)->get()->pluck('name')->unique()->sort()->values()->toArray();
+        $autocompleteDishes = Dish::where('tenant_id', $tenant->id)
+            ->orderBy('id', 'desc')
+            ->limit(300)
+            ->get()
+            ->pluck('name')
+            ->unique()
+            ->sort()
+            ->values()
+            ->toArray();
         $autocompleteDishesTags = collect(Dish::getTagsTranslations(false))
             ->map(function($value, $key) {
                 return ['label' => $value, 'value' => $key];
             })->values()->all();
-        $categories = DishCategory::whereNull('parent_id')
+        $categories = DishCategory::where('tenant_id', $tenant->id)
+            ->whereNull('parent_id')
             ->with(['children' => function($query) {
                 $query->orderBy('sort_order');
             }])
@@ -63,10 +111,10 @@ class AdminController extends Controller
             ->get()
             ->groupBy('type');
 
-        return view('admin.menu', ['menus' => $menus, 'categories' => $categories, 'weekMonday' => Carbon::parse($mondayTime), 'autocompleteDishes' => $autocompleteDishes, 'autocompleteDishesTags' => $autocompleteDishesTags, 'week' => $calendarWeekFirstDay, 'prevWeek' => $prevWeek, 'nextWeek' => $nextWeek]);
+        return view('admin.menu', ['tenant' => $tenant, 'menus' => $menus, 'categories' => $categories, 'weekMonday' => Carbon::parse($mondayTime), 'autocompleteDishes' => $autocompleteDishes, 'autocompleteDishesTags' => $autocompleteDishesTags, 'week' => $calendarWeekFirstDay, 'prevWeek' => $prevWeek, 'nextWeek' => $nextWeek]);
     }
 
-    public function updateMenu(DayService $dayService, UpdateMenuFormRequest $request)
+    public function updateMenu(DayService $dayService, UpdateMenuFormRequest $request, $tenant)
     {
         $validated = $request->validated();
         if($validated['date'] && count($validated['date']) > 0) {
@@ -84,20 +132,21 @@ class AdminController extends Controller
                 $dishIds = [];
                 foreach ($categories as $categoryId => $dishes) {
                     foreach($dishes as $idx => $dish) {
+                        $tags = $validated['dishes_tags'][$date][$categoryId][$idx] ?? '';
+                        $tags = $tags ? explode(',', $tags) : [];
                         $dish = Dish::firstOrCreate([
                             'date' => $date,
                             'dishes_category_id' => $categoryId,
                             'name' => $dish,
+                            'tenant_id' => $tenant->id,
+                            'tags' => $tags,
                         ]);
-                        $tags = $validated['dishes_tags'][$date][$categoryId][$idx] ?? '';
-                        $tags = $tags ? explode(',', $tags) : [];
-                        $dish->tags = $tags;
-                        $dish->save();
                         $dishIds[] = $dish->id;
                     }
                 }
-                Dish::where('date', $date)
-                    ->whereNotIn('id', values: $dishIds)
+                Dish::where('tenant_id', $tenant->id)
+                    ->where('date', $date)
+                    ->whereNotIn('id', $dishIds)
                     ->delete();
             }
             $fields = ['event_name', 'information', 'style'];
@@ -106,6 +155,7 @@ class AdminController extends Controller
                     foreach ($validated[$field] as $date => $value) {
                         $information = Information::firstOrCreate([
                             'date' => $date,
+                            'tenant_id' => $tenant->id,
                         ]);
                         $information->$field = $value;
                         $information->save();
@@ -113,7 +163,7 @@ class AdminController extends Controller
                 }
             }
             foreach ($validated['date'] as $date) {
-                $menu = $dayService->getDay($date);
+                $menu = $dayService->getDay($tenant, $date);
                 if($menu) {
                     try {
                         MenuUpdatedEvent::dispatch($menu);
@@ -124,18 +174,18 @@ class AdminController extends Controller
             }
             return $this->redirectWithSuccess(
                 'Menus mis à jour',
-                redirect()->route('admin.menu', ['date' => $date])
+                redirect()->route('admin.menu', ['tenant' => $tenant->slug, 'date' => $date])
             );
         }
         return $this->backWithError('Rien à mettre à jour');
-   }
+    }
 
-    public function webex()
+    public function webex($tenant)
     {
-        if(!config('services.webex.bearer_token')) {
-            throw new HttpException(500, 'Webex bearer token not set', null, []);
+        if (!$tenant->webex_bearer_token) {
+            throw new HttpException(403, 'Webex configuration not found for tenant', null, []);
         }
-        $api = new WebexApi;
+        $api = new WebexApi($tenant);
         $rooms = [];
         $webexRooms = $api->getRooms();
         foreach($webexRooms['items'] as $room) {
@@ -143,30 +193,31 @@ class AdminController extends Controller
             $room['messages'] = $api->getMessages($room['id'], 3)['items'];
             $rooms[] = $room;
         }
-        return view('admin.webex', ['rooms' => $rooms]);
+        return view('admin.webex', ['rooms' => $rooms, 'tenant' => $tenant]);
     }
 
-    public function webexNotify(DayService $dayService)
+    public function webexNotify(DayService $dayService, $tenant)
     {
+        if (!$tenant->webex_bearer_token) {
+            Log::info('Webex configuration not found for tenant, aborting');
+            return $this->redirectWithError('Configuration Webex non trouvée', redirect()->route('admin.webex', ['tenant' => $tenant->slug]));
+        }
+
         $date = date('Y-m-d');
         Log::info('Sending Webex notifications for menu of ' . $date . ' to all rooms');
-        $menu = $dayService->getDay($date);
+        $menu = $dayService->getDay($tenant, $date);
 
-        if(!config('services.webex.bearer_token')) {
-            Log::info('Webex bearer token not set, aborting');
-            return $this->redirectWithError('Token Webex non configuré', redirect()->route('admin'));
-        }
         if(!$menu) {
             Log::info('No menu for date '.$date.', aborting');
-            return $this->redirectWithError('Aucun menu pour le '.$date, redirect()->route('admin'));
+            return $this->redirectWithError('Aucun menu pour le '.$date, redirect()->route('admin.webex', ['tenant' => $tenant->slug]));
         }
-        $api = new WebexApi;
+        $api = new WebexApi($tenant);
         Log::info('Listing Webex rooms');
         $rooms = $api->getRooms();
         foreach($rooms['items'] as $room) {
             Log::info('Adding Webex room notification task to room ' . $room['title'] .' ' . $room['id']);
-            ProcessWebexMenuNotification::dispatch($room, $menu, $date, true);
+            ProcessWebexMenuNotification::dispatch($tenant, $room, $menu, $date, true);
         }
-        return $this->redirectWithSuccess('Notifications Webex envoyées', redirect()->route('admin'));
+        return $this->redirectWithSuccess('La mise à jour du menu va être envoyée à tous les canaux Webex. Cela peut prendre quelques instants.', redirect()->route('admin.webex', ['tenant' => $tenant->slug]));
     }
 }

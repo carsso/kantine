@@ -19,6 +19,7 @@ class Dish extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'tenant_id',
         'date',
         'name',
         'tags',
@@ -74,5 +75,10 @@ class Dish extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(DishCategory::class, 'dishes_category_id');
+    }
+
+    public function tenant(): BelongsTo
+    {
+        return $this->belongsTo(Tenant::class);
     }
 }
