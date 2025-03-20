@@ -132,6 +132,8 @@ class ApiAdminController extends Controller
                             'tenant_id' => $tenant->id,
                             'tags' => $dish['tags'] ?? [],
                         ]);
+                        $createdDish->tags = $dish['tags'] ?? [];
+                        $createdDish->save();
                         $dishIds[] = $createdDish->id;
                     }
                 }
