@@ -15,9 +15,9 @@ class UpdateMenuApiRequest extends FormRequest
     {
         return [
             'dishes' => 'required|array',
-            'dishes.*' => 'required|array',
-            'dishes.*.*' => 'required|array',
-            'dishes.*.*.*' => 'required|array',
+            'dishes.*' => 'nullable|array',
+            'dishes.*.*' => 'nullable|array',
+            'dishes.*.*.*' => 'nullable|array',
             'dishes.*.*.*.*.name' => 'required|string',
             'dishes.*.*.*.*.tags' => 'nullable|array',
             'dishes.*.*.*.*.tags.*' => 'string',
