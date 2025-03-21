@@ -68,7 +68,15 @@
                     @php
                         $j++;
                     @endphp
+                    @if(!isset($menu['dishes'][$type][$rootCategory->name_slug]) && $rootCategory->hidden)
+                        @continue
+                    @endif
                     {{ $rootCategory->name }}
+                    @if($rootCategory->hidden_from_dashboard)
+                        <i class="text-xs">
+                            (Non visible sur le dashboard)
+                        </i>
+                    @endif
                     <div class="ml-1 border-l-2 {{ ['border-[#A6D64D]', 'border-[#FFD124]', 'border-[#4AB0F5]', 'border-[#ED733D]'][$j % 4] }} pl-1">
                         @foreach($rootCategory->children as $category)
                             @php
@@ -81,7 +89,14 @@
                             @if($dishes || !$category->hidden)
                                 <div class="ml-1">
                                     @if($category->name != $rootCategory->name)
-                                        <label for="{{ $inputName }}" class="block font-semibold">{{ $category->name }} :</label>
+                                        <label for="{{ $inputName }}" class="block font-semibold">
+                                            {{ $category->name }} 
+                                            @if($category->hidden_from_dashboard)
+                                                <i class="text-xs">
+                                                    (Non visible sur le dashboard)
+                                                </i>
+                                            @endif
+                                        </label>
                                     @endif
                                     <admin-dishes-input
                                         name="{{ $inputName }}"

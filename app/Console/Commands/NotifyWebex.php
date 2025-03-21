@@ -16,7 +16,7 @@ class NotifyWebex extends Command
      *
      * @var string
      */
-    protected $signature = 'kantine:notify-webex {tenant_slug}';
+    protected $signature = 'kantine:notify-webex {tenant_slug?}';
 
     /**
      * The console command description.
@@ -32,34 +32,38 @@ class NotifyWebex extends Command
      */
     public function handle(DayService $dayService)
     {
-        $tenant = Tenant::where('slug', $this->argument('tenant_slug'))->first();
-        if(!$tenant) {
-            $this->error('Tenant not found');
-            return 1;
+        if($this->argument('tenant_slug')) {
+            $tenants = Tenant::where('slug', $this->argument('tenant_slug'))->where('is_active', true)->get();
+        } else {
+            $tenants = Tenant::where('is_active', true)->get();
         }
         $date = date('Y-m-d');
-        $this->info('Sending Webex notifications for menu of ' . $date . ' to all rooms for tenant ' . $tenant->name);
-        $menu = $dayService->getDay($tenant, $date);
+        foreach($tenants as $tenant) {
+            $this->info('--------------------------------');
+            $this->info('Sending Webex notifications for menu of ' . $date . ' to all rooms for tenant ' . $tenant->name);
+            $menu = $dayService->getDay($tenant, $date);
 
-        if(!$tenant->webex_bearer_token) {
-            $this->info('Webex bearer token not set, aborting');
-            return 0;
+            if(!$tenant->webex_bearer_token) {
+                $this->info('Webex bearer token not set for tenant ' . $tenant->name . ', skipping');
+                continue;
+            }
+            if(!$menu) {
+                $this->info('No menu for date '.$date.' for tenant '.$tenant->name.', skipping');
+                continue;
+            }
+            if(!$menu['dishes'] || count($menu['dishes']) == 0) {
+                $this->info('No dishes for date '.$date.' for tenant '.$tenant->name.', skipping');
+                continue;
+            }
+            $api = new WebexApi($tenant);
+            $this->info('Listing Webex rooms for tenant ' . $tenant->name);
+            $rooms = $api->getRooms();
+            foreach($rooms['items'] as $room) {
+                $this->info('Adding Webex room notification task to room ' . $room['title'] .' ' . $room['id']);
+                ProcessWebexMenuNotification::dispatch($tenant, $room, $menu, $date);
+            }
         }
-        if(!$menu) {
-            $this->info('No menu for date '.$date.', aborting');
-            return 0;
-        }
-        if(!$menu['dishes'] || count($menu['dishes']) == 0) {
-            $this->info('No dishes for date '.$date.', aborting');
-            return 0;
-        }
-        $api = new WebexApi($tenant);
-        $this->info('Listing Webex rooms');
-        $rooms = $api->getRooms();
-        foreach($rooms['items'] as $room) {
-            $this->info('Adding Webex room notification task to room ' . $room['title'] .' ' . $room['id']);
-            ProcessWebexMenuNotification::dispatch($tenant, $room, $menu, $date);
-        }
+        $this->info('--------------------------------');
         return 0;
     }
 }

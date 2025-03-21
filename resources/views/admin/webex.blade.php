@@ -8,7 +8,7 @@
         <p class="mb-4">
             Le BOT Webex de cette cantine est <i>{{ $tenant->webex_bot_name }}</i>.<br />
             Sur cette page, vous retrouverez les derniers messages envoyés par le BOT Webex sur les différentes canaux dans lesquels il a été invité.<br />
-            Le menu est envoyé automatiquement chaque matin à 10:30.<br />
+            Le menu est envoyé automatiquement chaque matin à 9:30.<br />
             Vous pouvez envoyer une mise à jour du menu sur Webex immédiatement en cliquant sur le bouton ci-dessous.
         </p>
         <form action="{{ route('admin.webex.notify', ['tenantSlug' => $tenant->slug]) }}" method="POST">

@@ -47,11 +47,17 @@
                                 @endphp
                                 @foreach($categories as $type => $rootCategories)
                                     @foreach($rootCategories as $rootCategory)
+                                        @if($rootCategory->hidden_from_dashboard)
+                                            @continue
+                                        @endif
                                         @php
                                             $i = 0;
                                             $has_dishes = false;
                                         @endphp
                                         @foreach($rootCategory->children as $category)
+                                            @if($category->hidden_from_dashboard)
+                                                @continue
+                                            @endif
                                             @php
                                                 $dishes = $menu['dishes'][$type][$rootCategory->name_slug][$category->name_slug] ?? [];
                                             @endphp
@@ -66,12 +72,12 @@
                                                                 $dish = $dishes[0];
                                                             @endphp
                                                             @if(strtolower($dishes[0]['name']) == strtolower($category->name))
-                                                                <div class="font-bold text-6xl mb-2 text-[{{ $rootCategory->color }}]">
+                                                                <div class="font-bold text-5xl mb-2 text-[{{ $rootCategory->color }}]">
                                                                     <i class="fa-thin {{ $rootCategory->icon }}"></i> {{ $rootCategory->name }}
                                                                 </div>
                                                             @else
                                                                 <div>
-                                                                    <span class="font-bold text-6xl mb-2 text-[{{ $rootCategory->color }}]">
+                                                                    <span class="font-bold text-5xl mb-2 text-[{{ $rootCategory->color }}]">
                                                                         <i class="fa-thin {{ $rootCategory->icon }}"></i> {{ $rootCategory->name }} :
                                                                     </span>
                                                                     {{ $dish['name'] }}
@@ -84,7 +90,7 @@
                                                             @endif
                                                         @else
                                                             @if(!$i)
-                                                                <div class="font-bold text-6xl mb-2 text-[{{ $rootCategory->color }}]">
+                                                                <div class="font-bold text-5xl mb-2 text-[{{ $rootCategory->color }}]">
                                                                     <i class="fa-thin {{ $rootCategory->icon }}"></i> {{ $rootCategory->name }} :
                                                                 </div>
                                                             @else

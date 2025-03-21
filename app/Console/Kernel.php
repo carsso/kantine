@@ -17,7 +17,7 @@ class Kernel extends ConsoleKernel
         foreach($tenants as $tenant) {
             if($tenant->webex_bearer_token) {
                 $schedule->command('kantine:notify-webex', ['tenant_slug' => $tenant->slug])
-                    ->weekdays()->at('10:30');
+                    ->weekdays()->at('9:30');
             }
 
             $schedule->command('kantine:refresh-dashboard', ['tenant_slug' => $tenant->slug])

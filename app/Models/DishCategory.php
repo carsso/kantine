@@ -35,6 +35,7 @@ class DishCategory extends Model
         'color',
         'icon',
         'emoji',
+        'hidden_from_dashboard',
         'parent_id',
         'sort_order',
     ];
@@ -53,7 +54,7 @@ class DishCategory extends Model
      *
      * @var array
      */
-    protected $hidden = ['id', 'created_at', 'updated_at', 'tenant_id', 'parent_id', 'sort_order', 'hidden'];
+    protected $hidden = ['id', 'created_at', 'updated_at', 'tenant_id', 'parent_id', 'sort_order', 'hidden', 'hidden_from_dashboard'];
 
     /**
      * The attributes that should be appended to arrays.

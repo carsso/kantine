@@ -18,7 +18,7 @@
             <div class="m-auto lg:w-2/3">
                 <div class="bg-gray-800 text-white rounded-lg shadow-sm m-8 p-8 text-left text-sm mt-6">
                     <div class="text-gray-400 text-xs mb-1">
-                        {{ config('app.name') }} - {{ $tenant->name }} 10:30
+                        {{ config('app.name') }} - {{ $tenant->name }} 9:30
                     </div>
                     <div class="border-l-4 border-[#147DE8] pl-2">
                         @include('webex.menu', ['tenant' => $tenant, 'menu' => $menu, 'date' => $date, 'hideMention' => true, 'categories' => $categories])
