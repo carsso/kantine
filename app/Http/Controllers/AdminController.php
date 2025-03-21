@@ -111,6 +111,8 @@ class AdminController extends Controller
                             'tenant_id' => $tenant->id,
                             'tags' => $tags,
                         ]);
+                        $dish->tags = $tags;
+                        $dish->save();
                         $dishIds[] = $dish->id;
                     }
                 }
