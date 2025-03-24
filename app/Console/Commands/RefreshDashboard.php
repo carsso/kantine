@@ -16,7 +16,7 @@ class RefreshDashboard extends Command
      *
      * @var string
      */
-    protected $signature = 'kantine:refresh-dashboard {tenant_slug} {date?}';
+    protected $signature = 'kantine:refresh-dashboard';
 
     /**
      * The console command description.
@@ -32,23 +32,8 @@ class RefreshDashboard extends Command
      */
     public function handle(DayService $dayService)
     {
-        if($date = $this->argument('date')) {
-            $tenant = Tenant::where('slug', $this->argument('tenant_slug'))->first();
-            if(!$tenant) {
-                $this->error('Tenant not found');
-                return 1;
-            }
-            $menu = $dayService->getDay($tenant, $date);
-            if(!$menu) {
-                $this->error('Menu not found for date: ' . $date);
-                return 1;
-            }
-            MenuUpdatedEvent::dispatch($menu);
-            $this->info('Menu updated for date: ' . $date . ' for tenant ' . $tenant->name);
-        } else {
-            DashboardRefreshEvent::dispatch();
-            $this->info('Dashboard refreshed');
-        }
+        DashboardRefreshEvent::dispatch();
+        $this->info('Dashboard refreshed');
         return 0;
     }
 }

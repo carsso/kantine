@@ -13,17 +13,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        $tenants = Tenant::where('is_active', true)->get();
-        foreach($tenants as $tenant) {
-            if($tenant->webex_bearer_token) {
-                $schedule->command('kantine:notify-webex', ['tenant_slug' => $tenant->slug])
-                    ->weekdays()->at('9:30');
-            }
+        $schedule->command('kantine:notify-webex')
+            ->weekdays()->at('9:30');
 
-            $schedule->command('kantine:refresh-dashboard', ['tenant_slug' => $tenant->slug])
-                ->dailyAt('00:30')
-                ->dailyAt('15:30');
-        }
+        $schedule->command('kantine:refresh-dashboard')
+            ->dailyAt('00:30')
+            ->dailyAt('15:30');
     }
 
     /**
