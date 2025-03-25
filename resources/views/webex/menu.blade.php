@@ -113,7 +113,7 @@
         <a href="{{ route('menus', ['tenantSlug' => $tenant->slug, 'date' => $menu['date']]) }}">{{ route('menus', ['tenantSlug' => $tenant->slug, 'date' => $menu['date']]) }}</a>
 
         @if(!isset($hideMention) || !$hideMention)
-            <@personEmail:{{ config('services.webex.bot_name') }}| >
+            <@personEmail:{{ $tenant->webex_bot_name }}| >
         @endif
     </blockquote>
 @endspaceless
