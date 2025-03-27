@@ -38,6 +38,7 @@ class DishCategory extends Model
         'hidden_from_dashboard',
         'parent_id',
         'sort_order',
+        'meta',
     ];
 
     /**
@@ -54,7 +55,7 @@ class DishCategory extends Model
      *
      * @var array
      */
-    protected $hidden = ['id', 'created_at', 'updated_at', 'tenant_id', 'parent_id', 'sort_order', 'hidden', 'hidden_from_dashboard'];
+    protected $hidden = ['id', 'created_at', 'updated_at', 'tenant_id', 'parent_id', 'sort_order', 'hidden', 'hidden_from_dashboard', 'meta'];
 
     /**
      * The attributes that should be appended to arrays.

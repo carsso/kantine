@@ -27,6 +27,7 @@ class Tenant extends Model
         'id',
         'created_at',
         'updated_at',
+        'meta',
     ];
 
     protected $casts = [
