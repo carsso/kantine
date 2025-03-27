@@ -111,6 +111,6 @@ class ProcessWebexMenuNotification implements ShouldQueue, ShouldBeUnique
 
     public function uniqueId(): string
     {
-        return $this->tenant->id;
+        return $this->tenant->id. ' - ' . $this->room['id'];
     }
 }
