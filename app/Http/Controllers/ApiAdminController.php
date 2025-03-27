@@ -33,7 +33,6 @@ class ApiAdminController extends Controller
 
     public function updateMenuApi(UpdateMenuApiRequest $request, DayService $dayService)
     {
-        $user = $request->user();
         $tenant = $request->route('tenant');
         $date = $request->route('date');
 

@@ -1,0 +1,424 @@
+<?php
+
+namespace App\Lib;
+
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Config;
+use App\Models\Tenant;
+use App\Models\DishCategory;
+use App\Models\Dish;
+use App\Models\Information;
+use App\Services\DayService;
+use App\Events\MenuUpdatedEvent;
+
+class ApiRestaurationClient
+{
+    private Tenant $tenant;
+    private string $baseUrl;
+    private array $headers;
+
+    public function __construct(Tenant $tenant)
+    {
+        if(!$tenant->meta['api_url']) {
+            throw new \Exception('Tenant '.$tenant->slug.' has no API URL');
+        }
+        if(!$tenant->meta['api_type']) {
+            throw new \Exception('Tenant '.$tenant->slug.' has no API Type');
+        }
+        if($tenant->meta['api_type'] !== 'api-restauration') {
+            throw new \Exception('Tenant '.$tenant->slug.' has an invalid API Type');
+        }
+        $this->tenant = $tenant;
+        $this->baseUrl = rtrim($tenant->meta['api_url'], '/');
+        $this->headers = [
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json',
+            'Referer' => Config::get('app.name', 'Kantine'),
+        ];
+    }
+
+    public function compareMenus(array $apiMenus = null)
+    {
+        if(!$apiMenus) {
+            throw new \Exception('No menus provided');
+        }
+        $currentMenus = [];
+        foreach($apiMenus as $date => $apiMenu) {
+            $currentMenu = app(DayService::class)->getDay($this->tenant, $date);
+            if(!$currentMenu) { 
+                $currentMenus[$date] = $apiMenu;
+            } else {
+                foreach($apiMenu['dishes'] as $dishType => $rootCategories) {
+                    foreach($rootCategories as $rootCategorySlug => $subCategories) {
+                        foreach($subCategories as $subCategorySlug => $dishes) {
+                            $apiDishes = $dishes;
+                            $currentDishes = isset($currentMenu['dishes'][$dishType][$rootCategorySlug][$subCategorySlug]) ? $currentMenu['dishes'][$dishType][$rootCategorySlug][$subCategorySlug]->toArray() : [];
+                            usort($apiDishes, function($a, $b) {
+                                if ($a['name'] !== $b['name']) {
+                                    return strcmp($a['name'], $b['name']);
+                                }
+                                return strcmp(implode(',', $a['tags']), implode(',', $b['tags']));
+                            });
+                            usort($currentDishes, function($a, $b) {
+                                if ($a['name'] !== $b['name']) {
+                                    return strcmp($a['name'], $b['name']);
+                                }
+                                return strcmp(implode(',', $a['tags']), implode(',', $b['tags']));
+                            });
+                            foreach($apiDishes as $dishIdx => $apiDish) {
+                                $currentDish = $currentDishes[$dishIdx] ?? null;
+                                if(!$currentDish || $currentDish['name'] !== $apiDish['name'] || $currentDish['tags'] !== $apiDish['tags']) {
+                                    $apiDish['_inconsistency_from'] = 'API';
+                                    $apiDish['_inconsistency_other'] = $currentDish;
+                                    $currentMenus[$date]['dishes'][$dishType][$rootCategorySlug][$subCategorySlug][$dishIdx] = $apiDish;
+                                }
+                            }
+                        }
+                    }
+                }
+                foreach($currentMenu['dishes'] as $dishType => $rootCategories) {
+                    foreach($rootCategories as $rootCategorySlug => $subCategories) {
+                        foreach($subCategories as $subCategorySlug => $dishes) {
+                            $currentDishes = $dishes->toArray() ?? [];
+                            $apiDishes = $apiMenu['dishes'][$dishType][$rootCategorySlug][$subCategorySlug] ?? [];
+                            usort($currentDishes, function($a, $b) {
+                                if ($a['name'] !== $b['name']) {
+                                    return strcmp($a['name'], $b['name']);
+                                }
+                                return strcmp(implode(',', $a['tags']), implode(',', $b['tags']));
+                            });
+                            usort($apiDishes, function($a, $b) {
+                                if ($a['name'] !== $b['name']) {
+                                    return strcmp($a['name'], $b['name']);
+                                }
+                                return strcmp(implode(',', $a['tags']), implode(',', $b['tags']));
+                            });
+                            foreach($currentDishes as $dishIdx => $currentDish) {
+                                $apiDish = $apiDishes[$dishIdx] ?? null;
+                                if(!$apiDish || $apiDish['name'] !== $currentDish['name'] || $apiDish['tags'] !== $currentDish['tags']) {
+                                    $currentDish['_inconsistency_from'] = 'DB';
+                                    $currentDish['_inconsistency_other'] = $apiDish;
+                                    $currentMenus[$date]['dishes'][$dishType][$rootCategorySlug][$subCategorySlug][$dishIdx] = $currentDish;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $currentMenus;
+    }
+
+    public function updateMenus(array $menus = null)
+    {
+        if(!$menus) {
+            throw new \Exception('No menus provided');
+        }
+
+        $success = true;
+        foreach ($menus as $date => $menuData) {
+            // Validate date format
+            if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+                throw new \Exception('Format de date invalide : ' . $date);
+            }
+
+            // Load all categories and create hierarchical slug to id mapping
+            $categories = DishCategory::where('tenant_id', $this->tenant->id)
+                ->with('parent')
+                ->get();
+            $categorySlugToId = [];
+            foreach ($categories as $category) {
+                if ($category->parent_id) {
+                    $categorySlugToId[$category->parent->type . '.' . $category->parent->name_slug . '.' . $category->name_slug] = $category->id;
+                }
+            }
+            
+            // Validate all categories first
+            $invalidCategories = [];
+            foreach ($menuData['dishes'] as $dishType => $rootCategories) {
+                foreach ($rootCategories as $rootCategorySlug => $subCategories) {
+                    foreach ($subCategories as $subCategorySlug => $dishes) {
+                        $fullSlug = $dishType . '.' . $rootCategorySlug . '.' . $subCategorySlug;
+                        if (!isset($categorySlugToId[$fullSlug])) {
+                            $invalidCategories[] = $fullSlug;
+                        }
+                    }
+                }
+            }
+
+            if (!empty($invalidCategories)) {
+                throw new \Exception('Catégories invalides : ' . implode(', ', $invalidCategories) . '- Catégories valides : ' . implode(', ', array_keys($categorySlugToId)));
+            }
+
+            // Validate all tags
+            $allowedTags = array_keys(Dish::getTagsDefinitions());
+            $invalidTags = [];
+            foreach ($menuData['dishes'] as $dishType => $rootCategories) {
+                foreach ($rootCategories as $rootCategorySlug => $subCategories) {
+                    foreach ($subCategories as $subCategorySlug => $dishes) {
+                        foreach ($dishes as $dish) {
+                            if (isset($dish['tags']) && is_array($dish['tags'])) {
+                                foreach ($dish['tags'] as $tag) {
+                                    if (!in_array($tag, $allowedTags)) {
+                                        $invalidTags[] = $tag;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (!empty($invalidTags)) {
+                throw new \Exception('Tags invalides : ' . implode(', ', $invalidTags) . '- Tags valides : ' . implode(', ', $allowedTags));
+            }
+
+            $dishIds = [];
+            foreach ($menuData['dishes'] as $dishType => $rootCategories) {
+                foreach ($rootCategories as $rootCategorySlug => $subCategories) {
+                    foreach ($subCategories as $subCategorySlug => $dishes) {
+                        $fullSlug = $dishType . '.' . $rootCategorySlug . '.' . $subCategorySlug;
+                        foreach ($dishes as $dish) {
+                            if(!isset($categorySlugToId[$fullSlug])) {
+                                throw new \Exception('Catégorie invalide : ' . $fullSlug);
+                            }
+                            $createdDish = Dish::firstOrCreate([
+                                'date' => $date,
+                                'dishes_category_id' => $categorySlugToId[$fullSlug],
+                                'name' => $dish['name'],
+                                'tenant_id' => $this->tenant->id,
+                                'tags' => $dish['tags'] ?? [],
+                            ]);
+                            $createdDish->tags = $dish['tags'] ?? [];
+                            $createdDish->save();
+                            $dishIds[] = $createdDish->id;
+                        }
+                    }
+                }
+            }
+
+            // Delete dishes that are no longer present
+            Dish::where('tenant_id', $this->tenant->id)
+                ->where('date', $date)
+                ->whereNotIn('id', $dishIds)
+                ->delete();
+
+            // Trigger menu update event
+            $menu = app(DayService::class)->getDay($this->tenant, $date);
+            if ($menu) {
+                try {
+                    MenuUpdatedEvent::dispatch($menu);
+                } catch (\Exception $e) {
+                    Log::error($e);
+                }
+            }
+        }
+        return $success;
+    }
+
+    /**
+     * Récupère le menu depuis l'API
+     *
+     * @return array|null
+     */
+    public function getMenus(): ?array
+    {
+        try {
+            $response = Http::withHeaders($this->headers)
+                ->get($this->baseUrl);
+
+            if ($response->successful()) {
+                $apiMenus = $response->json();
+                return $this->mapMenus($apiMenus);
+            }
+
+            Log::error('Erreur lors de la récupération du menu', [
+                'status' => $response->status(),
+                'body' => $response->body()
+            ]);
+
+            return null;
+        } catch (\Exception $e) {
+            Log::error('Exception lors de la récupération du menu', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return null;
+        }
+    }
+
+    /**
+     * Transforme les données du menu de l'API vers notre format
+     *
+     * @param array $apiMenu
+     * @return array
+     */
+    private function mapMenus(array $apiMenu): array
+    {
+        $mappedMenu = [];
+        $today = date('Ymd');
+        
+        // Récupérer le mapping des feuilles vers les catégories et les plats statiques
+        $categoryMapping = $this->tenant->meta['api_category_mapping'] ?? [];
+        $staticDishes = $this->tenant->meta['api_static_dishes'] ?? [];
+        
+        // Première passe : collecter toutes les dates uniques et les plats disponibles tous les jours
+        $dates = [];
+        $dailyDishes = [];
+        $dailyAccompaniments = [];
+        
+        foreach ($apiMenu as $item) {
+            if ($item['periode'] === 'midi' && $item['rupture'] !== 'TRUE') {
+                $feuille = $item['feuille'] ?? null;
+                $categorySlug = $categoryMapping[$feuille] ?? $feuille;
+
+                if ($item['date'] === 'TRUE') {
+                    if ($item['accompagnement'] === 'TRUE') {
+                        $dailyAccompaniments[$categorySlug] = [
+                            'name' => implode(', ', array_filter([
+                                $item['nom'] ?? '',
+                                $item['info1'] ?? '',
+                                $item['info2'] ?? ''
+                            ])),
+                            'tags' => $this->mapNutritionalInfo($item)
+                        ];
+                    } else {
+                        $dailyDishes[$categorySlug] = [
+                            'name' => implode(', ', array_filter([
+                                $item['nom'] ?? '',
+                                $item['info1'] ?? '',
+                                $item['info2'] ?? ''
+                            ])),
+                            'tags' => $this->mapNutritionalInfo($item)
+                        ];
+                    }
+                } else {
+                    $dateUs = $item['dateUs'] ?? date('Ymd');
+                    if ($dateUs >= $today) {
+                        $formattedDate = date('Y-m-d', strtotime($dateUs));
+                        $dates[$formattedDate] = true;
+                    }
+                }
+            }
+        }
+
+        // Deuxième passe : pour chaque date, construire le menu avec les plats spécifiques et les plats quotidiens
+        foreach ($dates as $formattedDate => $_) {
+            $mappedMenu[$formattedDate] = [
+                'dishes' => [
+                    'mains' => []
+                ]
+            ];
+
+            // Ajouter les plats statiques
+            foreach ($staticDishes as $category => $items) {
+                $mappedMenu[$formattedDate]['dishes'][$category] = $items;
+            }
+
+            // Initialiser les pôles avec les plats quotidiens
+            foreach ($dailyDishes as $categorySlug => $dish) {
+                if (!isset($mappedMenu[$formattedDate]['dishes']['mains'][$categorySlug])) {
+                    $mappedMenu[$formattedDate]['dishes']['mains'][$categorySlug] = [
+                        'plats' => [],
+                        'garnitures' => []
+                    ];
+                }
+                $mappedMenu[$formattedDate]['dishes']['mains'][$categorySlug]['plats'][] = $dish;
+            }
+
+            // Ajouter les accompagnements quotidiens
+            foreach ($dailyAccompaniments as $categorySlug => $accompaniment) {
+                if (!isset($mappedMenu[$formattedDate]['dishes']['mains'][$categorySlug])) {
+                    $mappedMenu[$formattedDate]['dishes']['mains'][$categorySlug] = [
+                        'plats' => [],
+                        'garnitures' => []
+                    ];
+                }
+                $mappedMenu[$formattedDate]['dishes']['mains'][$categorySlug]['garnitures'][] = $accompaniment;
+            }
+
+            // Ajouter les plats spécifiques à cette date
+            foreach ($apiMenu as $item) {
+                if ($item['periode'] === 'midi' && 
+                    $item['date'] !== 'TRUE' && 
+                    $item['accompagnement'] !== 'TRUE' && 
+                    $item['rupture'] !== 'TRUE' &&
+                    date('Y-m-d', strtotime($item['dateUs'])) === $formattedDate) {
+                    
+                    $feuille = $item['feuille'] ?? null;
+                    $categorySlug = $categoryMapping[$feuille] ?? $feuille;
+                    
+                    if (!isset($mappedMenu[$formattedDate]['dishes']['mains'][$categorySlug])) {
+                        $mappedMenu[$formattedDate]['dishes']['mains'][$categorySlug] = [
+                            'plats' => [],
+                            'garnitures' => []
+                        ];
+                    }
+
+                    $mappedMenu[$formattedDate]['dishes']['mains'][$categorySlug]['plats'][] = [
+                        'name' => implode(', ', array_filter([
+                            $item['nom'] ?? '',
+                            $item['info1'] ?? '',
+                            $item['info2'] ?? ''
+                        ])),
+                        'tags' => $this->mapNutritionalInfo($item)
+                    ];
+                }
+            }
+        }
+
+        // Trier les dates
+        ksort($mappedMenu);
+
+        return $mappedMenu;
+    }
+
+    /**
+     * Mappe les informations nutritionnelles vers nos tags
+     *
+     * @param array $item
+     * @return array
+     */
+    private function mapNutritionalInfo(array $item): array
+    {
+        $tags = [];
+        
+        if ($item['vegetarien'] === 'TRUE') {
+            $tags[] = 'vegetarian';
+        }
+        if ($item['bio'] === 'TRUE') {
+            $tags[] = 'organic';
+        }
+        if ($item['local'] === 'TRUE') {
+            $tags[] = 'regional';
+        }
+        if ($item['saison'] === 'TRUE') {
+            $tags[] = 'seasonal';
+        }
+        if ($item['equitable'] === 'TRUE') {
+            $tags[] = 'equitable_trade';
+        }
+        if ($item['peche'] === 'TRUE') {
+            $tags[] = 'sustainable_fishing';
+        }
+        if ($item['france'] === 'TRUE') {
+            $tags[] = 'france';
+        }
+
+        // Vérification pour le tag halal
+        $searchText = strtolower(implode(' ', array_filter([
+            $item['nom'] ?? '',
+            $item['info1'] ?? '',
+            $item['info2'] ?? ''
+        ])));
+        
+        if (strpos($searchText, 'halal') !== false || strpos($searchText, 'hallal') !== false) {
+            $tags[] = 'halal';
+        }
+
+        return $tags;
+    }
+} 

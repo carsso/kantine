@@ -19,6 +19,7 @@ class Tenant extends Model
         'is_active',
         'webex_bearer_token',
         'webex_bot_name',
+        'meta',
     ];
 
     protected $hidden = [
@@ -30,6 +31,7 @@ class Tenant extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
+        'meta' => 'json',
     ];
 
     public function getSlugOptions(): SlugOptions

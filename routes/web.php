@@ -5,6 +5,7 @@ use App\Http\Controllers\MenuController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\DarkmodeController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\JobMonitorController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,6 +40,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::prefix('/admin')->middleware(['auth', 'verified', 'permission:admin'])->group(function () {
     Route::get('/', [AdminController::class, 'index'])
         ->name('admin');
+    Route::get('/jobs', [JobMonitorController::class, 'index'])
+        ->name('admin.jobs');
+    Route::get('/api/jobs', [JobMonitorController::class, 'getJobs']);
 });
 
 Route::redirect('/dashboard/{date?}', '/roubaix/dashboard/{date?}');

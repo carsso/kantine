@@ -75,6 +75,20 @@ class Dish extends Model
                 'emoji' => '🐟',
                 'color' => '#4AB0F5',
             ],
+            'sustainable_fishing' => [
+                'name' => 'Pêche durable',
+                'name_short' => 'Pêche durable',
+                'icon' => 'fa-fish-fins',
+                'emoji' => '🐟',
+                'color' => '#4AB0F5',
+            ],
+            'equitable_trade' => [
+                'name' => 'Commerce équitable',
+                'name_short' => 'Commerce éq.',
+                'icon' => 'fa-balance-scale',
+                'emoji' => '🌍',
+                'color' => '#147DE8',
+            ],
             'france' => [
                 'name' => 'Origine France',
                 'name_short' => 'Orig. France',
@@ -83,10 +97,24 @@ class Dish extends Model
                 'color' => '#147DE8',
             ],
             'regional' => [
-                'name' => 'Régional',
+                'name' => 'Local & régional',
                 'name_short' => 'Régional',
                 'icon' => 'fa-tractor',
                 'emoji' => '🚜',
+                'color' => '#FFD124',
+            ],
+            'organic' => [
+                'name' => 'Bio',
+                'name_short' => 'Bio',
+                'icon' => 'fa-leaf',
+                'emoji' => '🌿',
+                'color' => '#007e45',
+            ],
+            'seasonal' => [
+                'name' => 'Saison',
+                'name_short' => 'Saison',
+                'icon' => 'fa-calendar',
+                'emoji' => '🌼',
                 'color' => '#FFD124',
             ],
         ];

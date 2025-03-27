@@ -18,6 +18,9 @@ class Kernel extends ConsoleKernel
         $schedule->command('kantine:refresh-dashboard')
             ->dailyAt('00:30')
             ->dailyAt('15:30');
+
+        $schedule->command('kantine:check-menus-from-api')
+            ->everyTenMinutes();
     }
 
     /**

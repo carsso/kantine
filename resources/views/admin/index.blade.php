@@ -14,14 +14,13 @@
                         <p class="font-medium">{{ auth()->user()->name }}</p>
                         <p class="text-xs font-medium text-gray-500">{{ auth()->user()->email }}</p>
                     </div>
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST">
-                        @csrf
-                        <div class="mt-6">
-                            <button type="submit" class="rounded-md bg-red-600 dark:bg-red-800 px-2 py-0.5 text-xs leading-6 text-white shadow-xs hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
-                                {{ __('Logout') }}
-                            </button>
-                        </div>
-                    </form>
+                    <div class="mt-4">
+                        <a href="{{ route('admin.jobs') }}" 
+                        class="inline-flex items-center justify-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-gray-600 hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                            <i class="fa-solid fa-gears mr-2"></i>
+                            Monitoring des jobs
+                        </a>
+                    </div>
                 </div>
                 <div class="basis-3/4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
                     @foreach($tenants as $tenant)
