@@ -358,14 +358,18 @@ class ApiRestaurationClient
                         ];
                     }
 
-                    $mappedMenu[$formattedDate]['dishes']['mains'][$categorySlug]['plats'][] = [
-                        'name' => implode(', ', array_filter([
-                            $item['nom'] ?? '',
-                            $item['info1'] ?? '',
-                            $item['info2'] ?? ''
-                        ])),
-                        'tags' => $this->mapNutritionalInfo($item)
-                    ];
+                    $name = implode(', ', array_filter([
+                        $item['nom'] ?? '',
+                        $item['info1'] ?? '',
+                        $item['info2'] ?? ''
+                    ]));
+                    
+                    if (!empty($name)) {
+                        $mappedMenu[$formattedDate]['dishes']['mains'][$categorySlug]['plats'][] = [
+                            'name' => $name,
+                            'tags' => $this->mapNutritionalInfo($item)
+                        ];
+                    }
                 }
             }
         }
