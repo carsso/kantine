@@ -48,6 +48,7 @@ class DishCategory extends Model
      */
     protected $casts = [
         'hidden' => 'boolean',
+        'meta' => 'json',
     ];
 
     /**

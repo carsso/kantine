@@ -18,6 +18,6 @@ class RestrictIpAddressMiddleware
         if($request->isIpAllowed) {
             return $next($request);
         }
-        return response()->json(['message' => 'Cette page est restreinte, votre adresse IP n\'est pas autorisé à y accéder.'], 403);
+        abort(403, 'Cette page est restreinte, votre adresse IP n\'est pas autorisé à y accéder.');
     }     
 }

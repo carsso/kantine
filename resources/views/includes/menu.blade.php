@@ -76,6 +76,17 @@
                                 @endif
                             </div>
                         @endforeach
+                        @if($category->meta && isset($category->meta['link_url']))
+                            <div class="leading-snug ml-4">
+                                <small>
+                                    <a class="underline hover:text-indigo-600" target="_blank"
+                                        href="{{ route('menus.categories.link', ['tenantSlug' => $tenant->slug, 'date' => $menu['date'], 'type' => $type, 'parentSlug' => $rootCategory->name_slug, 'childSlug' => $category->name_slug]) }}">
+                                        <i class="fa-solid fa-external-link"></i>
+                                        {{ $category->meta['link_name'] }}
+                                    </a>
+                                </small>
+                            </div>
+                        @endif
                     </div>
                 @endif
                 @php
@@ -84,43 +95,6 @@
             @endforeach
         @endforeach
     @endforeach
-    @if($displayDetails ?? false)
-        <div class="mt-4 text-sm italic">
-            @if($menu['next_fries_day'] && $menu['next_fries_day']->is_burgers_day)
-                <div class="mt-1">
-                    <div>Prochain <i class="fa-solid fa-burger-fries"></i> Jour des Burgers et des Frites : </div>
-                    <div>{{ $menu['next_fries_day']->date_carbon->translatedFormat('l j F') }}</div>
-                </div>
-            @else
-                @if($menu['next_fries_day'])
-                    <div class="mt-1">
-                        <div>Prochain <i class="fa-solid fa-french-fries"></i> Jour des Frites : </div>
-                        <div>{{ $menu['next_fries_day']->date_carbon->translatedFormat('l j F') }}</div>
-                    </div>
-                @endif
-                @if($menu['next_burgers_day'])
-                    <div class="mt-1">
-                        <div>Prochain <i class="fa-solid fa-burger-cheese"></i> Jour des Burgers : </div>
-                        <div>{{ $menu['next_burgers_day']->date_carbon->translatedFormat('l j F') }}</div>
-                    </div>
-                @endif
-            @endif
-
-            @if($menu['next_event'])
-                <div class="mt-1">
-                    <div>Prochain <i class="fa-solid fa-party-horn"></i> Événement : </div>
-                    <div>{{ $menu['next_event']->event_name }} - {{ $menu['next_event']->date_carbon->translatedFormat('l j F') }}</div>
-                </div>
-            @endif
-
-            @if($menu['next_antioxidants_day'])
-                <div class="mt-1">
-                    <div>Prochain <i class="fa-solid fa-dumbbell"></i> Jour des Antioxydants : </div>
-                    <div>{{ $menu['next_antioxidants_day']->date_carbon->translatedFormat('l j F') }}</div>
-                </div>
-            @endif
-        </div>
-    @endif
 
     <page-refresher date="{{ $menu['date'] }}"></page-refresher>
 </div>

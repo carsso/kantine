@@ -59,6 +59,18 @@
                                 @endif
                             </span><br />
                         @endforeach
+                        @if($category->meta && isset($category->meta['link_url']))
+                            <span>
+                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <small>
+                                    <a target="_blank"
+                                        href="{{ route('menus.categories.link', ['tenantSlug' => $tenant->slug, 'date' => $menu['date'], 'type' => $type, 'parentSlug' => $rootCategory->name_slug, 'childSlug' => $category->name_slug]) }}">
+                                        ↗
+                                        {{ $category->meta['link_name'] }}
+                                    </a>
+                                </small>
+                            </span><br />
+                        @endif
                     @endif
                     @php
                         $i++;

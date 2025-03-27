@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoryLinkController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\AccountController;
@@ -48,6 +49,7 @@ Route::prefix('/admin')->middleware(['auth', 'verified', 'permission:admin'])->g
 Route::redirect('/dashboard/{date?}', '/roubaix/dashboard/{date?}');
 Route::redirect('/menu/{date?}', '/roubaix/menus/{date?}');
 Route::redirect('/menus/{date?}', '/roubaix/menus/{date?}');
+
 Route::redirect('/notifications/{date?}', '/roubaix/notifications/{date?}');
 Route::redirect('/notifications/webex/{date?}', '/roubaix/notifications/webex/{date?}');
 
@@ -61,6 +63,11 @@ Route::prefix('{tenantSlug}')->middleware('tenant')->group(function () {
 
     Route::get('/menus/{date?}', [MenuController::class, 'menu'])
         ->name('menus');
+
+    Route::middleware(['restrict.ip'])->group(function () {
+        Route::get('/menus/{date?}/categories/{type}/{parentSlug}/{childSlug}/lien', [CategoryLinkController::class, 'redirect'])
+            ->name('menus.categories.link');
+    });
 
     Route::get('/notifications/{date?}', [MenuController::class, 'notifications'])
         ->name('notifications');
