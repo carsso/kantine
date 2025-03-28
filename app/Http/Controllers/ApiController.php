@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Menu;
 use App\Models\Tenant;
 use App\Services\DayService;
 use Illuminate\Http\Request;

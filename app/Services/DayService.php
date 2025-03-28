@@ -58,15 +58,15 @@ class DayService
             'tenant' => $tenant,
         ];
         $result['is_fries_day'] = $dishes->contains(function($dish) {
-            return str_contains($dish->name, 'Frites');
+            return str_contains(strtolower($dish->name), 'frites');
         });
         $result['is_burgers_day'] = $dishes->contains(function($dish) {
-            return str_contains($dish->name, 'Burger');
+            return str_contains(strtolower($dish->name), 'burger');
         });
         $result['is_antioxidants_day'] = $dishes->contains(function($dish) {
-            $needles = ['Haricots rouges', 'Lentilles'];
+            $needles = ['haricots rouges', 'lentilles'];
             foreach ($needles as $needle){
-                if (str_contains($dish->name, $needle)) {
+                if (str_contains(strtolower($dish->name), $needle)) {
                     return true;
                 }
             }

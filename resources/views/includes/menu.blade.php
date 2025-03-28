@@ -27,9 +27,9 @@
         </p>
     @elseif($menu['is_burgers_day'])
         <p class="mt-2 font-semibold">
-            <i class="fa-solid fa-french-fries text-[#ED733D]"></i>
-            <i class="fa-solid fa-burger-cheese"></i> Jour des Burgers
-            <i class="fa-solid fa-french-fries text-[#ED733D]"></i>
+            <i class="fa-solid fa-burger-cheese text-[#ED733D]"></i>
+            Jour des Burgers
+            <i class="fa-solid fa-burger-cheese text-[#ED733D]"></i>
         </p>
     @endif
     @if($menu['is_antioxidants_day'])

@@ -5,23 +5,23 @@ namespace App\Console\Commands;
 use App\Models\Tenant;
 use App\Services\DayService;
 use Illuminate\Console\Command;
-use App\Jobs\CheckMenusFromApiJob;    
+use App\Jobs\UpdateMenusFromApiJob;    
 
-class CheckMenusFromApi extends Command
+class UpdateMenusFromApi extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'kantine:check-menus-from-api {tenant_slug?}';
+    protected $signature = 'kantine:update-menus-from-api {tenant_slug?}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Check menus from API';
+    protected $description = 'Update menus from API';
 
     /**
      * Execute the console command.
@@ -39,7 +39,7 @@ class CheckMenusFromApi extends Command
             if(isset($tenant->meta['api_type']) && $tenant->meta['api_type']) {
                 if($tenant->meta['api_type'] === 'api-restauration') {
                     $this->info('Checking menus from API for tenant '.$tenant->slug);
-                    CheckMenusFromApiJob::dispatch($tenant);
+                    UpdateMenusFromApiJob::dispatch($tenant);
                     $this->info('Job dispatched for tenant '.$tenant->slug);
                 } else {
                     $this->info('Tenant '.$tenant->slug.' has an unknown API Type, skipping');

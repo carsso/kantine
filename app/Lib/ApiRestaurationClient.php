@@ -239,14 +239,13 @@ class ApiRestaurationClient
                 'body' => $response->body()
             ]);
 
-            return null;
+            throw new \Exception('Erreur lors de la récupération du menu: status '.$response->status().' body '.$response->body());
         } catch (\Exception $e) {
             Log::error('Exception lors de la récupération du menu', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-
-            return null;
+            throw $e;
         }
     }
 

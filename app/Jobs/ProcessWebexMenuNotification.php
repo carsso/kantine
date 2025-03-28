@@ -28,13 +28,14 @@ class ProcessWebexMenuNotification implements ShouldQueue, ShouldBeUnique
     /**
      * Create a new job instance.
      */
-    public function __construct(public Tenant $tenant, public array $room, public array $menu, public ?string $date, public ?bool $notifyUpdate = false)
+    public function __construct(public Tenant $tenant, public array $room, public array $menu, public ?string $date, public ?bool $notifyUpdate = false, public ?string $initiator = null)
     {
         $this->tenant = $tenant;
         $this->room = $room;
         $this->menu = $menu;
         $this->date = $date;
         $this->notifyUpdate = $notifyUpdate;
+        $this->initiator = $initiator;
     }
 
     /**
@@ -94,7 +95,11 @@ class ProcessWebexMenuNotification implements ShouldQueue, ShouldBeUnique
                 if(!$this->notifyUpdate) {
                     return;
                 }
-                $html = 'Menu mis à jour à ' . date('H\hi') . '<@personEmail:'.$this->tenant->webex_bot_name.'| >';
+                $html = 'Menu mis à jour à ' . date('H\hi');
+                if($this->initiator) {
+                    $html .= ' <small>par ' . $this->initiator . '</small>';
+                }
+                $html .= '<@personEmail:'.$this->tenant->webex_bot_name.'| >';
                 $this->logJob('Posting reply message in Webex room "' . $this->room['title'] .'" ' . $this->room['id']);
                 $this->logJob('Reply HTML content', 'info', ['html' => $html]);
                 $api->postMessage($this->room['id'], $html, $message['id']);

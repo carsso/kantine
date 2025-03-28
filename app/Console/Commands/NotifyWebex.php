@@ -3,11 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Models\Tenant;
-use App\Services\DayService;
+use App\Services\WebexNotificationService;
 use Illuminate\Console\Command;
-use App\Libraries\WebexApi;
-use Illuminate\Support\Facades\Log;
-use App\Jobs\ProcessWebexMenuNotification;
 
 class NotifyWebex extends Command
 {
@@ -30,7 +27,7 @@ class NotifyWebex extends Command
      *
      * @return int
      */
-    public function handle(DayService $dayService)
+    public function handle(WebexNotificationService $webexService)
     {
         if($this->argument('tenant_slug')) {
             $tenants = Tenant::where('slug', $this->argument('tenant_slug'))->where('is_active', true)->get();
@@ -38,31 +35,15 @@ class NotifyWebex extends Command
             $tenants = Tenant::where('is_active', true)->get();
         }
         $date = date('Y-m-d');
+        
         foreach($tenants as $tenant) {
             $this->info('--------------------------------');
             $this->info('Sending Webex notifications for menu of ' . $date . ' to all rooms for tenant ' . $tenant->name);
-            $menu = $dayService->getDay($tenant, $date);
-
-            if(!$tenant->webex_bearer_token) {
-                $this->info('Webex bearer token not set for tenant ' . $tenant->name . ', skipping');
-                continue;
-            }
-            if(!$menu) {
-                $this->info('No menu for date '.$date.' for tenant '.$tenant->name.', skipping');
-                continue;
-            }
-            if(!$menu['dishes'] || count($menu['dishes']) == 0) {
-                $this->info('No dishes for date '.$date.' for tenant '.$tenant->name.', skipping');
-                continue;
-            }
-            $api = new WebexApi($tenant);
-            $this->info('Listing Webex rooms for tenant ' . $tenant->name);
-            $rooms = $api->getRooms();
-            foreach($rooms['items'] as $room) {
-                $this->info('Adding Webex room notification task to room ' . $room['title'] .' ' . $room['id']);
-                ProcessWebexMenuNotification::dispatch($tenant, $room, $menu, $date);
-            }
+            
+            $result = $webexService->sendMenuNotifications($tenant, $date);
+            $this->info($result['message']);
         }
+        
         $this->info('--------------------------------');
         return 0;
     }

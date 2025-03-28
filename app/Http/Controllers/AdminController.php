@@ -11,10 +11,9 @@ use App\Services\DayService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use App\Jobs\ProcessWebexMenuNotification;
-use App\Models\Menu;
 use Illuminate\Http\Request;
 use App\Models\Tenant;
+use App\Services\WebexNotificationService;
 
 class AdminController extends Controller
 {
@@ -169,29 +168,20 @@ class AdminController extends Controller
         return view('admin.webex', ['rooms' => $rooms, 'tenant' => $tenant]);
     }
 
-    public function webexNotify(Request $request, DayService $dayService)
+    public function webexNotify(Request $request, WebexNotificationService $webexService)
     {
         $tenant = $request->route('tenant');
-        if (!$tenant->webex_bearer_token) {
-            Log::info('Webex configuration not found for tenant, aborting');
-            return $this->redirectWithError('Configuration Webex non trouvée', redirect()->route('admin.webex', ['tenantSlug' => $tenant->slug]));
-        }
-
         $date = date('Y-m-d');
+        
         Log::info('Sending Webex notifications for menu of ' . $date . ' to all rooms');
-        $menu = $dayService->getDay($tenant, $date);
-
-        if(!$menu) {
-            Log::info('No menu for date '.$date.', aborting');
-            return $this->redirectWithError('Aucun menu pour le '.$date, redirect()->route('admin.webex', ['tenantSlug' => $tenant->slug]));
+        $result = $webexService->sendMenuNotifications($tenant, $date, true);
+        
+        if (!$result['success']) {
+            Log::info($result['message']);
+            return $this->redirectWithError($result['message'], redirect()->route('admin.webex', ['tenantSlug' => $tenant->slug]));
         }
-        $api = new WebexApi($tenant);
-        Log::info('Listing Webex rooms');
-        $rooms = $api->getRooms();
-        foreach($rooms['items'] as $room) {
-            Log::info('Adding Webex room notification task to room ' . $room['title'] .' ' . $room['id']);
-            ProcessWebexMenuNotification::dispatch($tenant, $room, $menu, $date, true);
-        }
-        return $this->redirectWithSuccess('La mise à jour du menu va être envoyée à tous les canaux Webex. Cela peut prendre quelques instants.', redirect()->route('admin.webex', ['tenantSlug' => $tenant->slug]));
+        
+        Log::info($result['message']);
+        return $this->redirectWithSuccess('Notifications Webex envoyées avec succès', redirect()->route('admin.webex', ['tenantSlug' => $tenant->slug]));
     }
 }

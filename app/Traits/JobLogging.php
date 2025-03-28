@@ -5,6 +5,7 @@ namespace App\Traits;
 use App\Models\Job;
 use Illuminate\Support\Facades\Log;
 use App\Events\JobSuccessfullyProcessed;
+use Illuminate\Container\Container;
 
 trait JobLogging
 {
@@ -17,14 +18,27 @@ trait JobLogging
         $this->jobLogs[] = [
             'message' => $message,
             'level' => $level,
-            'data' => $data
+            'data' => $data,
+            'date' => now()
         ];
         Log::info($message, $data);
     }
 
     public function handle(): void
     {
-        $this->handleLoggedJob();
+        $container = Container::getInstance();
+        $parameters = $this->getHandleLoggedJobParameters();
+        
+        if (empty($parameters)) {
+            $this->handleLoggedJob();
+        } else {
+            $dependencies = array_map(function ($parameter) use ($container) {
+                return $container->make($parameter->getClass()->getName());
+            }, $parameters);
+            
+            call_user_func_array([$this, 'handleLoggedJob'], $dependencies);
+        }
+
         if($this->doNotLog) {
             return;
         }
@@ -41,5 +55,16 @@ trait JobLogging
             $job->created_at,
             now()
         );
+    }
+
+    /**
+     * Get the parameters for handleLoggedJob method
+     *
+     * @return array
+     */
+    protected function getHandleLoggedJobParameters(): array
+    {
+        $reflection = new \ReflectionMethod($this, 'handleLoggedJob');
+        return $reflection->getParameters();
     }
 } 

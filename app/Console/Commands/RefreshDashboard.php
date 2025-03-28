@@ -3,9 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Events\DashboardRefreshEvent;
-use App\Events\MenuUpdatedEvent;
-use App\Models\Menu;
-use App\Models\Tenant;
 use App\Services\DayService;
 use Illuminate\Console\Command;
 
