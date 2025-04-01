@@ -272,6 +272,10 @@ class ApiRestaurationClient
         foreach ($apiMenu as $item) {
             if ($item['periode'] === 'midi' && $item['rupture'] !== 'TRUE') {
                 $feuille = $item['feuille'] ?? null;
+                if(!isset($categoryMapping[$feuille])) {
+                    Log::error('Catégorie non mappée : ' . $feuille);
+                    continue;
+                }
                 $categorySlug = $categoryMapping[$feuille] ?? $feuille;
 
                 if ($item['date'] === 'TRUE') {
