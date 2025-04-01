@@ -352,6 +352,10 @@ class ApiRestaurationClient
                     date('Y-m-d', strtotime($item['dateUs'])) === $formattedDate) {
                     
                     $feuille = $item['feuille'] ?? null;
+                    if(!isset($categoryMapping[$feuille])) {
+                        Log::error('Catégorie non mappée : ' . $feuille);
+                        continue;
+                    }
                     $categorySlug = $categoryMapping[$feuille] ?? $feuille;
                     
                     if (!isset($mappedMenu[$formattedDate]['dishes']['mains'][$categorySlug])) {
