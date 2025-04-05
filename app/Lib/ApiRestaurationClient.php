@@ -319,7 +319,7 @@ class ApiRestaurationClient
                     }
                 } else {
                     $dateUs = $item['dateUs'] ?? date('Ymd');
-                    if ($dateUs >= $today || true) {
+                    if ($dateUs >= $today) {
                         $formattedDate = date('Y-m-d', strtotime($dateUs));
                         $dates[$formattedDate] = true;
                     }
