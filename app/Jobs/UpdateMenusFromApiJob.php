@@ -41,41 +41,46 @@ class UpdateMenusFromApiJob implements ShouldQueue, ShouldBeUnique
         if ($this->tenant->meta['api_type'] === 'api-restauration') {
             $client = new ApiRestaurationClient($this->tenant);
             $menus = $client->getMenus();
-            $this->logJob('Menus retrieved successfully');
-            $today = now()->format('Y-m-d');
-            $menusDiff = $client->compareMenus($menus);
-            if(count($menusDiff) > 0) {
-                $this->logJob('Changes to menus found', 'info', ['menusDiff' => $menusDiff]);
-                $client->updateMenus($menus);
-                $this->logJob('Menus updated successfully', 'info');
+            if($menus) {
+                $this->logJob('Menus retrieved successfully');
+                $today = now()->format('Y-m-d');
+                $menusDiff = $client->compareMenus($menus);
+                if(count($menusDiff) > 0) {
+                    $this->logJob('Changes to menus found', 'info', ['menusDiff' => $menusDiff]);
+                    $client->updateMenus($menus);
+                    $this->logJob('Menus updated successfully', 'info');
 
-                $menusDiff2 = $client->compareMenus($menus);
-                if(count($menusDiff2) == 0) {
-                    $this->logJob('After updating menus, no differences found, fine', 'info');
-                    if(isset($menusDiff[$today])) {
-                        $currentTime = now();
-                        if ($currentTime->hour >= 9 && $currentTime->hour <= 13) {
-                            if ($currentTime->hour === 9 && $currentTime->minute < 30) {
-                                return;
-                            }
-                            if ($currentTime->hour === 13 && $currentTime->minute > 30) {
-                                return;
-                            }
-                            
-                            $result = $webexService->sendMenuNotifications($this->tenant, $today, true, 'API Restauration (API)');
-                            if ($result['success']) {
-                                $this->logJob('Webex notifications requested successfully: ' . $result['message'], 'info');
-                            } else {
-                                $this->logJob('Failed to request Webex notifications: ' . $result['message'], 'error');
+                    $menusDiff2 = $client->compareMenus($menus);
+                    if(count($menusDiff2) == 0) {
+                        $this->logJob('After updating menus, no differences found, fine', 'info');
+                        if(isset($menusDiff[$today])) {
+                            $currentTime = now();
+                            if ($currentTime->hour >= 9 && $currentTime->hour <= 13) {
+                                if ($currentTime->hour === 9 && $currentTime->minute < 30) {
+                                    return;
+                                }
+                                if ($currentTime->hour === 13 && $currentTime->minute > 30) {
+                                    return;
+                                }
+                                
+                                $result = $webexService->sendMenuNotifications($this->tenant, $today, true, 'API Restauration (API)');
+                                if ($result['success']) {
+                                    $this->logJob('Webex notifications requested successfully: ' . $result['message'], 'info');
+                                } else {
+                                    $this->logJob('Failed to request Webex notifications: ' . $result['message'], 'error');
+                                }
                             }
                         }
+                    } else {
+                        $this->logJob('After updating menus, we still have differences', 'error', ['menusDiff2' => $menusDiff2]);
+                        throw new \Exception('After updating menus, we still have differences');
                     }
                 } else {
-                    $this->logJob('After updating menus, we still have differences', 'error', ['menusDiff2' => $menusDiff2]);
-                    throw new \Exception('After updating menus, we still have differences');
+                    $this->logJob('No changes to menus', 'info');
+                    $this->doNotLog = true;
                 }
             } else {
-                $this->logJob('No changes to menus', 'info');
+                $this->logJob('No menus found', 'info');
                 $this->doNotLog = true;
             }
         } else {
