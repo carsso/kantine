@@ -39,19 +39,18 @@
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{{ getDisplayName(job.payload) }}</td>
                 <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">
                   <div class="relative">
-                    <div v-if="!expandedPayloads[job.id]" class="text-xs">
-                      {{ truncatePayload(job.payload) }}
-                      <button @click="togglePayload(job.id)" class="ml-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
-                        <i class="fas fa-chevron-down"></i>
+                    <div class="flex justify-between items-center mb-2">
+                      <div class="text-xs font-medium text-gray-500 dark:text-gray-400">Payload:</div>
+                      <button @click="togglePayload(job.id)" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-xs">
+                        <i :class="expandedPayloads[job.id] ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="mr-1"></i>
+                        {{ expandedPayloads[job.id] ? 'Réduire' : 'Déployer' }}
                       </button>
                     </div>
+                    <div v-if="!expandedPayloads[job.id]" class="text-xs">
+                      {{ truncatePayload(job.payload) }}
+                    </div>
                     <div v-else class="text-xs">
-                      <div class="flex justify-between items-start mb-2">
-                        <button @click="togglePayload(job.id)" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
-                          <i class="fas fa-chevron-up"></i> Réduire
-                        </button>
-                      </div>
-                      <pre class="bg-gray-50 dark:bg-gray-700 p-2 rounded max-w-2xl overflow-x-auto">{{ formatPayload(job.payload) }}</pre>
+                      <pre class="bg-gray-50 dark:bg-gray-700 p-2 rounded overflow-x-auto whitespace-pre-wrap break-all">{{ formatPayload(job.payload) }}</pre>
                     </div>
                   </div>
                 </td>
@@ -67,13 +66,12 @@
       <div class="p-4">
         <h2 class="text-lg font-semibold mb-4">Derniers jobs</h2>
         <div class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <table class="w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead class="bg-gray-50 dark:bg-gray-700">
               <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">DisplayName</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Payload</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Statut</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-48">Date</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider w-48">DisplayName</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Détails</th>
               </tr>
             </thead>
             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
@@ -81,54 +79,53 @@
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{{ formatDate(job.failed_at || job.finished_at) }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{{ getDisplayName(job.payload) }}</td>
                 <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">
-                  <div class="relative">
-                    <div v-if="!expandedPayloads[job.id]" class="text-xs">
-                      {{ truncatePayload(job.payload) }}
-                      <button @click="togglePayload(job.id)" class="ml-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
-                        <i class="fas fa-chevron-down"></i>
-                      </button>
-                    </div>
-                    <div v-else class="text-xs">
-                      <div class="flex justify-between items-start mb-2">
-                        <button @click="togglePayload(job.id)" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
-                          <i class="fas fa-chevron-up"></i> Réduire
+                  <div class="space-y-4">
+                    <!-- Payload -->
+                    <div class="relative">
+                      <div class="flex justify-between items-center mb-2">
+                        <div class="text-xs font-medium text-gray-500 dark:text-gray-400">Payload:</div>
+                        <button @click="togglePayload(job.id)" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-xs">
+                          <i :class="expandedPayloads[job.id] ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="mr-1"></i>
+                          {{ expandedPayloads[job.id] ? 'Réduire' : 'Déployer' }}
                         </button>
                       </div>
-                      <pre class="bg-gray-50 dark:bg-gray-700 p-2 rounded max-w-2xl overflow-x-auto">{{ formatPayload(job.payload) }}</pre>
+                      <div v-if="!expandedPayloads[job.id]" class="text-xs">
+                        {{ truncatePayload(job.payload) }}
+                      </div>
+                      <div v-else class="text-xs">
+                        <pre class="bg-gray-50 dark:bg-gray-700 p-2 rounded overflow-x-auto whitespace-pre-wrap break-all">{{ formatPayload(job.payload) }}</pre>
+                      </div>
                     </div>
-                  </div>
-                </td>
-                <td class="px-6 py-4 text-sm">
-                  <div v-if="job.failed_at" class="text-red-600 dark:text-red-400">
-                    <div v-if="!expandedExceptions[job.id]" class="text-xs">
-                      {{ truncateException(job.exception) }}
-                      <button @click="toggleException(job.id)" class="ml-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
-                        <i class="fas fa-chevron-down"></i>
-                      </button>
-                    </div>
-                    <div v-else class="text-xs">
-                      <div class="flex justify-between items-start mb-2">
-                        <button @click="toggleException(job.id)" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
-                          <i class="fas fa-chevron-up"></i> Réduire
+
+                    <!-- Status -->
+                    <div class="relative">
+                      <div class="flex justify-between items-center mb-2">
+                        <div class="text-xs font-medium text-gray-500 dark:text-gray-400">Statut:</div>
+                        <button v-if="job.failed_at" @click="toggleException(job.id)" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-xs">
+                          <i :class="expandedExceptions[job.id] ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="mr-1"></i>
+                          {{ expandedExceptions[job.id] ? 'Réduire' : 'Déployer' }}
+                        </button>
+                        <button v-else @click="toggleResult(job.id)" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 text-xs">
+                          <i :class="expandedResults[job.id] ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="mr-1"></i>
+                          {{ expandedResults[job.id] ? 'Réduire' : 'Déployer' }}
                         </button>
                       </div>
-                      <pre class="bg-gray-50 dark:bg-gray-700 p-2 rounded max-w-2xl overflow-x-auto whitespace-pre-wrap">{{ formatException(job.exception) }}</pre>
-                    </div>
-                  </div>
-                  <div v-else class="text-green-600 dark:text-green-400">
-                    <div v-if="!expandedResults[job.id]" class="text-xs">
-                      {{ truncateResult(job.result) }}
-                      <button @click="toggleResult(job.id)" class="ml-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
-                        <i class="fas fa-chevron-down"></i>
-                      </button>
-                    </div>
-                    <div v-else class="text-xs">
-                      <div class="flex justify-between items-start mb-2">
-                        <button @click="toggleResult(job.id)" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
-                          <i class="fas fa-chevron-up"></i> Réduire
-                        </button>
+                      <div v-if="job.failed_at" class="text-red-600 dark:text-red-400">
+                        <div v-if="!expandedExceptions[job.id]" class="text-xs">
+                          {{ truncateException(job.exception) }}
+                        </div>
+                        <div v-else class="text-xs">
+                          <pre class="bg-gray-50 dark:bg-gray-700 p-2 rounded overflow-x-auto whitespace-pre-wrap break-all">{{ formatException(job.exception) }}</pre>
+                        </div>
                       </div>
-                      <pre class="bg-gray-50 dark:bg-gray-700 p-2 rounded max-w-2xl overflow-x-auto">{{ formatResult(job.result) }}</pre>
+                      <div v-else class="text-green-600 dark:text-green-400">
+                        <div v-if="!expandedResults[job.id]" class="text-xs">
+                          {{ truncateResult(job.result) }}
+                        </div>
+                        <div v-else class="text-xs">
+                          <pre class="bg-gray-50 dark:bg-gray-700 p-2 rounded overflow-x-auto whitespace-pre-wrap break-all">{{ formatResult(job.result) }}</pre>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </td>
@@ -209,7 +206,25 @@ export default {
       if (!result) return ''
       try {
         const decoded = typeof result === 'string' ? JSON.parse(result) : result
-        return JSON.stringify(decoded, null, 2)
+        if (!Array.isArray(decoded)) return JSON.stringify(decoded, null, 2)
+        
+        return decoded.map(log => {
+          const date = new Date(log.date).toLocaleString('fr-FR', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false
+          }).replace(',', '')
+          
+          const dataStr = log.data && Object.keys(log.data).length > 0 
+            ? JSON.stringify(log.data)
+            : ''
+            
+          return `[${date}] ${log.level.toUpperCase()}: ${log.message}${dataStr ? ' ' + dataStr : ''}`
+        }).join('\n')
       } catch (e) {
         return result
       }

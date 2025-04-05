@@ -39,10 +39,14 @@ class UpdateMenusFromApiJob implements ShouldQueue, ShouldBeUnique
         }
 
         if ($this->tenant->meta['api_type'] === 'api-restauration') {
-            $client = new ApiRestaurationClient($this->tenant);
+            $logCallback = function($message, $level = 'info', $data = []) {
+                $this->logJob($message, $level, $data);
+            };
+            
+            $client = new ApiRestaurationClient($this->tenant, $logCallback);
             $menus = $client->getMenus();
             if($menus) {
-                $this->logJob('Menus retrieved successfully');
+                $this->logJob('Menus retrieved successfully', 'info', ['menus' => $menus]);
                 $today = now()->format('Y-m-d');
                 $menusDiff = $client->compareMenus($menus);
                 if(count($menusDiff) > 0) {

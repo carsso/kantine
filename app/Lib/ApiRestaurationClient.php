@@ -17,8 +17,9 @@ class ApiRestaurationClient
     private Tenant $tenant;
     private string $baseUrl;
     private array $headers;
+    private $logCallback;
 
-    public function __construct(Tenant $tenant)
+    public function __construct(Tenant $tenant, $logCallback = null)
     {
         if(!$tenant->meta['api_url']) {
             throw new \Exception('Tenant '.$tenant->slug.' has no API URL');
@@ -36,6 +37,16 @@ class ApiRestaurationClient
             'Content-Type' => 'application/json',
             'Referer' => Config::get('app.name', 'Kantine'),
         ];
+        $this->logCallback = $logCallback;
+    }
+
+    private function log($message, $level = 'info', $data = [])
+    {
+        if ($this->logCallback && is_callable($this->logCallback)) {
+            call_user_func($this->logCallback, $message, $level, $data);
+        } else {
+            Log::info($message, $data);
+        }
     }
 
     public function compareMenus(array $apiMenus = null)
@@ -72,6 +83,7 @@ class ApiRestaurationClient
                                     $apiDish['_inconsistency_from'] = 'API';
                                     $apiDish['_inconsistency_other'] = $currentDish;
                                     $currentMenus[$date]['dishes'][$dishType][$rootCategorySlug][$subCategorySlug][$dishIdx] = $apiDish;
+                                    $this->log('[' . $date . '] Inconsistance API trouvée pour ' . $dishType . ' ' . $rootCategorySlug . ' ' . $subCategorySlug . ' : ' . $apiDish['name'], 'info', $apiDish);
                                 }
                             }
                         }
@@ -100,6 +112,7 @@ class ApiRestaurationClient
                                     $currentDish['_inconsistency_from'] = 'DB';
                                     $currentDish['_inconsistency_other'] = $apiDish;
                                     $currentMenus[$date]['dishes'][$dishType][$rootCategorySlug][$subCategorySlug][$dishIdx] = $currentDish;
+                                    $this->log('[' . $date . '] Inconsistance DB trouvée pour ' . $dishType . ' ' . $rootCategorySlug . ' ' . $subCategorySlug . ' : ' . $currentDish['name'], 'info', $currentDish);
                                 }
                             }
                         }
@@ -211,7 +224,7 @@ class ApiRestaurationClient
                 try {
                     MenuUpdatedEvent::dispatch($menu);
                 } catch (\Exception $e) {
-                    Log::error($e);
+                    $this->log('Erreur lors de la mise à jour du menu', 'error', $e);
                 }
             }
         }
@@ -231,17 +244,18 @@ class ApiRestaurationClient
 
             if ($response->successful()) {
                 $apiMenus = $response->json();
+                $this->log('API Menus', 'info', ['menus' => $apiMenus]);
                 return $this->mapMenus($apiMenus);
             }
 
-            Log::error('Erreur lors de la récupération du menu', [
+            $this->log('Erreur lors de la récupération du menu', 'error', [
                 'status' => $response->status(),
                 'body' => $response->body()
             ]);
 
             throw new \Exception('Erreur lors de la récupération du menu: status '.$response->status().' body '.$response->body());
         } catch (\Exception $e) {
-            Log::error('Exception lors de la récupération du menu', [
+            $this->log('Exception lors de la récupération du menu', 'error', [
                 'message' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
@@ -273,34 +287,39 @@ class ApiRestaurationClient
             if ($item['periode'] === 'midi' && $item['rupture'] !== 'TRUE') {
                 $feuille = $item['feuille'] ?? null;
                 if(!isset($categoryMapping[$feuille])) {
-                    Log::error('Catégorie non mappée : ' . $feuille);
+                    $this->log('Catégorie non mappée : ' . $feuille, 'error');
                     continue;
                 }
                 $categorySlug = $categoryMapping[$feuille] ?? $feuille;
 
                 if ($item['date'] === 'TRUE') {
+                    $name = implode(', ', array_filter([
+                        $item['nom'] ?? '',
+                        $item['info1'] ?? '',
+                        $item['info2'] ?? ''
+                    ]));
                     if ($item['accompagnement'] === 'TRUE') {
-                        $dailyAccompaniments[$categorySlug] = [
-                            'name' => implode(', ', array_filter([
-                                $item['nom'] ?? '',
-                                $item['info1'] ?? '',
-                                $item['info2'] ?? ''
-                            ])),
+                        $this->log('Garniture récurrente de la catégorie ' . $categorySlug . ' : ' . $name, 'info');
+                        if(!isset($dailyAccompaniments[$categorySlug])) {
+                            $dailyAccompaniments[$categorySlug] = [];
+                        }
+                        $dailyAccompaniments[$categorySlug][] = [
+                            'name' => $name,
                             'tags' => $this->mapNutritionalInfo($item)
                         ];
                     } else {
-                        $dailyDishes[$categorySlug] = [
-                            'name' => implode(', ', array_filter([
-                                $item['nom'] ?? '',
-                                $item['info1'] ?? '',
-                                $item['info2'] ?? ''
-                            ])),
+                        $this->log('Plat récurrent de la catégorie ' . $categorySlug . ' : ' . $name, 'info');
+                        if(!isset($dailyDishes[$categorySlug])) {
+                            $dailyDishes[$categorySlug] = [];
+                        }
+                        $dailyDishes[$categorySlug][] = [
+                            'name' => $name,
                             'tags' => $this->mapNutritionalInfo($item)
                         ];
                     }
                 } else {
                     $dateUs = $item['dateUs'] ?? date('Ymd');
-                    if ($dateUs >= $today) {
+                    if ($dateUs >= $today || true) {
                         $formattedDate = date('Y-m-d', strtotime($dateUs));
                         $dates[$formattedDate] = true;
                     }
@@ -310,6 +329,7 @@ class ApiRestaurationClient
 
         // Deuxième passe : pour chaque date, construire le menu avec les plats spécifiques et les plats quotidiens
         foreach ($dates as $formattedDate => $_) {
+            $this->log('Traitement de la date : ' . $formattedDate, 'info');
             $mappedMenu[$formattedDate] = [
                 'dishes' => [
                     'mains' => []
@@ -317,46 +337,53 @@ class ApiRestaurationClient
             ];
 
             // Ajouter les plats statiques
-            foreach ($staticDishes as $category => $items) {
-                $mappedMenu[$formattedDate]['dishes'][$category] = $items;
+            foreach ($staticDishes as $type => $items) {
+                $this->log('Ajout des plats statiques type ' . $type . ' :', 'info', $items);
+                $mappedMenu[$formattedDate]['dishes'][$type] = $items;
             }
 
             // Initialiser les pôles avec les plats quotidiens
-            foreach ($dailyDishes as $categorySlug => $dish) {
-                if (!isset($mappedMenu[$formattedDate]['dishes']['mains'][$categorySlug])) {
-                    $mappedMenu[$formattedDate]['dishes']['mains'][$categorySlug] = [
-                        'plats' => [],
-                        'garnitures' => []
-                    ];
+            foreach ($dailyDishes as $categorySlug => $dishes) {
+                foreach($dishes as $dish) {
+                    if (!isset($mappedMenu[$formattedDate]['dishes']['mains'][$categorySlug])) {
+                        $mappedMenu[$formattedDate]['dishes']['mains'][$categorySlug] = [
+                            'plats' => [],
+                            'garnitures' => []
+                        ];
+                    }
+                    $this->log('Ajout de plat récurrent type mains pour la catégorie ' . $categorySlug . ' : ' . $dish['name'], 'info');
+                    $mappedMenu[$formattedDate]['dishes']['mains'][$categorySlug]['plats'][] = $dish;
                 }
-                $mappedMenu[$formattedDate]['dishes']['mains'][$categorySlug]['plats'][] = $dish;
             }
 
             // Ajouter les accompagnements quotidiens
-            foreach ($dailyAccompaniments as $categorySlug => $accompaniment) {
-                if (!isset($mappedMenu[$formattedDate]['dishes']['mains'][$categorySlug])) {
-                    $mappedMenu[$formattedDate]['dishes']['mains'][$categorySlug] = [
-                        'plats' => [],
-                        'garnitures' => []
-                    ];
+            foreach ($dailyAccompaniments as $categorySlug => $accompaniments) {
+                foreach($accompaniments as $accompaniment) {
+                    if (!isset($mappedMenu[$formattedDate]['dishes']['mains'][$categorySlug])) {
+                        $mappedMenu[$formattedDate]['dishes']['mains'][$categorySlug] = [
+                            'plats' => [],
+                            'garnitures' => []
+                        ];
+                    }
+                    $this->log('Ajout de garniture récurrente type mains pour la catégorie ' . $categorySlug . ' : ' . $accompaniment['name'], 'info');
+                    $mappedMenu[$formattedDate]['dishes']['mains'][$categorySlug]['garnitures'][] = $accompaniment;
                 }
-                $mappedMenu[$formattedDate]['dishes']['mains'][$categorySlug]['garnitures'][] = $accompaniment;
             }
 
             // Ajouter les plats spécifiques à cette date
             foreach ($apiMenu as $item) {
                 if ($item['periode'] === 'midi' && 
                     $item['date'] !== 'TRUE' && 
-                    $item['accompagnement'] !== 'TRUE' && 
                     $item['rupture'] !== 'TRUE' &&
                     date('Y-m-d', strtotime($item['dateUs'])) === $formattedDate) {
                     
                     $feuille = $item['feuille'] ?? null;
                     if(!isset($categoryMapping[$feuille])) {
-                        Log::error('Catégorie non mappée : ' . $feuille);
+                        $this->log('Catégorie non mappée : ' . $feuille, 'error');
                         continue;
                     }
                     $categorySlug = $categoryMapping[$feuille] ?? $feuille;
+                    $subCategorySlug = $item['accompagnement'] === 'TRUE' ? 'garnitures' : 'plats';
                     
                     if (!isset($mappedMenu[$formattedDate]['dishes']['mains'][$categorySlug])) {
                         $mappedMenu[$formattedDate]['dishes']['mains'][$categorySlug] = [
@@ -370,9 +397,11 @@ class ApiRestaurationClient
                         $item['info1'] ?? '',
                         $item['info2'] ?? ''
                     ]));
+
+                    $this->log('Ajout de plat standard type mains de '.$subCategorySlug.' pour la catégorie '.$categorySlug.' : '.$name, 'info');
                     
                     if (!empty($name)) {
-                        $mappedMenu[$formattedDate]['dishes']['mains'][$categorySlug]['plats'][] = [
+                        $mappedMenu[$formattedDate]['dishes']['mains'][$categorySlug][$subCategorySlug][] = [
                             'name' => $name,
                             'tags' => $this->mapNutritionalInfo($item)
                         ];
