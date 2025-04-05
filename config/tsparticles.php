@@ -51,8 +51,6 @@ $particlesOptionsFire = [
                 '#4AB0F5',
                 '#ED733D',
                 '#FFD124',
-                '#73E3FF',
-                '#147DE8',
             ]
         ],
         "opacity" => [
@@ -163,8 +161,6 @@ $particlesOptionsBalls = [
                 '#4AB0F5',
                 '#ED733D',
                 '#FFD124',
-                '#73E3FF',
-                '#147DE8',
             ],
         ],
         'shape' => [
@@ -196,10 +192,6 @@ $particlesOptionsParty = [
     'particles' => [
         'number' => [
             'value' => 0,
-            'limit' => [
-                'mode' => 'delete',
-                'value' => 200,
-            ],
         ],
         'color' => [
             'value' => [
@@ -207,49 +199,87 @@ $particlesOptionsParty = [
                 '#4AB0F5',
                 '#ED733D',
                 '#FFD124',
-                '#73E3FF',
-                '#147DE8',
-            ],
-            'animation' => [
-                'h' => [
-                    'speed' => 10,
-                ],
-                's' => [
-                    'speed' => 1,
-                ],
-                'l' => [
-                    'speed' => 1,
-                ],
             ],
         ],
+        'shape' => [
+          'type' => [
+            'circle',
+          ],
+        ],
         'size' => [
-            'value' => 3,
+            'value' => 4,
         ],
         'move' => [
             'enable' => true,
             'direction' => 'top',
+            'angle' => [
+                'value' => 30,
+                'offset' => 0,
+            ],
             'speed' => [
                 'min' => 10,
-                'max' => 25,
+                'max' => 30,
             ],
             'gravity' => [
                 'enable' => true,
-                'acceleration' => 9.81,
+                'acceleration' => 5,
                 'inverse' => false,
                 'maxSpeed' => 15,
             ],
             'outModes' => [
                 'default' => 'destroy',
                 'bottom' => 'destroy',
-                'left' => 'destroy',
-                'right' => 'destroy',
+                'left' => 'bounce',
+                'right' => 'bounce',
                 'top' => 'none',
+            ],
+        ],
+        'rotate' => [
+            'value' => [
+                'min' => 0,
+                'max' => 360,
+            ],
+            'direction' => 'random',
+            'animation' => [
+                'enable' => true,
+                'speed' => 60,
+            ],
+        ],
+        'tilt' => [
+            'direction' => 'random',
+            'enable' => true,
+            'value' => [
+                'min' => 0,
+                'max' => 360,
+            ],
+            'animation' => [
+                'enable' => true,
+                'speed' => 60,
+            ],
+        ],
+        'roll' => [
+            'darken' => [
+                'enable' => true,
+                'value' => 25
+            ],
+            'enable' => true,
+            'speed' => [
+                'min' => 15,
+                'max' => 25,
+            ],
+        ],
+        'wobble' => [
+            'distance' => 30,
+            'enable' => true,
+            'speed' => [
+                'min' => -15,
+                'max' => 15,
             ],
         ],
     ],
     'emitters' => [
         'rate' => [
-            'quantity' => 6,
+            'quantity' => 10,
             'delay' => 0.2,
         ],
         'position' => [
