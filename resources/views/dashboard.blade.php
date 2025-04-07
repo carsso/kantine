@@ -20,7 +20,7 @@
         <div id="dashboard-container" class="w-screen h-screen overflow-hidden flex items-center justify-center">
             <div id="dashboard-scale" class="">
                 <div id="dashboard-wrapper" class="w-[1920px] h-[1080px]">
-                    <main class="p-8 relative flex flex-row items-center text-[3.25rem] text-left h-full w-full leading-[1.2]">
+                    <main class="p-8 relative flex flex-row items-center text-[3rem] text-left h-full w-full leading-[1.2]">
                         <div class="basis-1/6 pr-12 text-right">
                             <div class="text-8xl font-black">Menu</div>
                             <div class="text-4xl mb-2 font-extralight italic">{{ $tenant->name }}</div>
@@ -75,12 +75,12 @@
                                                                             $dish = $dishes[0];
                                                                         @endphp
                                                                         @if(strtolower($dishes[0]['name']) == strtolower($category->name))
-                                                                            <div class="font-bold text-[3.5rem] mb-2 text-[{{ $rootCategory->color }}]">
+                                                                            <div class="font-bold text-[3.25rem] mb-2 text-[{{ $rootCategory->color }}]">
                                                                                 <i class="fa-thin {{ $rootCategory->icon }}"></i> {{ $rootCategory->name }}
                                                                             </div>
                                                                         @else
                                                                             <div>
-                                                                                <span class="font-bold text-[3.5rem] mb-2 text-[{{ $rootCategory->color }}]">
+                                                                                <span class="font-bold text-[3.25rem] mb-2 text-[{{ $rootCategory->color }}]">
                                                                                     <i class="fa-thin {{ $rootCategory->icon }}"></i> {{ $rootCategory->name }} :
                                                                                 </span>
                                                                                 {{ $dish['name'] }}
@@ -93,7 +93,7 @@
                                                                         @endif
                                                                     @else
                                                                         @if(!$i)
-                                                                            <div class="font-bold text-[3.5rem] mb-2 text-[{{ $rootCategory->color }}]">
+                                                                            <div class="font-bold text-[3.25rem] mb-2 text-[{{ $rootCategory->color }}]">
                                                                                 <i class="fa-thin {{ $rootCategory->icon }}"></i> {{ $rootCategory->name }} :
                                                                             </div>
                                                                         @else
