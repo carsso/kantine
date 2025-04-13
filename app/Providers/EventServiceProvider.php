@@ -6,6 +6,8 @@ use App\Events\JobSuccessfullyProcessed;
 use App\Events\JobFailed;
 use App\Listeners\LogSuccessfulJob;
 use App\Listeners\LogFailedJob;
+use App\Listeners\NotifySlackOnJobSuccess;
+use App\Listeners\NotifySlackOnJobFailed;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -23,9 +25,11 @@ class EventServiceProvider extends ServiceProvider
         ],
         JobSuccessfullyProcessed::class => [
             LogSuccessfulJob::class,
+            NotifySlackOnJobSuccess::class,
         ],
         JobFailed::class => [
             LogFailedJob::class,
+            NotifySlackOnJobFailed::class,
         ],
     ];
 

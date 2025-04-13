@@ -36,4 +36,10 @@ return [
         'bot_name' => env('WEBEX_BOT_NAME', 'kantine.menu@webex.bot'),
     ],
 
+    'slack' => [
+        'webhook_url_failed' => env('SLACK_WEBHOOK_URL_FAILED'),
+        'webhook_url_success' => env('SLACK_WEBHOOK_URL_SUCCESS'),
+        'notifications_enabled' => env('SLACK_NOTIFICATIONS_ENABLED', false),
+    ],
+
 ];
