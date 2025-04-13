@@ -7,8 +7,8 @@
             <h1 class="text-center text-2xl leading-9 tracking-tight">Administration</h1>
         </div>
         <div class="mt-8 text-center">
-            <div class="flex flex-row">
-                <div class="basis-1/4 text-center mb-3">
+            <div class="flex flex-col md:flex-row">
+                <div class="w-full md:w-1/4 text-center mb-6 md:mb-0 md:pr-4">
                     <img class="inline-block h-15 w-15 rounded-full" src="{{ auth()->user()->gravatar_url }}" alt="">
                     <div class="mt-2">
                         <p class="font-medium">{{ auth()->user()->name }}</p>
@@ -22,7 +22,7 @@
                         </a>
                     </div>
                 </div>
-                <div class="basis-3/4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+                <div class="w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
                     @foreach($tenants as $tenant)
                         <div class="bg-gray-100 dark:bg-gray-800 rounded-lg shadow p-6">
                             <h2 class="text-xl font-bold mb-4">{{ $tenant->name }}</h2>
