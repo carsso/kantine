@@ -18,15 +18,23 @@ class FailedJob extends Model
         'queue',
         'payload',
         'exception',
-        'failed_at'
+        'logs',
+        'failed_at',
+        'created_at'
     ];
 
     protected $casts = [
-        'failed_at' => 'datetime'
+        'failed_at' => 'datetime',
+        'created_at' => 'datetime'
     ];
 
     public function getPayloadAttribute($value)
     {
         return $this->getJsonAttribute('payload', $value);
+    }
+
+    public function getLogsAttribute($value)
+    {
+        return $this->getJsonAttribute('logs', $value);
     }
 } 

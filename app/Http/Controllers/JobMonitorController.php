@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Job;
 use App\Models\FailedJob;
 use App\Models\SuccessfulJob;
+use App\Models\Tenant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -45,6 +46,9 @@ class JobMonitorController extends Controller
         $failedJobs = FailedJob::orderBy('failed_at', 'desc')->get();
         $successfulJobs = SuccessfulJob::orderBy('finished_at', 'desc')->get();
 
+        // Récupérer tous les tenants
+        $tenants = Tenant::all()->keyBy('id');
+
         // Combiner et trier par date
         $allJobs = collect()
             ->concat($failedJobs->map(function ($job) {
@@ -83,6 +87,7 @@ class JobMonitorController extends Controller
             'failedJobs' => $failedJobs,
             'successfulJobs' => $successfulJobs,
             'stats' => $stats,
+            'tenants' => $tenants,
         ]);
     }
 } 

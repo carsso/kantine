@@ -36,7 +36,10 @@
             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
               <tr v-for="job in pendingJobs" :key="job.id" class="bg-blue-50 dark:bg-blue-900/20">
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{{ formatDate(job.created_at) }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{{ getDisplayName(job.payload) }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                  <div>{{ getDisplayName(job.payload) }}</div>
+                  <div class="text-xs text-gray-500 dark:text-gray-400">Tenant: {{ getTenantName(job.payload) }}</div>
+                </td>
                 <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">
                   <div class="relative">
                     <div class="flex justify-between items-center mb-2">
@@ -77,7 +80,10 @@
             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
               <tr v-for="job in recentJobs" :key="job.id" :class="job.failed_at ? 'bg-red-50 dark:bg-red-900/20' : 'bg-green-50 dark:bg-green-900/20'">
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{{ formatDate(job.failed_at || job.finished_at) }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">{{ getDisplayName(job.payload) }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                  <div>{{ getDisplayName(job.payload) }}</div>
+                  <div class="text-xs text-gray-500 dark:text-gray-400">Tenant: {{ getTenantName(job.payload) }}</div>
+                </td>
                 <td class="px-6 py-4 text-sm text-gray-900 dark:text-white">
                   <div class="space-y-4">
                     <!-- Payload -->
@@ -116,6 +122,8 @@
                         </div>
                         <div v-else class="text-xs">
                           <pre class="bg-gray-50 dark:bg-gray-700 p-2 rounded overflow-x-auto whitespace-pre-wrap break-all">{{ formatException(job.exception) }}</pre>
+                          <div class="text-xs font-medium text-gray-500 dark:text-gray-400 mt-2 mb-2">Logs:</div>
+                          <pre class="bg-gray-50 dark:bg-gray-700 p-2 rounded overflow-x-auto whitespace-pre-wrap break-all">{{ formatResult(job.logs) }}</pre>
                         </div>
                       </div>
                       <div v-else class="text-green-600 dark:text-green-400">
@@ -146,6 +154,7 @@ export default {
       pendingJobs: [],
       failedJobs: [],
       successfulJobs: [],
+      tenants: {},
       stats: {
         pending: 0,
         failed: 0,
@@ -189,6 +198,7 @@ export default {
         this.failedJobs = data.failedJobs
         this.successfulJobs = data.successfulJobs
         this.stats = data.stats
+        this.tenants = data.tenants
       } catch (error) {
         console.error('Error fetching jobs:', error)
       }
@@ -321,6 +331,18 @@ export default {
         const displayName = decoded.displayName || '-'
         if (displayName === '-') return displayName
         return displayName.split('\\').pop()
+      } catch (e) {
+        return '-'
+      }
+    },
+    getTenantName(payload) {
+      if (!payload) return '-'
+      try {
+        const decoded = typeof payload === 'string' ? JSON.parse(payload) : payload
+        const tenantId = decoded?.data?.command?.tenant?.id
+        if (!tenantId) return '-'
+        const tenant = this.tenants[tenantId]
+        return tenant ? `${tenant.name} (ID: ${tenantId})` : `Inconnu (ID: ${tenantId})`
       } catch (e) {
         return '-'
       }
