@@ -77,7 +77,7 @@
                             </p>
                         @else
                             <p class="mt-12 text-center text-sm text-red-600">
-                                Votre adresse IP n'est pas autorisée à créer un compte.
+                                La création de compte est possible uniquement depuis le réseau interne.
                             </p>
                         @endif
                     @endif

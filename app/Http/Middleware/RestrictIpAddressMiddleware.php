@@ -18,6 +18,6 @@ class RestrictIpAddressMiddleware
         if($request->isIpAllowed) {
             return $next($request);
         }
-        abort(403, 'Cette page est restreinte, votre adresse IP n\'est pas autorisé à y accéder.');
+        abort(403, 'Cette page est restreinte pour des raisons de sécurité. Vous devez être sur le réseau interne, wifi ou VPN pour y accéder.');
     }     
 }
