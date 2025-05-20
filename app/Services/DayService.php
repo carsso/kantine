@@ -58,12 +58,21 @@ class DayService
             'tenant' => $tenant,
         ];
         $result['is_fries_day'] = $dishes->contains(function($dish) {
+            if (isset($dish->category->meta['ignore_special_day']) && $dish->category->meta['ignore_special_day']) {
+                return false;
+            }
             return str_contains(strtolower($dish->name), 'frites');
         });
         $result['is_burgers_day'] = $dishes->contains(function($dish) {
+            if (isset($dish->category->meta['ignore_special_day']) && $dish->category->meta['ignore_special_day']) {
+                return false;
+            }
             return str_contains(strtolower($dish->name), 'burger');
         });
         $result['is_antioxidants_day'] = $dishes->contains(function($dish) {
+            if (isset($dish->category->meta['ignore_special_day']) && $dish->category->meta['ignore_special_day']) {
+                return false;
+            }
             $needles = ['haricots rouges', 'lentilles'];
             foreach ($needles as $needle){
                 if (str_contains(strtolower($dish->name), $needle)) {
@@ -75,11 +84,17 @@ class DayService
         $result['next_fries_day'] = Dish::where('tenant_id', $tenant->id)
             ->where('date', '>', date('Y-m-d', $date))
             ->where('name', 'like', '%Frites%')
+            ->whereHas('category', function($query) {
+                $query->whereRaw("JSON_EXTRACT(meta, '$.ignore_special_day') IS NULL OR JSON_EXTRACT(meta, '$.ignore_special_day') = false");
+            })
             ->orderBy('date', 'asc')
             ->first();
         $result['next_burgers_day'] = Dish::where('tenant_id', $tenant->id)
             ->where('date', '>', date('Y-m-d', $date))
             ->where('name', 'like', '%Burger%')
+            ->whereHas('category', function($query) {
+                $query->whereRaw("JSON_EXTRACT(meta, '$.ignore_special_day') IS NULL OR JSON_EXTRACT(meta, '$.ignore_special_day') = false");
+            })
             ->orderBy('date', 'asc')
             ->first();
         $result['next_antioxidants_day'] = Dish::where('tenant_id', $tenant->id)
@@ -87,6 +102,9 @@ class DayService
             ->where(function($query) {
                 $query->where('name', 'like', '%Haricots rouges%')
                       ->orWhere('name', 'like', '%Lentilles%');
+            })
+            ->whereHas('category', function($query) {
+                $query->whereRaw("JSON_EXTRACT(meta, '$.ignore_special_day') IS NULL OR JSON_EXTRACT(meta, '$.ignore_special_day') = false");
             })
             ->orderBy('date', 'asc')
             ->first();
