@@ -276,6 +276,7 @@ class ApiRestaurationClient
         
         // Récupérer le mapping des feuilles vers les catégories et les plats statiques
         $categoryMapping = $this->tenant->meta['api_category_mapping'] ?? [];
+        $categoryNameIsTitleMapping = $this->tenant->meta['api_category_name_is_title_mapping'] ?? [];
         $staticDishes = $this->tenant->meta['api_static_dishes'] ?? [];
         
         // Première passe : collecter toutes les dates uniques et les plats disponibles tous les jours
@@ -291,13 +292,18 @@ class ApiRestaurationClient
                     continue;
                 }
                 $categorySlug = $categoryMapping[$feuille] ?? $feuille;
+                $categoryNameIsTitle = $categoryNameIsTitleMapping[$feuille] ?? false;
 
                 if ($item['date'] === 'TRUE') {
-                    $name = implode(', ', array_filter([
-                        $item['nom'] ?? '',
+                    $nom = $categoryNameIsTitle ? $item['nom'] . ' : ' : $item['nom'] ?? '';
+                    $name = implode(' ', array_filter([
+                        $nom ?? '',
                         $item['info1'] ?? '',
                         $item['info2'] ?? ''
                     ]));
+                    $name = preg_replace('/\s+/', ' ', $name);
+                    $name = preg_replace('/(\s*,)+/', ',', $name);
+
                     if ($item['accompagnement'] === 'TRUE') {
                         $this->log('Garniture récurrente de la catégorie ' . $categorySlug . ' : ' . $name, 'info');
                         if(!isset($dailyAccompaniments[$categorySlug])) {
@@ -392,11 +398,14 @@ class ApiRestaurationClient
                         ];
                     }
 
-                    $name = implode(', ', array_filter([
-                        $item['nom'] ?? '',
+                    $nom = $categoryNameIsTitle ? $item['nom'] . ' : ' : $item['nom'] ?? '';
+                    $name = implode(' ', array_filter([
+                        $nom ?? '',
                         $item['info1'] ?? '',
                         $item['info2'] ?? ''
                     ]));
+                    $name = preg_replace('/\s+/', ' ', $name);
+                    $name = preg_replace('/(\s*,)+/', ',', $name);
 
                     $this->log('Ajout de plat standard type mains de '.$subCategorySlug.' pour la catégorie '.$categorySlug.' : '.$name, 'info');
                     
