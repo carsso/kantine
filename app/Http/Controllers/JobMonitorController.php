@@ -43,8 +43,8 @@ class JobMonitorController extends Controller
         $pendingJobs = Job::orderBy('created_at', 'desc')->get();
 
         // Jobs échoués et réussis, limités à 20 au total
-        $failedJobs = FailedJob::orderBy('failed_at', 'desc')->get();
-        $successfulJobs = SuccessfulJob::orderBy('finished_at', 'desc')->get();
+        $failedJobs = FailedJob::orderBy('failed_at', 'desc')->limit(20)->get();
+        $successfulJobs = SuccessfulJob::orderBy('finished_at', 'desc')->limit(20)->get();
 
         // Récupérer tous les tenants
         $tenants = Tenant::all()->keyBy('id');
