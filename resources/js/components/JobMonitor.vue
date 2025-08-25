@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-6">
     <!-- Statistiques -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
       <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
         <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Jobs en attente</div>
         <div class="mt-2 text-2xl font-semibold text-gray-900 dark:text-white">{{ stats.pending }}</div>
@@ -11,11 +11,15 @@
         <div class="mt-2 text-2xl font-semibold text-green-600 dark:text-green-400">{{ stats.successful }}</div>
       </div>
       <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
+        <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Jobs réussis (aujourd'hui)</div>
+        <div class="mt-2 text-2xl font-semibold text-green-600 dark:text-green-400">{{ stats.successful_today }}</div>
+      </div>
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
         <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Jobs échoués (total)</div>
         <div class="mt-2 text-2xl font-semibold text-red-600 dark:text-red-400">{{ stats.failed }}</div>
       </div>
       <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4">
-        <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Échecs aujourd'hui</div>
+        <div class="text-sm font-medium text-gray-500 dark:text-gray-400">Jobs échoués (aujourd'hui)</div>
         <div class="mt-2 text-2xl font-semibold text-red-600 dark:text-red-400">{{ stats.failed_today }}</div>
       </div>
     </div>
