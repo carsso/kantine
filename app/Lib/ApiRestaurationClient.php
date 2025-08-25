@@ -66,7 +66,6 @@ class ApiRestaurationClient
                             $apiDishes = $dishes;
                             $currentDishes = isset($currentMenu['dishes'][$dishType][$rootCategorySlug][$subCategorySlug]) ? $currentMenu['dishes'][$dishType][$rootCategorySlug][$subCategorySlug]->toArray() : [];
                             $apiDishes = array_unique($apiDishes, SORT_REGULAR);
-                            $currentDishes = array_unique($currentDishes, SORT_REGULAR);
                             usort($apiDishes, function($a, $b) {
                                 if ($a['name'] !== $b['name']) {
                                     return strcmp($a['name'], $b['name']);
@@ -97,7 +96,6 @@ class ApiRestaurationClient
                             $currentDishes = $dishes->toArray() ?? [];
                             $apiDishes = $apiMenu['dishes'][$dishType][$rootCategorySlug][$subCategorySlug] ?? [];
                             $apiDishes = array_unique($apiDishes, SORT_REGULAR);
-                            $currentDishes = array_unique($currentDishes, SORT_REGULAR);
                             usort($currentDishes, function($a, $b) {
                                 if ($a['name'] !== $b['name']) {
                                     return strcmp($a['name'], $b['name']);
