@@ -14,27 +14,7 @@ class JobMonitorController extends Controller
 {
     public function index()
     {
-        // Jobs en attente
-        $pendingJobs = Job::orderBy('created_at', 'desc')->get();
-
-        // Jobs échoués
-        $failedJobs = FailedJob::orderBy('failed_at', 'desc')->get();
-
-        // Jobs réussis
-        $successfulJobs = SuccessfulJob::orderBy('finished_at', 'desc')->get();
-
-        // Statistiques
-        $stats = [
-            'pending' => Job::count(),
-            'failed' => FailedJob::count(),
-            'successful' => SuccessfulJob::count(),
-            'failed_today' => FailedJob::whereDate('failed_at', today())->count(),
-            'failed_week' => FailedJob::whereDate('failed_at', '>=', now()->subWeek())->count(),
-            'successful_today' => SuccessfulJob::whereDate('finished_at', today())->count(),
-            'successful_week' => SuccessfulJob::whereDate('finished_at', '>=', now()->subWeek())->count(),
-        ];
-
-        return view('admin.jobs', compact('pendingJobs', 'failedJobs', 'successfulJobs', 'stats'));
+        return view('admin.jobs');
     }
 
     public function getJobs()
