@@ -182,6 +182,6 @@ class AdminController extends Controller
         }
         
         Log::info($result['message']);
-        return $this->redirectWithSuccess('Notifications Webex envoyées avec succès', redirect()->route('admin.webex', ['tenantSlug' => $tenant->slug]));
+        return $this->redirectWithSuccess('Notifications Webex envoyées avec succès', redirect()->route('admin.jobs'));
     }
 }
