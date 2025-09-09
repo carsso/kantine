@@ -26,6 +26,13 @@ class ProcessWebexMenuNotification implements ShouldQueue, ShouldBeUnique
     public $tries = 1;
 
     /**
+     * The number of seconds the job can run before timing out.
+     *
+     * @var int
+     */
+    public $timeout = 300;
+
+    /**
      * Create a new job instance.
      */
     public function __construct(public Tenant $tenant, public array $room, public array $menu, public ?string $date, public ?bool $notifyUpdate = false, public ?string $initiator = null)
@@ -69,7 +76,7 @@ class ProcessWebexMenuNotification implements ShouldQueue, ShouldBeUnique
         $html = view('webex.menu', ['tenant' => $this->tenant, 'menu' => $this->menu, 'date' => $date, 'categories' => $categories])->render();
         $this->logJob('Working on Webex room "' . $this->room['title'] .'" ' . $this->room['id']);
         $messages = $api->getMessages($this->room['id']);
-        sleep(5);
+        sleep(1);
         $this->logJob('Messages retrieved', 'info', ['messages' => $messages]);
         foreach ($messages['items'] as $message) {
             if($message['personEmail'] !== $this->tenant->webex_bot_name) {
@@ -84,14 +91,14 @@ class ProcessWebexMenuNotification implements ShouldQueue, ShouldBeUnique
                     if (str_contains($e->getMessage(), 'Max allowed number of edits per activity reached')) {
                         $this->logJob($e->getMessage(), 'error');
                         $this->logJob('Max allowed number of edits per activity reached. Posting a new message instead.');
+                        sleep(2);
                         $api->postMessage($this->room['id'], $html);
-                        sleep(5);
                         return;
                     } else {
                         throw $e;
                     }
                 }
-                sleep(5);
+                sleep(2);
                 if(!$this->notifyUpdate) {
                     return;
                 }
@@ -103,7 +110,7 @@ class ProcessWebexMenuNotification implements ShouldQueue, ShouldBeUnique
                 $this->logJob('Posting reply message in Webex room "' . $this->room['title'] .'" ' . $this->room['id']);
                 $this->logJob('Reply HTML content', 'info', ['html' => $html]);
                 $api->postMessage($this->room['id'], $html, $message['id']);
-                sleep(5);
+                sleep(2);
                 return;
             }
         }
@@ -111,7 +118,7 @@ class ProcessWebexMenuNotification implements ShouldQueue, ShouldBeUnique
         $this->logJob('Posting message to Webex room "' . $this->room['title'] .'" ' . $this->room['id']);
         $this->logJob('HTML content', 'info', ['html' => $html]);
         $api->postMessage($this->room['id'], $html);
-        sleep(5);
+        sleep(2);
     }
 
     public function uniqueId(): string

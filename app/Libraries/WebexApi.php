@@ -6,10 +6,13 @@ use App\Libraries\WebexApiClient;
 use GuzzleHttp\Client as GuzzleClient;
 use Psr\Http\Message\ResponseInterface;
 use App\Models\Tenant;
+use App\Exceptions\WebexRateLimitException;
 
 class WebexApi
 {
     public $client;
+    private $maxRetries = 3;
+    private $baseDelay = 3; // seconds
 
     public function __construct(?Tenant $tenant = null)
     {
@@ -25,20 +28,26 @@ class WebexApi
 
     public function get($path, $headers = [])
     {
-        $json = $this->client->getJson($this->client->get($path, null, $headers));
-        return json_decode($json, true);
+        return $this->executeWithRetry(function() use ($path, $headers) {
+            $json = $this->client->getJson($this->client->get($path, null, $headers));
+            return json_decode($json, true);
+        });
     }
 
     public function post($path, $data = [], $headers = [])
     {
-        $json = $this->client->getJson($this->client->post($path, json_encode($data), $headers));
-        return json_decode($json, true);
+        return $this->executeWithRetry(function() use ($path, $data, $headers) {
+            $json = $this->client->getJson($this->client->post($path, json_encode($data), $headers));
+            return json_decode($json, true);
+        });
     }
 
     public function put($path, $data = [], $headers = [])
     {
-        $json = $this->client->getJson($this->client->put($path, json_encode($data), $headers));
-        return json_decode($json, true);
+        return $this->executeWithRetry(function() use ($path, $data, $headers) {
+            $json = $this->client->getJson($this->client->put($path, json_encode($data), $headers));
+            return json_decode($json, true);
+        });
     }
 
     public function getRooms($type = 'group')
@@ -88,5 +97,38 @@ class WebexApi
             'roomId'=> $roomId,
             'html' => $message,
         ]);
+    }
+
+    /**
+     * Execute a request with retry logic for rate limiting
+     */
+    private function executeWithRetry(callable $request, int $attempt = 1)
+    {
+        try {
+            return $request();
+        } catch (WebexRateLimitException $e) {
+            if ($attempt > $this->maxRetries) {
+                throw $e;
+            }
+
+            $delay = $this->calculateDelay($e->getRetryAfterSeconds(), $attempt);
+            sleep($delay);
+
+            return $this->executeWithRetry($request, $attempt + 1);
+        }
+    }
+
+    /**
+     * Calculate delay with exponential backoff
+     */
+    private function calculateDelay(int $retryAfter, int $attempt): int
+    {
+        // Use Retry-After header if available, otherwise use exponential backoff
+        if ($retryAfter > 0) {
+            return $retryAfter;
+        }
+
+        // Exponential backoff: baseDelay * 2^(attempt-1)
+        return $this->baseDelay * pow(2, $attempt - 1);
     }
 }
