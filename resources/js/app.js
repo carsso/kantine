@@ -8,18 +8,6 @@ import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
 
 const app = createApp({
-    data() {
-        return {
-            currentDarkmode: document.documentElement.dataset.bsColorScheme === 'dark',
-        }
-    },
-    watch: {
-        currentDarkmode(newValue) {
-            document.documentElement.dataset.bsColorScheme = newValue ? 'dark' : 'light';
-            document.documentElement.className = newValue ? 'dark' : 'light';
-        }
-    },
-
 	methods: {
         round(value, decimals) {
             if (!value) {
@@ -54,7 +42,7 @@ window.Echo = new Echo({
 
 window.EchoMixin = {
     created() {
-        window.Echo.connector.pusher.connection.bind('state_change', (states) => {
+        window.Echo.connector.pusher.connection.bind('state_change', () => {
             this.echoState = window.Echo.connector.pusher.connection.state;
         });
         window.Echo.connector.pusher.connection.bind('connected', () => {

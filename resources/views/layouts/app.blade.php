@@ -1,7 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}"
-    data-bs-color-scheme="{{ Cookie::get('darkmode') ? 'dark' : 'light' }}"
-    class="{{ Cookie::get('darkmode') ? 'dark' : 'light' }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     
 
 <head>

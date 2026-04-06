@@ -4,7 +4,6 @@ use App\Http\Controllers\CategoryLinkController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\AccountController;
-use App\Http\Controllers\DarkmodeController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\JobMonitorController;
 
@@ -25,8 +24,6 @@ Route::get('/', [MenuController::class, 'home'])
 Route::get('/legal', [MenuController::class, 'legal'])
     ->name('legal');
 
-Route::get('/darkmode/{enable}', [DarkmodeController::class, 'json'])
-    ->name('darkmode');
 
 Auth::routes(['verify' => true]);
 

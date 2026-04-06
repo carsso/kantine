@@ -146,7 +146,6 @@ export default {
 
 <style>
 @reference "tailwindcss";
-@custom-variant dark (&:where(.dark, .dark *));
 
 .admin-dishes-input .vs__search::placeholder,
 .admin-dishes-input .vs__dropdown-toggle,
