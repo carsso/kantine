@@ -34,7 +34,7 @@ class SlackNotificationService
             $firstExceptionLine = explode("\n", $exception)[0];
             $message = [
                 'username' => config('app.name'),
-                'icon_url' => Vite::asset('assets/images/favicon.png'),
+                'icon_url' => Vite::asset('resources/images/favicon.png'),
                 'text' => "❌ *Job Failed : {$displayName} - {$tenantName} (ID: {$tenantId})*\n" .
                     route('admin.jobs') . "\n" .
                     "*UUID:* `{$uuid}`\n" .
@@ -62,7 +62,7 @@ class SlackNotificationService
         }
 
         Log::info('Sending Slack notification for successful job ' . $uuid);
-        Log::info(Vite::asset('assets/images/favicon.png'));
+        Log::info(Vite::asset('resources/images/favicon.png'));
         try {
             $displayName = explode('\\', $payload['displayName'])[count(explode('\\', $payload['displayName'])) - 1];
             $tenantId = 0;
@@ -75,7 +75,7 @@ class SlackNotificationService
             $tenantName = $tenant ? $tenant->name : 'Inconnu';
             $message = [
                 'username' => config('app.name'),
-                'icon_url' => Vite::asset('assets/images/favicon.png'),
+                'icon_url' => Vite::asset('resources/images/favicon.png'),
                 'text' => "✅ *Job Completed : {$displayName} - {$tenantName} (ID: {$tenantId})*\n" .
                     route('admin.jobs') . "\n" .
                     "*UUID:* `{$uuid}`\n" .

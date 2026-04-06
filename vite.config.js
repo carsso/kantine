@@ -11,6 +11,8 @@ export default defineConfig({
                 'resources/css/base.css',
                 'resources/scss/app.scss',
                 'resources/js/app.js',
+                'resources/images/favicon.png',
+                'resources/images/bg_dev.png',
             ],
             refresh: true,
         }),
