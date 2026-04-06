@@ -22,7 +22,7 @@ Written in PHP/Laravel and VueJS.
 ## Pre-requisites
 
 - PHP >= 8.3
-- NodeJS >= 23
+- NodeJS >= 24
 - FontAwesome Pro 6 license, with a [configured .npmrc file](https://docs.fontawesome.com/web/setup/packages#project-specific-using-configuration-files)
 
 ## Deployment
