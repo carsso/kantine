@@ -2,11 +2,11 @@
 
 namespace App\Traits;
 
-use App\Models\Job;
-use Illuminate\Support\Facades\Log;
-use App\Events\JobSuccessfullyProcessed;
 use App\Events\JobFailed;
+use App\Events\JobSuccessfullyProcessed;
+use App\Models\Job;
 use Illuminate\Container\Container;
+use Illuminate\Support\Facades\Log;
 
 trait JobLogging
 {
@@ -20,7 +20,7 @@ trait JobLogging
             'message' => $message,
             'level' => $level,
             'data' => $data,
-            'date' => now()
+            'date' => now(),
         ];
         Log::info($message, $data);
     }
@@ -29,19 +29,21 @@ trait JobLogging
     {
         $container = Container::getInstance();
         $parameters = $this->getHandleLoggedJobParameters();
-        
+
         try {
             if (empty($parameters)) {
                 $this->handleLoggedJob();
             } else {
                 $dependencies = array_map(function ($parameter) use ($container) {
-                    return $container->make($parameter->getClass()->getName());
+                    $type = $parameter->getType();
+
+                    return $container->make($type instanceof \ReflectionNamedType ? $type->getName() : (string) $type);
                 }, $parameters);
-                
+
                 call_user_func_array([$this, 'handleLoggedJob'], $dependencies);
             }
 
-            if($this->doNotLog) {
+            if ($this->doNotLog) {
                 return;
             }
 
@@ -60,7 +62,7 @@ trait JobLogging
         } catch (\Exception $e) {
             // Log l'erreur dans les logs du job
             $this->logJob($e->getMessage(), 'error', [
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
 
             // Dispatch l'événement d'échec
@@ -81,12 +83,11 @@ trait JobLogging
 
     /**
      * Get the parameters for handleLoggedJob method
-     *
-     * @return array
      */
     protected function getHandleLoggedJobParameters(): array
     {
         $reflection = new \ReflectionMethod($this, 'handleLoggedJob');
+
         return $reflection->getParameters();
     }
-} 
+}
