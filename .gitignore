@@ -22,6 +22,7 @@ laravel-echo-server.json
 /.fleet
 /.idea
 /.vscode
+/.claude/settings.local.json
 /scripts/bin
 /scripts/lib
 /scripts/lib64
