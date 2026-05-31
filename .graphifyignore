@@ -1,0 +1,48 @@
+# Graphify ignore rules — extends .gitignore for graph extraction scope.
+# Graphify uses this file instead of .gitignore, so all gitignore patterns
+# must be duplicated here to keep the same exclusions.
+
+# --- Mirrored from .gitignore ---
+/.phpunit.cache
+/node_modules
+/public/build
+/public/hot
+/public/storage
+/public/fonts/vendor
+/storage/*.key
+/vendor
+.env
+.env.backup
+.env.production
+.phpunit.result.cache
+database.sqlite
+Homestead.json
+Homestead.yaml
+auth.json
+npm-debug.log
+yarn-error.log
+composer.phar
+laravel-echo-server.lock
+laravel-echo-server.json
+/.fleet
+/.idea
+/.vscode
+
+# Claude Code
+/.claude/settings.local.json
+
+# Graphify (generated output, reconstructible)
+/graphify-out/
+
+/scripts/bin
+/scripts/lib
+/scripts/lib64
+/scripts/pyvenv.cfg
+
+# --- Graphify-specific exclusions ---
+
+# Uploaded user content (menu PDFs, etc.) — not source code
+/storage/app/public/uploads/
+
+# Compiled Blade/PHP view cache — generated, not source
+/storage/framework/views/
