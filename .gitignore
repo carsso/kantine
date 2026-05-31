@@ -22,7 +22,11 @@ laravel-echo-server.json
 /.fleet
 /.idea
 /.vscode
+# Claude Code
 /.claude/settings.local.json
+
+# Graphify (generated output, reconstructible)
+/graphify-out/
 /scripts/bin
 /scripts/lib
 /scripts/lib64
