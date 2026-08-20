@@ -42,4 +42,10 @@ return [
         'notifications_enabled' => env('SLACK_NOTIFICATIONS_ENABLED', false),
     ],
 
+    'discord' => [
+        'webhook_url_failed' => env('DISCORD_WEBHOOK_URL_FAILED'),
+        'webhook_url_success' => env('DISCORD_WEBHOOK_URL_SUCCESS'),
+        'notifications_enabled' => env('DISCORD_NOTIFICATIONS_ENABLED', false),
+    ],
+
 ];
