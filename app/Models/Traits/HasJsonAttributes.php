@@ -7,7 +7,7 @@ trait HasJsonAttributes
     /**
      * Désérialise les données PHP sérialisées
      *
-     * @param mixed $data
+     * @param  mixed  $data
      * @return mixed
      */
     protected function deserializePhpData($data)
@@ -23,22 +23,22 @@ trait HasJsonAttributes
                     'App\Models\Information',
                     'App\Models\Tenant',
                     'Carbon\Carbon',
-                ]
+                ],
             ]);
         }
-        
+
         if (is_array($data)) {
             return array_map([$this, 'deserializePhpData'], $data);
         }
-        
+
         return $data;
     }
 
     /**
      * Récupère un attribut JSON
      *
-     * @param string $key
-     * @param mixed $value
+     * @param  string  $key
+     * @param  mixed  $value
      * @return mixed
      */
     public function getJsonAttribute($key, $value)
@@ -58,8 +58,8 @@ trait HasJsonAttributes
     /**
      * Définit un attribut JSON
      *
-     * @param string $key
-     * @param mixed $value
+     * @param  string  $key
+     * @param  mixed  $value
      * @return string
      */
     public function setJsonAttribute($key, $value)
@@ -70,4 +70,4 @@ trait HasJsonAttributes
 
         return json_encode($value);
     }
-} 
+}

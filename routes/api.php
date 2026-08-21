@@ -1,10 +1,9 @@
 <?php
 
+use App\Http\Controllers\ApiAdminController;
+use App\Http\Controllers\ApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ApiController;
-use App\Http\Controllers\ApiAdminController;
-use App\Http\Controllers\Api\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,7 +34,7 @@ Route::prefix('{tenantSlug}')->middleware('tenant')->group(function () {
 
     Route::get('/today', [ApiController::class, 'today'])
         ->name('api.today');
-        
+
     Route::prefix('/admin')->middleware(['auth:sanctum', 'tenant-admin'])->group(function () {
         Route::get('/menus/{date}', [ApiAdminController::class, 'menu'])
             ->name('api.admin.menus.get');
@@ -43,4 +42,3 @@ Route::prefix('{tenantSlug}')->middleware('tenant')->group(function () {
             ->name('api.admin.menus.update');
     });
 });
-

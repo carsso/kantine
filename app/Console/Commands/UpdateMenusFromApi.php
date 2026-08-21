@@ -2,10 +2,10 @@
 
 namespace App\Console\Commands;
 
+use App\Jobs\UpdateMenusFromApiJob;
 use App\Models\Tenant;
 use App\Services\DayService;
 use Illuminate\Console\Command;
-use App\Jobs\UpdateMenusFromApiJob;    
 
 class UpdateMenusFromApi extends Command
 {
@@ -30,14 +30,14 @@ class UpdateMenusFromApi extends Command
      */
     public function handle(DayService $dayService)
     {
-        if($this->argument('tenant_slug')) {
+        if ($this->argument('tenant_slug')) {
             $tenants = Tenant::where('slug', $this->argument('tenant_slug'))->get();
         } else {
             $tenants = Tenant::where('is_active', true)->get();
         }
-        foreach($tenants as $tenant) {
-            if(isset($tenant->meta['api_type']) && $tenant->meta['api_type']) {
-                if($tenant->meta['api_type'] === 'api-restauration') {
+        foreach ($tenants as $tenant) {
+            if (isset($tenant->meta['api_type']) && $tenant->meta['api_type']) {
+                if ($tenant->meta['api_type'] === 'api-restauration') {
                     $this->info('Checking menus from API for tenant '.$tenant->slug);
                     UpdateMenusFromApiJob::dispatch($tenant);
                     $this->info('Job dispatched for tenant '.$tenant->slug);
@@ -48,6 +48,7 @@ class UpdateMenusFromApi extends Command
                 $this->info('Tenant '.$tenant->slug.' has no API URL or API Type, skipping');
             }
         }
+
         return 0;
     }
 }

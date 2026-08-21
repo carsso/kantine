@@ -1,13 +1,14 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Libraries;
 
+use App\Exceptions\WebexRateLimitException;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\ClientException;
-use Psr\Http\Message\ResponseInterface;
-use App\Exceptions\WebexRateLimitException;
 use Illuminate\Support\Facades\Log;
+use Psr\Http\Message\ResponseInterface;
 
 class WebexApiClient
 {
@@ -17,6 +18,7 @@ class WebexApiClient
      * @var ClientInterface
      */
     public $guzzleClient;
+
     /**
      * @var string
      */
@@ -35,9 +37,9 @@ class WebexApiClient
             $customHeaders
         );
         $options = array_merge(['headers' => $headers], ['query' => $queryParameters]);
-        
+
         try {
-            return $this->guzzleClient->get(self::API_BASE_URL . $url, $options);
+            return $this->guzzleClient->get(self::API_BASE_URL.$url, $options);
         } catch (ClientException $e) {
             $this->handleRateLimitException($e);
             throw $e;
@@ -55,9 +57,9 @@ class WebexApiClient
             $customHeaders
         );
         $options = array_merge(['headers' => $headers], ['body' => $jsonData]);
-        
+
         try {
-            return $this->guzzleClient->post(self::API_BASE_URL . $url, $options);
+            return $this->guzzleClient->post(self::API_BASE_URL.$url, $options);
         } catch (ClientException $e) {
             $this->handleRateLimitException($e);
             throw $e;
@@ -75,9 +77,9 @@ class WebexApiClient
             $customHeaders
         );
         $options = array_merge(['headers' => $headers], ['body' => $jsonData]);
-        
+
         try {
-            return $this->guzzleClient->put(self::API_BASE_URL . $url, $options);
+            return $this->guzzleClient->put(self::API_BASE_URL.$url, $options);
         } catch (ClientException $e) {
             $this->handleRateLimitException($e);
             throw $e;
@@ -90,9 +92,9 @@ class WebexApiClient
             $this->getAuthorizationHeader(),
             $customHeaders
         );
-        
+
         try {
-            return $this->guzzleClient->delete(self::API_BASE_URL . $url, ['headers' => $headers]);
+            return $this->guzzleClient->delete(self::API_BASE_URL.$url, ['headers' => $headers]);
         } catch (ClientException $e) {
             $this->handleRateLimitException($e);
             throw $e;
@@ -114,18 +116,18 @@ class WebexApiClient
         if ($e->getCode() === 429) {
             $response = $e->getResponse();
             $retryAfter = null;
-            
+
             if ($response && $response->hasHeader('Retry-After')) {
                 $retryAfter = (int) $response->getHeaderLine('Retry-After');
             }
-            
+
             Log::warning('Webex API rate limit exceeded', [
                 'retry_after' => $retryAfter,
                 'status_code' => 429,
                 'response_body' => $response ? $response->getBody()->getContents() : null,
-                'exception' => $e->getMessage()
+                'exception' => $e->getMessage(),
             ]);
-            
+
             throw new WebexRateLimitException(
                 'Webex API rate limit exceeded',
                 $retryAfter,

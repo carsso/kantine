@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Information extends Model
@@ -65,4 +65,4 @@ class Information extends Model
     {
         return $this->belongsTo(Tenant::class);
     }
-} 
+}

@@ -12,14 +12,13 @@ class DayService
     /**
      * Get information for the specified day
      *
-     * @param Tenant $tenant
-     * @param string|Carbon $date
+     * @param  string|Carbon  $date
      * @return array
      */
     public function getDay(Tenant $tenant, $dateString = null)
     {
         $date = strtotime('today 10 am');
-        if(preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateString)) {
+        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $dateString)) {
             $date = strtotime($dateString.' 10 am');
         }
 
@@ -34,17 +33,17 @@ class DayService
             ->get();
 
         // Organize dishes by category name and sort by sort_order
-        $groupedDishes = $dishes->groupBy(function($dish) {
+        $groupedDishes = $dishes->groupBy(function ($dish) {
             return $dish->category->parent->type;
-        })->map(function($typeGroup) {
-            return $typeGroup->groupBy(function($dish) {
+        })->map(function ($typeGroup) {
+            return $typeGroup->groupBy(function ($dish) {
                 return $dish->category->parent->name_slug;
-            })->sortBy(function($group, $key) {
+            })->sortBy(function ($group, $key) {
                 return $group->first()->category->parent->sort_order;
-            })->map(function($categoryGroup) {
-                return $categoryGroup->groupBy(function($dish) {
+            })->map(function ($categoryGroup) {
+                return $categoryGroup->groupBy(function ($dish) {
                     return $dish->category->name_slug;
-                })->sortBy(function($group, $key) {
+                })->sortBy(function ($group, $key) {
                     return $group->first()->category->sort_order;
                 });
             });
@@ -57,34 +56,37 @@ class DayService
             'information' => ($information && ($information->event_name || $information->information || $information->style)) ? $information : null,
             'tenant' => $tenant,
         ];
-        $result['is_fries_day'] = $dishes->contains(function($dish) {
+        $result['is_fries_day'] = $dishes->contains(function ($dish) {
             if (isset($dish->category->meta['ignore_special_day']) && $dish->category->meta['ignore_special_day']) {
                 return false;
             }
+
             return str_contains(strtolower($dish->name), 'frites');
         });
-        $result['is_burgers_day'] = $dishes->contains(function($dish) {
+        $result['is_burgers_day'] = $dishes->contains(function ($dish) {
             if (isset($dish->category->meta['ignore_special_day']) && $dish->category->meta['ignore_special_day']) {
                 return false;
             }
+
             return str_contains(strtolower($dish->name), 'burger');
         });
-        $result['is_antioxidants_day'] = $dishes->contains(function($dish) {
+        $result['is_antioxidants_day'] = $dishes->contains(function ($dish) {
             if (isset($dish->category->meta['ignore_special_day']) && $dish->category->meta['ignore_special_day']) {
                 return false;
             }
             $needles = ['haricots rouges', 'lentilles'];
-            foreach ($needles as $needle){
+            foreach ($needles as $needle) {
                 if (str_contains(strtolower($dish->name), $needle)) {
                     return true;
                 }
             }
+
             return false;
         });
         $result['next_fries_day'] = Dish::where('tenant_id', $tenant->id)
             ->where('date', '>', date('Y-m-d', $date))
             ->where('name', 'like', '%Frites%')
-            ->whereHas('category', function($query) {
+            ->whereHas('category', function ($query) {
                 $query->whereRaw("JSON_EXTRACT(meta, '$.ignore_special_day') IS NULL OR JSON_EXTRACT(meta, '$.ignore_special_day') = false");
             })
             ->orderBy('date', 'asc')
@@ -92,18 +94,18 @@ class DayService
         $result['next_burgers_day'] = Dish::where('tenant_id', $tenant->id)
             ->where('date', '>', date('Y-m-d', $date))
             ->where('name', 'like', '%Burger%')
-            ->whereHas('category', function($query) {
+            ->whereHas('category', function ($query) {
                 $query->whereRaw("JSON_EXTRACT(meta, '$.ignore_special_day') IS NULL OR JSON_EXTRACT(meta, '$.ignore_special_day') = false");
             })
             ->orderBy('date', 'asc')
             ->first();
         $result['next_antioxidants_day'] = Dish::where('tenant_id', $tenant->id)
             ->where('date', '>', date('Y-m-d', $date))
-            ->where(function($query) {
+            ->where(function ($query) {
                 $query->where('name', 'like', '%Haricots rouges%')
-                      ->orWhere('name', 'like', '%Lentilles%');
+                    ->orWhere('name', 'like', '%Lentilles%');
             })
-            ->whereHas('category', function($query) {
+            ->whereHas('category', function ($query) {
                 $query->whereRaw("JSON_EXTRACT(meta, '$.ignore_special_day') IS NULL OR JSON_EXTRACT(meta, '$.ignore_special_day') = false");
             })
             ->orderBy('date', 'asc')
@@ -114,6 +116,7 @@ class DayService
             ->where('event_name', '!=', '')
             ->orderBy('date', 'asc')
             ->first();
+
         return $result;
     }
 }

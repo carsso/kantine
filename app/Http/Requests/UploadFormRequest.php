@@ -17,12 +17,12 @@ class UploadFormRequest extends FormRequest
     public function messages()
     {
         return [
-            'files.required' => "Le fichier est obligatoire.",
-            'files.mimes' => "Le fichier doit être un PDF.",
-            'files.max' => "Le fichier est trop gros.",
-            'files.*.required' => "Le fichier est obligatoire.",
-            'files.*.mimes' => "Le fichier doit être un PDF.",
-            'files.*.max' => "Le fichier est trop gros.",
+            'files.required' => 'Le fichier est obligatoire.',
+            'files.mimes' => 'Le fichier doit être un PDF.',
+            'files.max' => 'Le fichier est trop gros.',
+            'files.*.required' => 'Le fichier est obligatoire.',
+            'files.*.mimes' => 'Le fichier doit être un PDF.',
+            'files.*.max' => 'Le fichier est trop gros.',
         ];
     }
 }

@@ -18,17 +18,17 @@ class Job extends Model
         'attempts',
         'reserved_at',
         'available_at',
-        'created_at'
+        'created_at',
     ];
 
     protected $casts = [
         'reserved_at' => 'integer',
         'available_at' => 'integer',
-        'created_at' => 'integer'
+        'created_at' => 'integer',
     ];
 
     public function getPayloadAttribute($value)
     {
         return $this->getJsonAttribute('payload', $value);
     }
-} 
+}

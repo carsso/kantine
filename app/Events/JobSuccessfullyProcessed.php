@@ -4,6 +4,7 @@ namespace App\Events;
 
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+
 class JobSuccessfullyProcessed
 {
     use Dispatchable, SerializesModels;
@@ -17,4 +18,4 @@ class JobSuccessfullyProcessed
         public ?string $created_at = null,
         public ?string $finished_at = null
     ) {}
-} 
+}

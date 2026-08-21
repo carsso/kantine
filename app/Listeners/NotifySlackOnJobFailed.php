@@ -7,9 +7,7 @@ use App\Services\SlackNotificationService;
 
 class NotifySlackOnJobFailed
 {
-    public function __construct(private SlackNotificationService $slackService)
-    {
-    }
+    public function __construct(private SlackNotificationService $slackService) {}
 
     public function handle(JobFailed $event): void
     {
@@ -20,4 +18,4 @@ class NotifySlackOnJobFailed
             $event->failed_at
         );
     }
-} 
+}

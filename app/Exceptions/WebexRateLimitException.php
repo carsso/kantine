@@ -8,7 +8,7 @@ class WebexRateLimitException extends Exception
 {
     protected $retryAfter;
 
-    public function __construct(string $message = 'Rate limit exceeded', int $retryAfter = null, int $code = 429, Exception $previous = null)
+    public function __construct(string $message = 'Rate limit exceeded', ?int $retryAfter = null, int $code = 429, ?Exception $previous = null)
     {
         parent::__construct($message, $code, $previous);
         $this->retryAfter = $retryAfter;

@@ -12,7 +12,7 @@ class ApiController extends Controller
     {
         $tenants = Tenant::where('is_active', true)->get();
         $routes = [];
-        
+
         foreach ($tenants as $tenant) {
             $routes[$tenant->slug] = [
                 'today' => route('api.today', ['tenantSlug' => $tenant->slug]),
@@ -32,9 +32,10 @@ class ApiController extends Controller
     {
         $tenant = $request->route('tenant');
         $dateString = $request->route('date');
+
         return $dayService->getDay($tenant, $dateString);
     }
-    
+
     public function user(Request $request)
     {
         return response()->json($request->user());

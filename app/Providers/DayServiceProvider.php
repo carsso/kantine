@@ -13,7 +13,7 @@ class DayServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton(DayService::class, function ($app) {
-            return new DayService();
+            return new DayService;
         });
     }
-} 
+}

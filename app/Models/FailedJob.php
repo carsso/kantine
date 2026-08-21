@@ -20,12 +20,12 @@ class FailedJob extends Model
         'exception',
         'logs',
         'failed_at',
-        'created_at'
+        'created_at',
     ];
 
     protected $casts = [
         'failed_at' => 'datetime',
-        'created_at' => 'datetime'
+        'created_at' => 'datetime',
     ];
 
     public function getPayloadAttribute($value)
@@ -37,4 +37,4 @@ class FailedJob extends Model
     {
         return $this->getJsonAttribute('logs', $value);
     }
-} 
+}

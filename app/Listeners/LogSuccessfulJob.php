@@ -19,7 +19,7 @@ class LogSuccessfulJob
                 'result' => json_encode($jobSuccessfullyProcessed->logs),
                 'finished_at' => $jobSuccessfullyProcessed->finished_at,
                 'created_at' => $jobSuccessfullyProcessed->created_at,
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
             $job->created_at = $jobSuccessfullyProcessed->created_at;
             $job->finished_at = $jobSuccessfullyProcessed->finished_at;
@@ -27,8 +27,8 @@ class LogSuccessfulJob
         } catch (\Exception $e) {
             Log::error('Failed to log successful job', [
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
         }
     }
-} 
+}

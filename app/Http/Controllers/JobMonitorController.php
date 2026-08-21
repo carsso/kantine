@@ -2,13 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Job;
 use App\Models\FailedJob;
+use App\Models\Job;
 use App\Models\SuccessfulJob;
 use App\Models\Tenant;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 
 class JobMonitorController extends Controller
 {
@@ -33,10 +30,12 @@ class JobMonitorController extends Controller
         $allJobs = collect()
             ->concat($failedJobs->map(function ($job) {
                 $job->date = $job->failed_at;
+
                 return $job;
             }))
             ->concat($successfulJobs->map(function ($job) {
                 $job->date = $job->finished_at;
+
                 return $job;
             }))
             ->sortByDesc('date')
@@ -70,4 +69,4 @@ class JobMonitorController extends Controller
             'tenants' => $tenants,
         ]);
     }
-} 
+}

@@ -29,9 +29,9 @@ return new class extends Migration
             $table->timestamps();
             $table->date('date');
             $table->foreignId('dishes_category_id')
-                  ->nullable()
-                  ->constrained('dishes_categories')
-                  ->onDelete('set null');
+                ->nullable()
+                ->constrained('dishes_categories')
+                ->onDelete('set null');
             $table->string('name')->nullable();
             $table->string('tags')->nullable();
         });

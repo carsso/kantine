@@ -1,14 +1,15 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Events\MenuUpdatedEvent;
 use App\Http\Requests\UpdateMenuApiRequest;
 use App\Models\Dish;
 use App\Models\DishCategory;
 use App\Models\Information;
 use App\Services\DayService;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ApiAdminController extends Controller
 {
@@ -21,6 +22,7 @@ class ApiAdminController extends Controller
     {
         $tenant = $request->route('tenant');
         $dateString = $request->route('date');
+
         return $dayService->getDay($tenant, $dateString);
     }
 
@@ -30,10 +32,10 @@ class ApiAdminController extends Controller
         $date = $request->route('date');
 
         // Validate date format
-        if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+        if (! preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
             return response()->json([
                 'error' => 'Format de date invalide',
-                'message' => 'La date doit être au format YYYY-MM-DD'
+                'message' => 'La date doit être au format YYYY-MM-DD',
             ], 422);
         }
 
@@ -42,11 +44,11 @@ class ApiAdminController extends Controller
         // Validate style if provided
         if (isset($menuData['information']['style']) && $menuData['information']['style'] !== '') {
             $allowedStyles = array_keys(config('tsparticles.config', []));
-            if (!in_array($menuData['information']['style'], $allowedStyles)) {
+            if (! in_array($menuData['information']['style'], $allowedStyles)) {
                 return response()->json([
                     'error' => 'Style invalide',
                     'invalid_style' => $menuData['information']['style'],
-                    'allowed_styles' => $allowedStyles
+                    'allowed_styles' => $allowedStyles,
                 ], 422);
             }
         }
@@ -58,7 +60,7 @@ class ApiAdminController extends Controller
         $categorySlugToId = [];
         foreach ($categories as $category) {
             if ($category->parent_id) {
-                $categorySlugToId[$category->parent->type . '.' . $category->parent->name_slug . '.' . $category->name_slug] = $category->id;
+                $categorySlugToId[$category->parent->type.'.'.$category->parent->name_slug.'.'.$category->name_slug] = $category->id;
             }
         }
 
@@ -67,19 +69,19 @@ class ApiAdminController extends Controller
         foreach ($menuData['dishes'] as $dishType => $rootCategories) {
             foreach ($rootCategories as $rootCategorySlug => $subCategories) {
                 foreach ($subCategories as $subCategorySlug => $dishes) {
-                    $fullSlug = $dishType . '.' . $rootCategorySlug . '.' . $subCategorySlug;
-                    if (!isset($categorySlugToId[$fullSlug])) {
+                    $fullSlug = $dishType.'.'.$rootCategorySlug.'.'.$subCategorySlug;
+                    if (! isset($categorySlugToId[$fullSlug])) {
                         $invalidCategories[] = $fullSlug;
                     }
                 }
             }
         }
 
-        if (!empty($invalidCategories)) {
+        if (! empty($invalidCategories)) {
             return response()->json([
                 'error' => 'Catégories invalides',
                 'invalid_categories' => $invalidCategories,
-                'allowed_categories' => array_keys($categorySlugToId)
+                'allowed_categories' => array_keys($categorySlugToId),
             ], 422);
         }
 
@@ -92,7 +94,7 @@ class ApiAdminController extends Controller
                     foreach ($dishes as $dish) {
                         if (isset($dish['tags']) && is_array($dish['tags'])) {
                             foreach ($dish['tags'] as $tag) {
-                                if (!in_array($tag, $allowedTags)) {
+                                if (! in_array($tag, $allowedTags)) {
                                     $invalidTags[] = $tag;
                                 }
                             }
@@ -102,11 +104,11 @@ class ApiAdminController extends Controller
             }
         }
 
-        if (!empty($invalidTags)) {
+        if (! empty($invalidTags)) {
             return response()->json([
                 'error' => 'Tags invalides',
                 'invalid_tags' => array_unique($invalidTags),
-                'allowed_tags' => $allowedTags
+                'allowed_tags' => $allowedTags,
             ], 422);
         }
 
@@ -115,7 +117,7 @@ class ApiAdminController extends Controller
         foreach ($menuData['dishes'] as $dishType => $rootCategories) {
             foreach ($rootCategories as $rootCategorySlug => $subCategories) {
                 foreach ($subCategories as $subCategorySlug => $dishes) {
-                    $fullSlug = $dishType . '.' . $rootCategorySlug . '.' . $subCategorySlug;
+                    $fullSlug = $dishType.'.'.$rootCategorySlug.'.'.$subCategorySlug;
                     foreach ($dishes as $dish) {
                         $createdDish = Dish::firstOrCreate([
                             'date' => $date,
@@ -163,7 +165,7 @@ class ApiAdminController extends Controller
 
         return response()->json([
             'message' => 'Menu mis à jour avec succès',
-            'menu' => $menu
+            'menu' => $menu,
         ]);
     }
 }
