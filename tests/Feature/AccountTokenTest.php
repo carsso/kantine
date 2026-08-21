@@ -4,20 +4,10 @@ namespace Tests\Feature;
 
 use App\Models\Tenant;
 use App\Models\User;
-use App\Services\TenantRolesAndPermissionsService;
 use Tests\TestCase;
 
 class AccountTokenTest extends TestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        // The navbar calls hasPermissionTo('admin'), which throws when the
-        // permission row is missing, so every authenticated page needs it.
-        app(TenantRolesAndPermissionsService::class)->createTenantRolesAndPermissions();
-    }
-
     public function test_the_account_page_lists_the_tokens_of_the_user(): void
     {
         $user = User::factory()->create();

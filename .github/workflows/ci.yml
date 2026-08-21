@@ -1,90 +1,18 @@
 name: CI
 
+# Runs on pull requests. Pushes to main go through build.yml, which runs the
+# same quality workflow before building and shipping the assets.
 on:
-  push:
-    branches: [ main ]
   pull_request:
+  workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  tests:
-    name: Tests (PHP ${{ matrix.php }})
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        php: ['8.4']
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: ${{ matrix.php }}
-          extensions: bcmath, curl, dom, fileinfo, gd, intl, mbstring, pdo_sqlite, sqlite3, xml, zip
-          coverage: none
-          tools: composer:v2
-
-      - name: Validate composer files
-        run: composer validate --strict --no-check-publish
-
-      - name: Cache composer packages
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/composer/files
-          key: ${{ runner.os }}-php${{ matrix.php }}-composer-${{ hashFiles('composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-php${{ matrix.php }}-composer-
-
-      - name: Install PHP dependencies
-        run: composer install --prefer-dist --no-progress --no-interaction
-
-      - name: Prepare the environment
-        run: |
-          cp .env.example .env
-          php artisan key:generate
-
-      # The suite runs on an in-memory SQLite database (see phpunit.xml), so no
-      # database service is needed here.
-      - name: Run the test suite
-        run: php artisan test --compact
-
-  lint:
-    name: Pint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.4'
-          coverage: none
-          tools: composer:v2
-
-      - name: Install PHP dependencies
-        run: composer install --prefer-dist --no-progress --no-interaction
-
-      # The existing code base predates Pint, so style is only enforced on the
-      # PHP files this branch actually touches.
-      - name: Collect the PHP files changed on this branch
-        id: changed
-        run: |
-          DEFAULT_BRANCH="${{ github.event.repository.default_branch }}"
-          git fetch --no-tags origin "$DEFAULT_BRANCH"
-          BASE="$(git merge-base HEAD "origin/$DEFAULT_BRANCH")"
-          FILES="$(git diff --name-only --diff-filter=ACMR "$BASE" HEAD -- '*.php' | tr '\n' ' ')"
-          echo "Changed PHP files: ${FILES:-<none>}"
-          echo "files=$FILES" >> "$GITHUB_OUTPUT"
-
-      - name: Check the code style of the changed files
-        if: steps.changed.outputs.files != ''
-        run: vendor/bin/pint --test ${{ steps.changed.outputs.files }}
+  quality:
+    uses: ./.github/workflows/quality.yml
 
   frontend:
     name: Front-end build

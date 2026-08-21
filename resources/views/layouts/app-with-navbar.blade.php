@@ -55,7 +55,7 @@
                     'active' => request()->routeIs('account.*') || request()->routeIs('account')
                 ]
             ];
-            if(auth()->user()->hasPermissionTo('admin')) {
+            if(auth()->user()->checkPermissionTo('admin')) {
                 $routes[] = [
                     'name' => '🔐 Administration',
                     'route' => route('admin'),
