@@ -117,6 +117,19 @@ return [
     'teams' => false,
 
     /*
+     * The class to use to resolve the permissions team id
+     */
+
+    'team_resolver' => \Spatie\Permission\DefaultTeamResolver::class,
+
+    /*
+     * Passport Client Credentials Grant
+     * When set to true the package will use Passports Client to check permissions
+     */
+
+    'use_passport_client_credentials' => false,
+
+    /*
      * When set to true, the required permission names are added to the exception
      * message. This could be considered an information leak in some contexts, so
      * the default setting is false here for optimum safety.
@@ -137,6 +150,18 @@ return [
      */
 
     'enable_wildcard_permission' => false,
+
+    /*
+     * The package fires events when roles and permissions are assigned or revoked.
+     */
+
+    'events_enabled' => false,
+
+    /*
+     * Octane specific listener to reset the permission registrar between requests.
+     */
+
+    'register_octane_reset_listener' => false,
 
     'cache' => [
 
