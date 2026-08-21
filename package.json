@@ -14,12 +14,9 @@
         "laravel-vite-plugin": "^3.1.0",
         "lodash": "^4.18.1",
         "pusher-js": "^8.5.0",
-        "resolve-url-loader": "^5.0.0",
         "sass": "^1.99.0",
-        "sass-loader": "^16.0.8",
         "vite": "^8.0.12",
-        "vue": "^3.5.34",
-        "vue-loader": "^17.4.2"
+        "vue": "^3.5.34"
     },
     "name": "kantine",
     "description": "<p align=\"center\"><a href=\"https://laravel.com\" target=\"_blank\"><img src=\"https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg\" width=\"400\" alt=\"Laravel Logo\"></a></p>",
