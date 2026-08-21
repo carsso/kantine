@@ -1,7 +1,26 @@
 <?php
 
+/*
+ * Chaque style desactive le HDR : tsparticles v4 l'active par defaut et emet
+ * alors les couleurs en color(display-p3 ...) avec un facteur 400/203. Les
+ * composantes depassent 1, sont ecretees, et tout est delave vers le blanc sur
+ * un ecran SDR. hdr => false retablit la sortie rgba()/hsla() de la v3.
+ *
+ * Les couleurs vivent sous particles.paint.color depuis la v4 (avant :
+ * particles.color) ; l'ancienne clef est ignoree en silence et paint.color vaut
+ * #fff par defaut, d'ou des particules toutes blanches.
+ *
+ * L'opacite passe par paint.fill.opacity et non par particles.opacity : dans
+ * tsparticles 4.3.2, Particle.getOpacity() replie deja opacity dans fillOpacity,
+ * puis RenderManager remultiplie par opacity. L'alpha final vaut donc opacity^2
+ * et tout parait delave. En laissant particles.opacity a 1 (1^2 = 1) et en
+ * portant la valeur sur paint.fill.opacity, le rendu est correct aujourd'hui et
+ * le restera si le bug amont est corrige.
+ */
+
 $particlesOptionsSnow = [
     'name' => 'Neige',
+    'hdr' => false,
     'particles' => [
         'number' => [
             'value' => 100,
@@ -12,10 +31,12 @@ $particlesOptionsSnow = [
             'random' => false,
             'straight' => false,
         ],
-        'opacity' => [
-            'value' => [
-                'min' => 0.1,
-                'max' => 0.5,
+        'paint' => [
+            'fill' => [
+                'opacity' => [
+                    'min' => 0.1,
+                    'max' => 0.5,
+                ],
             ],
         ],
         'size' => [
@@ -36,6 +57,7 @@ $particlesOptionsSnow = [
 ];
 $particlesOptionsFire = [
     'name' => 'Braises',
+    'hdr' => false,
     'fpsLimit' => 40,
     'particles' => [
         'number' => [
@@ -44,16 +66,18 @@ $particlesOptionsFire = [
                 'enable' => true,
             ],
         ],
-        'color' => [
-            'value' => [
-                '#A6D64D',
-                '#4AB0F5',
-                '#ED733D',
-                '#FFD124',
+        'paint' => [
+            'color' => [
+                'value' => [
+                    '#A6D64D',
+                    '#4AB0F5',
+                    '#ED733D',
+                    '#FFD124',
+                ],
             ],
-        ],
-        'opacity' => [
-            'value' => ['min' => 0.4, 'max' => 0.8],
+            'fill' => [
+                'opacity' => ['min' => 0.4, 'max' => 0.8],
+            ],
         ],
         'size' => [
             'value' => ['min' => 2, 'max' => 4],
@@ -68,6 +92,7 @@ $particlesOptionsFire = [
 
 $particlesOptionsLinks = [
     'name' => 'Liens',
+    'hdr' => false,
     'particles' => [
         'number' => [
             'value' => 100,
@@ -90,6 +115,7 @@ $particlesOptionsLinks = [
 ];
 $particlesOptionsTriangles = [
     'name' => 'Triangles',
+    'hdr' => false,
     'particles' => [
         'number' => [
             'value' => 100,
@@ -117,6 +143,7 @@ $particlesOptionsTriangles = [
 ];
 $particlesOptionsBalls = [
     'name' => 'Balles',
+    'hdr' => false,
     'particles' => [
         'destroy' => [
             'mode' => 'split',
@@ -153,19 +180,21 @@ $particlesOptionsBalls = [
         'number' => [
             'value' => 80,
         ],
-        'color' => [
-            'value' => [
-                '#A6D64D',
-                '#4AB0F5',
-                '#ED733D',
-                '#FFD124',
+        'paint' => [
+            'color' => [
+                'value' => [
+                    '#A6D64D',
+                    '#4AB0F5',
+                    '#ED733D',
+                    '#FFD124',
+                ],
+            ],
+            'fill' => [
+                'opacity' => 0.5,
             ],
         ],
         'shape' => [
             'type' => 'circle',
-        ],
-        'opacity' => [
-            'value' => 0.5,
         ],
         'size' => [
             'value' => [
@@ -186,17 +215,20 @@ $particlesOptionsBalls = [
 ];
 $particlesOptionsParty = [
     'name' => 'Confettis',
+    'hdr' => false,
     'fpsLimit' => 120,
     'particles' => [
         'number' => [
             'value' => 0,
         ],
-        'color' => [
-            'value' => [
-                '#A6D64D',
-                '#4AB0F5',
-                '#ED733D',
-                '#FFD124',
+        'paint' => [
+            'color' => [
+                'value' => [
+                    '#A6D64D',
+                    '#4AB0F5',
+                    '#ED733D',
+                    '#FFD124',
+                ],
             ],
         ],
         'shape' => [
