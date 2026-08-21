@@ -49,4 +49,4 @@ class UpdateMenuApiRequest extends FormRequest
             'information.style.string' => 'Le style doit être une chaîne de caractères',
         ];
     }
-} 
+}

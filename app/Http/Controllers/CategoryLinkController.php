@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\DishCategory;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Http\Request;
 
 class CategoryLinkController extends Controller
 {
@@ -27,7 +26,7 @@ class CategoryLinkController extends Controller
             })
             ->where('tenant_id', $tenant->id)
             ->first();
-        if (!$category) {
+        if (! $category) {
             abort(404, 'Catégorie non trouvée');
         }
 
@@ -38,4 +37,4 @@ class CategoryLinkController extends Controller
 
         abort(404, 'Aucun lien trouvé');
     }
-} 
+}

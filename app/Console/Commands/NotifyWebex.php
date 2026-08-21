@@ -29,22 +29,23 @@ class NotifyWebex extends Command
      */
     public function handle(WebexNotificationService $webexService)
     {
-        if($this->argument('tenant_slug')) {
+        if ($this->argument('tenant_slug')) {
             $tenants = Tenant::where('slug', $this->argument('tenant_slug'))->where('is_active', true)->get();
         } else {
             $tenants = Tenant::where('is_active', true)->get();
         }
         $date = date('Y-m-d');
-        
-        foreach($tenants as $tenant) {
+
+        foreach ($tenants as $tenant) {
             $this->info('--------------------------------');
-            $this->info('Sending Webex notifications for menu of ' . $date . ' to all rooms for tenant ' . $tenant->name);
-            
+            $this->info('Sending Webex notifications for menu of '.$date.' to all rooms for tenant '.$tenant->name);
+
             $result = $webexService->sendMenuNotifications($tenant, $date);
             $this->info($result['message']);
         }
-        
+
         $this->info('--------------------------------');
+
         return 0;
     }
 }

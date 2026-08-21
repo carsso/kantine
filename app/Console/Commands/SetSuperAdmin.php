@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Models\User;
 use App\Services\TenantRolesAndPermissionsService;
+use Illuminate\Console\Command;
 
 class SetSuperAdmin extends Command
 {
@@ -29,8 +29,6 @@ class SetSuperAdmin extends Command
 
     /**
      * Create a new command instance.
-     *
-     * @param TenantRolesAndPermissionsService $rolesAndPermissionsService
      */
     public function __construct(TenantRolesAndPermissionsService $rolesAndPermissionsService)
     {
@@ -53,12 +51,14 @@ class SetSuperAdmin extends Command
 
         // load user from email in argument and assign role
         $user = User::where('email', $this->argument('email'))->first();
-        if (!$user) {
+        if (! $user) {
             $this->error('User not found');
+
             return 1;
         }
         $user->assignRole('Super Admin');
         $this->info('Super Admin role set to user');
+
         return 0;
     }
 }

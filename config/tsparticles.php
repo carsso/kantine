@@ -1,119 +1,117 @@
 <?php
 
-
 $particlesOptionsSnow = [
     'name' => 'Neige',
-    "particles" => [
-        "number" => [
-            "value" => 100,
+    'particles' => [
+        'number' => [
+            'value' => 100,
         ],
-        "move" => [
-            "direction" => "bottom",
-            "enable" => true,
-            "random" => false,
-            "straight" => false,
+        'move' => [
+            'direction' => 'bottom',
+            'enable' => true,
+            'random' => false,
+            'straight' => false,
         ],
-        "opacity" => [
-            "value" => [
-                "min" => 0.1,
-                "max" => 0.5,
+        'opacity' => [
+            'value' => [
+                'min' => 0.1,
+                'max' => 0.5,
             ],
         ],
-        "size" => [
-            "value" => [
-                "min" => 1,
-                "max" => 10,
+        'size' => [
+            'value' => [
+                'min' => 1,
+                'max' => 10,
             ],
         ],
-        "wobble" => [
-            "distance" => 20,
-            "enable" => true,
-            "speed" => [
-                "min" => -5,
-                "max" => 5,
+        'wobble' => [
+            'distance' => 20,
+            'enable' => true,
+            'speed' => [
+                'min' => -5,
+                'max' => 5,
             ],
         ],
     ],
 ];
 $particlesOptionsFire = [
     'name' => 'Braises',
-    "fpsLimit" => 40,
-    "particles" => [
-        "number" => [
-            "value" => 200,
-            "density" => [
-                "enable" => true,
+    'fpsLimit' => 40,
+    'particles' => [
+        'number' => [
+            'value' => 200,
+            'density' => [
+                'enable' => true,
             ],
         ],
-        "color" => [
-            "value" => [
+        'color' => [
+            'value' => [
                 '#A6D64D',
                 '#4AB0F5',
                 '#ED733D',
                 '#FFD124',
-            ]
+            ],
         ],
-        "opacity" => [
-            "value" => ["min" => 0.4, "max" => 0.8],
+        'opacity' => [
+            'value' => ['min' => 0.4, 'max' => 0.8],
         ],
-        "size" => [
-            "value" => ["min" => 2, "max" => 4],
+        'size' => [
+            'value' => ['min' => 2, 'max' => 4],
         ],
-        "move" => [
-            "enable" => true,
-            "speed" => 3,
-            "random" => false,
+        'move' => [
+            'enable' => true,
+            'speed' => 3,
+            'random' => false,
         ],
     ],
 ];
 
-
 $particlesOptionsLinks = [
     'name' => 'Liens',
-    "particles" => [
-        "number" => [
-            "value" => 100,
+    'particles' => [
+        'number' => [
+            'value' => 100,
         ],
-        "links" => [
-            "distance" => 175,
-            "enable" => true,
-            "opacity" => 0.5,
+        'links' => [
+            'distance' => 175,
+            'enable' => true,
+            'opacity' => 0.5,
         ],
-        "move" => [
-            "enable" => true,
+        'move' => [
+            'enable' => true,
         ],
-        "size" => [
-            "value" => 1,
+        'size' => [
+            'value' => 1,
         ],
-        "shape" => [
-            "type" => "circle",
+        'shape' => [
+            'type' => 'circle',
         ],
     ],
 ];
 $particlesOptionsTriangles = [
     'name' => 'Triangles',
-    "particles" => [
-        "number" => [
-            "value" => 100,
+    'particles' => [
+        'number' => [
+            'value' => 100,
         ],
-        "links" => [
-            "distance" => 175,
-            "enable" => true,
-            "opacity" => 0.5,
-            "triangles" => [
-                "enable" => true,
-                "opacity" => 0.02,
+        'links' => [
+            'distance' => 175,
+            'enable' => true,
+            'opacity' => 0.5,
+            'triangles' => [
+                'enable' => true,
+                'opacity' => 0.02,
             ],
         ],
-        "move" => [
-            "enable" => true,
-            "speed" => 2,
+        'move' => [
+            'enable' => true,
+            'speed' => 2,
         ],
-        "size" => [
-            "value" => 1,
+        'size' => [
+            'value' => 1,
         ],
-        "shape" => [
-            "type" => "circle",
+        'shape' => [
+            'type' => 'circle',
         ],
     ],
 ];
@@ -188,7 +186,7 @@ $particlesOptionsBalls = [
 ];
 $particlesOptionsParty = [
     'name' => 'Confettis',
-    "fpsLimit" => 120,
+    'fpsLimit' => 120,
     'particles' => [
         'number' => [
             'value' => 0,
@@ -202,9 +200,9 @@ $particlesOptionsParty = [
             ],
         ],
         'shape' => [
-          'type' => [
-            'circle',
-          ],
+            'type' => [
+                'circle',
+            ],
         ],
         'size' => [
             'value' => 4,
@@ -260,7 +258,7 @@ $particlesOptionsParty = [
         'roll' => [
             'darken' => [
                 'enable' => true,
-                'value' => 25
+                'value' => 25,
             ],
             'enable' => true,
             'speed' => [

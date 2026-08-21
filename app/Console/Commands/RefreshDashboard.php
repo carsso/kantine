@@ -31,6 +31,7 @@ class RefreshDashboard extends Command
     {
         DashboardRefreshEvent::dispatch();
         $this->info('Dashboard refreshed');
+
         return 0;
     }
 }

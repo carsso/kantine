@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -20,11 +21,12 @@ class AccountController extends Controller
     /**
      * Show the application dashboard.
      *
-     * @return \Illuminate\Contracts\Support\Renderable
+     * @return Renderable
      */
     public function index()
     {
         $tokens = Auth::user()->tokens()->get();
+
         return view('account', compact('tokens'));
     }
 
@@ -35,12 +37,14 @@ class AccountController extends Controller
         ]);
 
         $token = Auth::user()->createToken($request->name)->plainTextToken;
+
         return back()->with('success', 'Token créé avec succès')->with('new_token', $token);
     }
 
     public function destroyToken(Request $request, $tokenId)
     {
         Auth::user()->tokens()->where('id', $tokenId)->delete();
+
         return back()->with('success', 'Token révoqué avec succès');
     }
 }

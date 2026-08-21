@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Tenant;
+use Illuminate\Database\Seeder;
 
 class TenantSeeder extends Seeder
 {
@@ -18,4 +18,4 @@ class TenantSeeder extends Seeder
             'description' => 'Cantine de Roubaix',
         ]);
     }
-} 
+}

@@ -20,7 +20,7 @@ class LogFailedJob
                 'logs' => json_encode($jobFailed->logs),
                 'failed_at' => $jobFailed->failed_at,
                 'created_at' => $jobFailed->created_at,
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
             $job->created_at = $jobFailed->created_at;
             $job->failed_at = $jobFailed->failed_at;
@@ -28,8 +28,8 @@ class LogFailedJob
         } catch (\Exception $e) {
             Log::error('Failed to log failed job', [
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
         }
     }
-} 
+}

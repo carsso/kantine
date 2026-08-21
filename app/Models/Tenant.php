@@ -10,8 +10,8 @@ use Spatie\Sluggable\SlugOptions;
 
 class Tenant extends Model
 {
-    use HasSlug;
     use HasFactory;
+    use HasSlug;
 
     protected $fillable = [
         'name',

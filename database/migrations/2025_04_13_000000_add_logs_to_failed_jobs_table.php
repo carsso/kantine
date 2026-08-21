@@ -22,4 +22,4 @@ return new class extends Migration
             $table->dropColumn('updated_at');
         });
     }
-}; 
+};

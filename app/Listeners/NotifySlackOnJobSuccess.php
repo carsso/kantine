@@ -7,9 +7,7 @@ use App\Services\SlackNotificationService;
 
 class NotifySlackOnJobSuccess
 {
-    public function __construct(private SlackNotificationService $slackService)
-    {
-    }
+    public function __construct(private SlackNotificationService $slackService) {}
 
     public function handle(JobSuccessfullyProcessed $event): void
     {

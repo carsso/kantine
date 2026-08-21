@@ -1,11 +1,11 @@
 <?php
 
-use App\Http\Controllers\CategoryLinkController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\MenuController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\CategoryLinkController;
 use App\Http\Controllers\JobMonitorController;
+use App\Http\Controllers\MenuController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,7 +23,6 @@ Route::get('/', [MenuController::class, 'home'])
 
 Route::get('/legal', [MenuController::class, 'legal'])
     ->name('legal');
-
 
 Auth::routes(['verify' => true]);
 
@@ -50,7 +49,6 @@ Route::redirect('/menus/{date?}', '/roubaix/menus/{date?}');
 Route::redirect('/notifications/{date?}', '/roubaix/notifications/{date?}');
 Route::redirect('/notifications/webex/{date?}', '/roubaix/notifications/webex/{date?}');
 
-
 Route::prefix('{tenantSlug}')->middleware('tenant')->group(function () {
     Route::get('/', [MenuController::class, 'menu'])
         ->name('tenant.home');
@@ -72,7 +70,7 @@ Route::prefix('{tenantSlug}')->middleware('tenant')->group(function () {
     Route::get('/notifications/webex/{date}', [MenuController::class, 'webexMenu'])
         ->name('notifications.webex');
 
-    # admin route group with prefix
+    // admin route group with prefix
     Route::prefix('/admin')->middleware(['auth', 'verified', 'tenant-admin'])->group(function () {
         Route::get('/menus/{date?}', [AdminController::class, 'menu'])
             ->name('admin.menu');

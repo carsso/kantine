@@ -11,13 +11,13 @@ class RestrictIpAddressMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if($request->isIpAllowed) {
+        if ($request->isIpAllowed) {
             return $next($request);
         }
         abort(403, 'Cette page est restreinte pour des raisons de sécurité. Vous devez être sur le réseau interne, wifi ou VPN pour y accéder.');
-    }     
+    }
 }

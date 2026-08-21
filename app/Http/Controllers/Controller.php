@@ -15,19 +15,16 @@ class Controller extends BaseController
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
     /**
-     * @param string $message
-     * @param \Exception|null $e
-     * @param string $sessionBag
-     *
-     * @return \Illuminate\Http\RedirectResponse
+     * @param  string  $sessionBag
+     * @return RedirectResponse
      */
     protected function backWithError(string $message, ?Exception $e = null, $sessionBag = 'flash')
     {
-        $withError = 'with' . Str::studly($sessionBag) . 'Error';
-        $withErrorException = $withError . 'Exception';
+        $withError = 'with'.Str::studly($sessionBag).'Error';
+        $withErrorException = $withError.'Exception';
 
         $response = back()->$withError($message)
-                          ->withInput();
+            ->withInput();
         if ($e) {
             $response = $response->$withErrorException($e->getMessage());
         }
@@ -36,15 +33,12 @@ class Controller extends BaseController
     }
 
     /**
-     * @param string $message
-     * @param string $sessionBag
-     * @param RedirectResponse $redirectResponse
-     *
+     * @param  string  $sessionBag
      * @return RedirectResponse
      */
-    protected function backWithSuccess(string $message, $sessionBag = 'flash', RedirectResponse $redirectResponse = null)
+    protected function backWithSuccess(string $message, $sessionBag = 'flash', ?RedirectResponse $redirectResponse = null)
     {
-        $withSuccess = 'with' . Str::studly($sessionBag) . 'Success';
+        $withSuccess = 'with'.Str::studly($sessionBag).'Success';
 
         $redirect = $redirectResponse ?? back();
 
@@ -52,19 +46,16 @@ class Controller extends BaseController
     }
 
     /**
-     * @param string $route
-     * @param string $message
-     * @param \Exception|null $e
-     * @param string $sessionBag
-     *
-     * @return \Illuminate\Http\RedirectResponse
+     * @param  string  $route
+     * @param  string  $sessionBag
+     * @return RedirectResponse
      */
     protected function redirectWithError(string $message, RedirectResponse $redirectResponse, ?Exception $e = null, $sessionBag = 'flash', $withoutInput = false)
     {
-        $withError = 'with' . Str::studly($sessionBag) . 'Error';
-        $withErrorException = $withError . 'Exception';
+        $withError = 'with'.Str::studly($sessionBag).'Error';
+        $withErrorException = $withError.'Exception';
 
-        if($withoutInput) {
+        if ($withoutInput) {
             $response = $redirectResponse->$withError($message);
         } else {
             $response = $redirectResponse->$withError($message)->withInput();
@@ -77,15 +68,12 @@ class Controller extends BaseController
     }
 
     /**
-     * @param string $message
-     * @param \Illuminate\Http\RedirectResponse $redirectResponse
-     * @param string $sessionBag
-     *
-     * @return \Illuminate\Http\RedirectResponse
+     * @param  string  $sessionBag
+     * @return RedirectResponse
      */
     protected function redirectWithSuccess(string $message, RedirectResponse $redirectResponse, $sessionBag = 'flash')
     {
-        $withSuccess = 'with' . Str::studly($sessionBag) . 'Success';
+        $withSuccess = 'with'.Str::studly($sessionBag).'Success';
 
         return $redirectResponse->$withSuccess($message);
     }

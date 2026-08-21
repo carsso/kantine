@@ -2,8 +2,8 @@
 
 namespace App\Events;
 
-use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\Channel;
+use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
@@ -19,8 +19,6 @@ class MenuUpdatedEvent implements ShouldBroadcastNow
 
     /**
      * Create a new event instance.
-     *
-     * @param array $menu
      */
     public function __construct(array $menu)
     {
@@ -30,10 +28,10 @@ class MenuUpdatedEvent implements ShouldBroadcastNow
     /**
      * Get the channels the event should broadcast on.
      *
-     * @return \Illuminate\Broadcasting\Channel|array
+     * @return Channel|array
      */
     public function broadcastOn()
     {
-        return [ new Channel('public') ];
+        return [new Channel('public')];
     }
 }

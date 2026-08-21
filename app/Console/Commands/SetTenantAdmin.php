@@ -30,8 +30,6 @@ class SetTenantAdmin extends Command
 
     /**
      * Create a new command instance.
-     *
-     * @param TenantRolesAndPermissionsService $rolesAndPermissionsService
      */
     public function __construct(TenantRolesAndPermissionsService $rolesAndPermissionsService)
     {
@@ -47,8 +45,9 @@ class SetTenantAdmin extends Command
     public function handle()
     {
         $tenant = Tenant::where('slug', $this->argument('tenant_slug'))->first();
-        if(!$tenant) {
+        if (! $tenant) {
             $this->error('Tenant not found');
+
             return 1;
         }
 
@@ -56,15 +55,17 @@ class SetTenantAdmin extends Command
         // Create roles and permissions using the service
         $this->rolesAndPermissionsService->createTenantRolesAndPermissions();
 
-        $this->info('Setting Tenant Admin role to user for tenant ' . $tenant->name);
+        $this->info('Setting Tenant Admin role to user for tenant '.$tenant->name);
         // load user from email in argument and assign role
         $user = User::where('email', $this->argument('email'))->first();
-        if (!$user) {
+        if (! $user) {
             $this->error('User not found');
+
             return 1;
         }
-        $user->assignRole('Tenant Admin ' . $tenant->slug);
-        $this->info('Tenant Admin role set to user for tenant ' . $tenant->name);
+        $user->assignRole('Tenant Admin '.$tenant->slug);
+        $this->info('Tenant Admin role set to user for tenant '.$tenant->name);
+
         return 0;
     }
 }

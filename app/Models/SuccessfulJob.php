@@ -20,13 +20,13 @@ class SuccessfulJob extends Model
         'result',
         'finished_at',
         'created_at',
-        'updated_at'
+        'updated_at',
     ];
 
     protected $casts = [
         'finished_at' => 'datetime',
         'created_at' => 'datetime',
-        'updated_at' => 'datetime'
+        'updated_at' => 'datetime',
     ];
 
     public function getPayloadAttribute($value)
@@ -38,4 +38,4 @@ class SuccessfulJob extends Model
     {
         return $this->getJsonAttribute('result', $value);
     }
-} 
+}
