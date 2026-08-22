@@ -13,6 +13,17 @@ use Illuminate\Support\Facades\Log;
 
 class ApiRestaurationClient
 {
+    /**
+     * L'API est hébergée sur Google Storage, qui renvoie aléatoirement un 403
+     * « service is not available in your location ». L'erreur est tirée par
+     * requête et non par période : on réessaie donc vite, et souvent.
+     */
+    private const REQUEST_TRIES = 7;
+
+    private const RETRY_BASE_DELAY_SECONDS = 2;
+
+    private const RETRY_MAX_DELAY_SECONDS = 30;
+
     private Tenant $tenant;
 
     private string $baseUrl;
@@ -247,6 +258,14 @@ class ApiRestaurationClient
     {
         try {
             $response = Http::withHeaders($this->headers)
+                ->retry(self::REQUEST_TRIES, function (int $attempt, \Throwable $exception): int {
+                    $delay = $this->retryDelaySeconds($attempt);
+                    $this->log('Échec de la récupération du menu (tentative '.$attempt.'/'.self::REQUEST_TRIES.'), nouvel essai dans '.$delay.'s', 'warning', [
+                        'message' => $exception->getMessage(),
+                    ]);
+
+                    return $delay * 1000;
+                }, throw: false)
                 ->get($this->baseUrl);
 
             if ($response->successful()) {
@@ -269,6 +288,14 @@ class ApiRestaurationClient
             ]);
             throw $e;
         }
+    }
+
+    /**
+     * Délai avant le prochain essai : 2s, 4s, 8s, 16s, puis 30s.
+     */
+    private function retryDelaySeconds(int $attempt): int
+    {
+        return (int) min(self::RETRY_BASE_DELAY_SECONDS * (2 ** ($attempt - 1)), self::RETRY_MAX_DELAY_SECONDS);
     }
 
     /**

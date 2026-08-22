@@ -9,6 +9,7 @@ use App\Models\DishCategory;
 use App\Models\Tenant;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Sleep;
 use Tests\Concerns\BuildsMenus;
 use Tests\TestCase;
 
@@ -244,6 +245,76 @@ class ApiRestaurationClientTest extends TestCase
 
         $this->expectExceptionMessage('Erreur lors de la récupération du menu');
         $this->client()->getMenus();
+    }
+
+    public function test_it_retries_a_failing_api_until_it_answers(): void
+    {
+        Http::fake([self::API_URL => Http::sequence()
+            ->push('Access denied.', 403)
+            ->push('Access denied.', 403)
+            ->push([$this->apiItem()]),
+        ]);
+
+        $menus = $this->client()->getMenus();
+
+        Http::assertSentCount(3);
+        $this->assertSame('Poulet rôti', $menus[$this->day]['dishes']['mains']['pole-chaud']['plats'][0]['name']);
+    }
+
+    public function test_it_waits_longer_between_each_retry(): void
+    {
+        Http::fake([self::API_URL => Http::response('Access denied.', 403)]);
+
+        try {
+            $this->client()->getMenus();
+        } catch (\Exception) {
+            // The last attempt still fails, we only care about the backoff here.
+        }
+
+        Http::assertSentCount(7);
+        Sleep::assertSleptTimes(6);
+        Sleep::assertSequence([
+            Sleep::usleep(2_000_000),
+            Sleep::usleep(4_000_000),
+            Sleep::usleep(8_000_000),
+            Sleep::usleep(16_000_000),
+            Sleep::usleep(30_000_000),
+            Sleep::usleep(30_000_000),
+        ]);
+    }
+
+    public function test_it_gives_up_after_the_last_retry(): void
+    {
+        Http::fake([self::API_URL => Http::response('Access denied.', 403)]);
+
+        $messages = [];
+        $client = new ApiRestaurationClient($this->tenant->fresh(), function ($message) use (&$messages) {
+            $messages[] = $message;
+        });
+
+        try {
+            $client->getMenus();
+            $this->fail('getMenus() should have thrown after the last retry.');
+        } catch (\Exception $e) {
+            $this->assertStringContainsString('Erreur lors de la récupération du menu: status 403', $e->getMessage());
+        }
+
+        Http::assertSentCount(7);
+        $this->assertContains('Échec de la récupération du menu (tentative 1/7), nouvel essai dans 2s', $messages);
+        $this->assertContains('Échec de la récupération du menu (tentative 6/7), nouvel essai dans 30s', $messages);
+    }
+
+    public function test_it_retries_a_connection_error(): void
+    {
+        Http::fake([self::API_URL => Http::sequence()
+            ->pushFailedConnection()
+            ->push([$this->apiItem()]),
+        ]);
+
+        $menus = $this->client()->getMenus();
+
+        Http::assertSentCount(2);
+        $this->assertArrayHasKey($this->day, $menus);
     }
 
     public function test_it_forwards_its_logs_to_the_callback(): void
