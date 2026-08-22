@@ -238,6 +238,48 @@ class ApiRestaurationClientTest extends TestCase
         }
     }
 
+    /**
+     * Declare a second sheet whose "nom" acts as a title, as the Sandwichs pole does.
+     */
+    private function mapSandwichAsTitle(): void
+    {
+        $this->tenant->update([
+            'meta' => array_merge($this->tenant->meta, [
+                'api_category_mapping' => ['Grill' => 'pole-chaud', 'Sandwich' => 'pole-sandwich'],
+                'api_category_name_is_title_mapping' => ['Sandwich' => true],
+            ]),
+        ]);
+    }
+
+    public function test_it_prefixes_the_name_as_a_title_whatever_the_item_order(): void
+    {
+        $this->mapSandwichAsTitle();
+        $this->fakeApi([
+            $this->apiItem(['feuille' => 'Sandwich', 'nom' => 'Le fermier', 'info1' => 'Pain ciabatta, bacon']),
+            $this->apiItem(['nom' => 'Poulet rôti']),
+        ]);
+
+        $menus = $this->client()->getMenus();
+
+        $this->assertSame(
+            'Le fermier : Pain ciabatta, bacon',
+            $menus[$this->day]['dishes']['mains']['pole-sandwich']['plats'][0]['name']
+        );
+    }
+
+    public function test_the_title_prefix_does_not_leak_to_the_other_categories(): void
+    {
+        $this->mapSandwichAsTitle();
+        $this->fakeApi([
+            $this->apiItem(['nom' => 'Poulet rôti']),
+            $this->apiItem(['feuille' => 'Sandwich', 'nom' => 'Le fermier', 'info1' => 'Pain ciabatta, bacon']),
+        ]);
+
+        $menus = $this->client()->getMenus();
+
+        $this->assertSame('Poulet rôti', $menus[$this->day]['dishes']['mains']['pole-chaud']['plats'][0]['name']);
+    }
+
     public function test_it_throws_when_the_api_answers_with_an_error(): void
     {
         Http::fake([self::API_URL => Http::response('boom', 500)]);

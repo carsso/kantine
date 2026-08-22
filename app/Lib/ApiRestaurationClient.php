@@ -396,6 +396,7 @@ class ApiRestaurationClient
                         continue;
                     }
                     $categorySlug = $categoryMapping[$feuille] ?? $feuille;
+                    $categoryNameIsTitle = $categoryNameIsTitleMapping[$feuille] ?? false;
                     $subCategorySlug = $item['accompagnement'] === 'TRUE' ? 'garnitures' : 'plats';
 
                     if (! isset($mappedMenu[$formattedDate]['dishes']['mains'][$categorySlug])) {
