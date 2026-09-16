@@ -24,7 +24,7 @@
       </div>
     </div>
 
-    <!-- Jobs en cours d'exécution -->
+    <!-- Running jobs -->
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow">
       <div class="p-4">
         <h2 class="text-lg font-semibold mb-4">Jobs en cours d'exécution</h2>
@@ -68,7 +68,7 @@
       </div>
     </div>
 
-    <!-- Historique des jobs -->
+    <!-- Job history -->
     <div class="bg-white dark:bg-gray-800 rounded-lg shadow">
       <div class="p-4">
         <h2 class="text-lg font-semibold mb-4">Derniers jobs</h2>
@@ -300,9 +300,9 @@ export default {
     formatException(exception) {
       if (!exception) return ''
       try {
-        // Si c'est une exception sérialisée PHP
+        // PHP-serialized exception
         if (exception.startsWith('O:')) {
-          // Extraction des informations principales
+          // Extract the main details
           const classMatch = exception.match(/O:(\d+):"([^"]+)"/)
           if (classMatch) {
             const className = classMatch[2]
@@ -321,7 +321,7 @@ export default {
           }
         }
         
-        // Si c'est du JSON
+        // JSON
         const decoded = JSON.parse(exception)
         return JSON.stringify(decoded, null, 2)
       } catch (e) {

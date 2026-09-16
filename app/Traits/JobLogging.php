@@ -49,7 +49,7 @@ trait JobLogging
 
             $job = Job::findOrFail($this->job->getJobId());
 
-            // Dispatch l'événement de succès
+            // Dispatch the success event
             JobSuccessfullyProcessed::dispatch(
                 $this->job->uuid(),
                 $this->job->getConnectionName(),
@@ -60,12 +60,12 @@ trait JobLogging
                 now()
             );
         } catch (\Exception $e) {
-            // Log l'erreur dans les logs du job
+            // Record the error in the job logs
             $this->logJob($e->getMessage(), 'error', [
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            // Dispatch l'événement d'échec
+            // Dispatch the failure event
             JobFailed::dispatch(
                 $this->job->uuid(),
                 $this->job->getConnectionName(),

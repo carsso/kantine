@@ -19,14 +19,14 @@ class JobMonitorController extends Controller
         // Jobs en attente
         $pendingJobs = Job::orderBy('created_at', 'desc')->get();
 
-        // Jobs échoués et réussis, limités à 20 au total
+        // Failed and successful jobs, 20 in total
         $failedJobs = FailedJob::orderBy('failed_at', 'desc')->limit(20)->get();
         $successfulJobs = SuccessfulJob::orderBy('finished_at', 'desc')->limit(20)->get();
 
-        // Récupérer tous les tenants
+        // All tenants
         $tenants = Tenant::all()->keyBy('id');
 
-        // Combiner et trier par date
+        // Merge and sort by date
         $allJobs = collect()
             ->concat($failedJobs->map(function ($job) {
                 $job->date = $job->failed_at;
@@ -41,7 +41,7 @@ class JobMonitorController extends Controller
             ->sortByDesc('date')
             ->take(20);
 
-        // Séparer les jobs réussis et échoués
+        // Split successful and failed jobs
         $failedJobs = $allJobs->filter(function ($job) {
             return isset($job->failed_at);
         })->values();

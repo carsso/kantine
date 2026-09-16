@@ -18,7 +18,7 @@ class WebexNotificationService
     }
 
     /**
-     * Envoie les notifications Webex pour un menu à toutes les salles d'un tenant
+     * Send the Webex notifications for a menu to every room of a tenant
      */
     public function sendMenuNotifications(Tenant $tenant, string $date, bool $notifyUpdate = false, ?string $initiator = null): array
     {
