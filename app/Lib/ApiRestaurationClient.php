@@ -205,15 +205,17 @@ class ApiRestaurationClient
                             if (! isset($categorySlugToId[$fullSlug])) {
                                 throw new \Exception('Catégorie invalide : '.$fullSlug);
                             }
-                            $createdDish = Dish::firstOrCreate([
+                            $dishAttributes = [
                                 'date' => $date,
                                 'dishes_category_id' => $categorySlugToId[$fullSlug],
                                 'name' => $dish['name'],
                                 'tenant_id' => $this->tenant->id,
-                                'tags' => $dish['tags'] ?? [],
-                            ]);
-                            $createdDish->tags = $dish['tags'] ?? [];
-                            $createdDish->save();
+                            ];
+                            $tags = $dish['tags'] ?? [];
+
+                            // Tags are stored as JSON, which a where clause would flatten, so compare them in PHP
+                            $createdDish = Dish::where($dishAttributes)->get()->firstWhere('tags', $tags)
+                                ?? Dish::create(array_merge($dishAttributes, ['tags' => $tags]));
                             $dishIds[] = $createdDish->id;
                         }
                     }
@@ -241,7 +243,7 @@ class ApiRestaurationClient
     }
 
     /**
-     * Récupère le menu depuis l'API
+     * Fetch the menus from the API
      */
     public function getMenus(): ?array
     {
@@ -272,19 +274,19 @@ class ApiRestaurationClient
     }
 
     /**
-     * Transforme les données du menu de l'API vers notre format
+     * Map the API menu data to our format
      */
     private function mapMenus(array $apiMenu): array
     {
         $mappedMenu = [];
         $today = date('Ymd');
 
-        // Récupérer le mapping des feuilles vers les catégories et les plats statiques
+        // Sheet-to-category mapping and static dishes
         $categoryMapping = $this->tenant->meta['api_category_mapping'] ?? [];
         $categoryNameIsTitleMapping = $this->tenant->meta['api_category_name_is_title_mapping'] ?? [];
         $staticDishes = $this->tenant->meta['api_static_dishes'] ?? [];
 
-        // Première passe : collecter toutes les dates uniques et les plats disponibles tous les jours
+        // First pass: collect the unique dates and the dishes served every day
         $dates = [];
         $dailyDishes = [];
         $dailyAccompaniments = [];
@@ -339,7 +341,7 @@ class ApiRestaurationClient
             }
         }
 
-        // Deuxième passe : pour chaque date, construire le menu avec les plats spécifiques et les plats quotidiens
+        // Second pass: build each date's menu from its own dishes and the daily ones
         foreach ($dates as $formattedDate => $_) {
             $this->log('Traitement de la date : '.$formattedDate, 'info');
             $mappedMenu[$formattedDate] = [
@@ -348,13 +350,13 @@ class ApiRestaurationClient
                 ],
             ];
 
-            // Ajouter les plats statiques
+            // Add the static dishes
             foreach ($staticDishes as $type => $items) {
                 $this->log('Ajout des plats statiques type '.$type.' :', 'info', $items);
                 $mappedMenu[$formattedDate]['dishes'][$type] = $items;
             }
 
-            // Initialiser les pôles avec les plats quotidiens
+            // Seed the poles with the daily dishes
             foreach ($dailyDishes as $categorySlug => $dishes) {
                 foreach ($dishes as $dish) {
                     if (! isset($mappedMenu[$formattedDate]['dishes']['mains'][$categorySlug])) {
@@ -368,7 +370,7 @@ class ApiRestaurationClient
                 }
             }
 
-            // Ajouter les accompagnements quotidiens
+            // Add the daily accompaniments
             foreach ($dailyAccompaniments as $categorySlug => $accompaniments) {
                 foreach ($accompaniments as $accompaniment) {
                     if (! isset($mappedMenu[$formattedDate]['dishes']['mains'][$categorySlug])) {
@@ -382,7 +384,7 @@ class ApiRestaurationClient
                 }
             }
 
-            // Ajouter les plats spécifiques à cette date
+            // Add the dishes specific to this date
             foreach ($apiMenu as $item) {
                 if ($item['periode'] === 'midi' &&
                     $item['date'] !== 'TRUE' &&
@@ -425,16 +427,25 @@ class ApiRestaurationClient
                     }
                 }
             }
+
+            // The API repeats one row per allergen sheet, so the same dish can show up several times
+            foreach ($mappedMenu[$formattedDate]['dishes'] as $dishType => $rootCategories) {
+                foreach ($rootCategories as $rootCategorySlug => $subCategories) {
+                    foreach ($subCategories as $subCategorySlug => $dishes) {
+                        $mappedMenu[$formattedDate]['dishes'][$dishType][$rootCategorySlug][$subCategorySlug] = array_values(array_unique($dishes, SORT_REGULAR));
+                    }
+                }
+            }
         }
 
-        // Trier les dates
+        // Sort by date
         ksort($mappedMenu);
 
         return $mappedMenu;
     }
 
     /**
-     * Mappe les informations nutritionnelles vers nos tags
+     * Map the nutritional flags to our tags
      */
     private function mapNutritionalInfo(array $item): array
     {
@@ -462,7 +473,7 @@ class ApiRestaurationClient
             $tags[] = 'france';
         }
 
-        // Vérification pour le tag halal
+        // Halal tag
         $searchText = strtolower(implode(' ', array_filter([
             $item['nom'] ?? '',
             $item['info1'] ?? '',

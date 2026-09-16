@@ -1,21 +1,21 @@
 <?php
 
 /*
- * Chaque style desactive le HDR : tsparticles v4 l'active par defaut et emet
- * alors les couleurs en color(display-p3 ...) avec un facteur 400/203. Les
- * composantes depassent 1, sont ecretees, et tout est delave vers le blanc sur
- * un ecran SDR. hdr => false retablit la sortie rgba()/hsla() de la v3.
+ * Every style disables HDR: tsparticles v4 enables it by default and then emits
+ * colors as color(display-p3 ...) with a 400/203 factor. The components exceed
+ * 1, get clipped, and everything washes out to white on an SDR screen.
+ * hdr => false restores the v3 rgba()/hsla() output.
  *
- * Les couleurs vivent sous particles.paint.color depuis la v4 (avant :
- * particles.color) ; l'ancienne clef est ignoree en silence et paint.color vaut
- * #fff par defaut, d'ou des particules toutes blanches.
+ * Colors live under particles.paint.color since v4 (previously
+ * particles.color); the old key is silently ignored and paint.color defaults
+ * to #fff, hence all-white particles.
  *
- * L'opacite passe par paint.fill.opacity et non par particles.opacity : dans
- * tsparticles 4.3.2, Particle.getOpacity() replie deja opacity dans fillOpacity,
- * puis RenderManager remultiplie par opacity. L'alpha final vaut donc opacity^2
- * et tout parait delave. En laissant particles.opacity a 1 (1^2 = 1) et en
- * portant la valeur sur paint.fill.opacity, le rendu est correct aujourd'hui et
- * le restera si le bug amont est corrige.
+ * Opacity goes through paint.fill.opacity, not particles.opacity: in
+ * tsparticles 4.3.2, Particle.getOpacity() already folds opacity into
+ * fillOpacity, then RenderManager multiplies by opacity again. The final alpha
+ * is opacity^2 and everything looks washed out. Keeping particles.opacity at 1
+ * (1^2 = 1) and putting the value on paint.fill.opacity renders correctly today
+ * and will keep doing so once the upstream bug is fixed.
  */
 
 $particlesOptionsSnow = [

@@ -5,7 +5,7 @@ namespace App\Models\Traits;
 trait HasJsonAttributes
 {
     /**
-     * Désérialise les données PHP sérialisées
+     * Unserialize PHP-serialized data
      *
      * @param  mixed  $data
      * @return mixed
@@ -35,7 +35,7 @@ trait HasJsonAttributes
     }
 
     /**
-     * Récupère un attribut JSON
+     * Get a JSON attribute
      *
      * @param  string  $key
      * @param  mixed  $value
@@ -56,7 +56,7 @@ trait HasJsonAttributes
     }
 
     /**
-     * Définit un attribut JSON
+     * Set a JSON attribute
      *
      * @param  string  $key
      * @param  mixed  $value
