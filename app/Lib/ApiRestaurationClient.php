@@ -205,15 +205,17 @@ class ApiRestaurationClient
                             if (! isset($categorySlugToId[$fullSlug])) {
                                 throw new \Exception('Catégorie invalide : '.$fullSlug);
                             }
-                            $createdDish = Dish::firstOrCreate([
+                            $dishAttributes = [
                                 'date' => $date,
                                 'dishes_category_id' => $categorySlugToId[$fullSlug],
                                 'name' => $dish['name'],
                                 'tenant_id' => $this->tenant->id,
-                                'tags' => $dish['tags'] ?? [],
-                            ]);
-                            $createdDish->tags = $dish['tags'] ?? [];
-                            $createdDish->save();
+                            ];
+                            $tags = $dish['tags'] ?? [];
+
+                            // Les tags sont stockés en JSON, qu'une clause where aplatirait : on les compare en PHP
+                            $createdDish = Dish::where($dishAttributes)->get()->firstWhere('tags', $tags)
+                                ?? Dish::create(array_merge($dishAttributes, ['tags' => $tags]));
                             $dishIds[] = $createdDish->id;
                         }
                     }
@@ -422,6 +424,15 @@ class ApiRestaurationClient
                             'name' => $name,
                             'tags' => $this->mapNutritionalInfo($item),
                         ];
+                    }
+                }
+            }
+
+            // L'API répète une ligne par feuille d'allergènes : un même plat peut arriver plusieurs fois
+            foreach ($mappedMenu[$formattedDate]['dishes'] as $dishType => $rootCategories) {
+                foreach ($rootCategories as $rootCategorySlug => $subCategories) {
+                    foreach ($subCategories as $subCategorySlug => $dishes) {
+                        $mappedMenu[$formattedDate]['dishes'][$dishType][$rootCategorySlug][$subCategorySlug] = array_values(array_unique($dishes, SORT_REGULAR));
                     }
                 }
             }

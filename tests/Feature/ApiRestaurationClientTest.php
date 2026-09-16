@@ -347,6 +347,22 @@ class ApiRestaurationClientTest extends TestCase
         $this->assertDatabaseHas('dishes', ['name' => 'Nouveau plat']);
     }
 
+    public function test_update_menus_keeps_the_existing_rows_when_replayed(): void
+    {
+        Event::fake([MenuUpdatedEvent::class]);
+        $menus = [
+            $this->day => [
+                'dishes' => ['mains' => ['pole-chaud' => ['plats' => [['name' => 'Poulet rôti', 'tags' => ['halal']]]]]],
+            ],
+        ];
+
+        $this->client()->updateMenus($menus);
+        $id = Dish::where('name', 'Poulet rôti')->first()->id;
+        $this->client()->updateMenus($menus);
+
+        $this->assertSame($id, Dish::where('name', 'Poulet rôti')->first()->id);
+    }
+
     public function test_update_menus_rejects_an_invalid_date(): void
     {
         $this->expectExceptionMessage('Format de date invalide');
@@ -438,6 +454,29 @@ class ApiRestaurationClientTest extends TestCase
         $this->expectExceptionMessage('No menus provided');
 
         $this->client()->compareMenus([]);
+    }
+
+    /**
+     * The API repeats a dish row per allergen sheet, so the same dish can show
+     * up twice for a date. Keeping both would leave a diff nothing can resolve.
+     */
+    public function test_a_dish_repeated_by_the_api_is_kept_once(): void
+    {
+        Event::fake([MenuUpdatedEvent::class]);
+        $this->fakeApi([
+            $this->apiItem(['nom' => 'Poulet rôti', 'bio' => 'TRUE']),
+            $this->apiItem(['nom' => 'Poulet rôti', 'bio' => 'TRUE']),
+        ]);
+
+        $client = $this->client();
+        $menus = $client->getMenus();
+
+        $this->assertCount(1, $menus[$this->day]['dishes']['mains']['pole-chaud']['plats']);
+
+        $client->updateMenus($menus);
+
+        $this->assertSame(1, Dish::where('name', 'Poulet rôti')->count());
+        $this->assertSame([], $client->compareMenus($menus));
     }
 
     public function test_the_api_response_can_be_replayed_end_to_end(): void
