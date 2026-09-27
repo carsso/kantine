@@ -219,6 +219,37 @@ class ApiRestaurationClientTest extends TestCase
         $this->assertSame([$this->day], array_keys($menus));
     }
 
+    public function test_it_ignores_a_date_whose_rows_have_no_dish_name(): void
+    {
+        $this->fakeApi([
+            $this->apiItem(),
+            $this->apiItem(['nom' => 'Pâtes tous les jours', 'date' => 'TRUE']),
+            $this->apiItem([
+                'nom' => '',
+                'dateUs' => now()->addDays(2)->format('Ymd'),
+            ]),
+        ]);
+
+        $menus = $this->client()->getMenus();
+
+        $this->assertSame([$this->day], array_keys($menus));
+    }
+
+    public function test_it_keeps_a_date_that_has_at_least_one_named_dish(): void
+    {
+        $this->fakeApi([
+            $this->apiItem(['nom' => '']),
+            $this->apiItem(['nom' => 'Poulet rôti']),
+        ]);
+
+        $menus = $this->client()->getMenus();
+
+        $this->assertSame(
+            ['Poulet rôti'],
+            array_column($menus[$this->day]['dishes']['mains']['pole-chaud']['plats'], 'name')
+        );
+    }
+
     public function test_a_recurring_item_is_added_to_every_date(): void
     {
         $tomorrow = now()->addDay()->format('Y-m-d');
