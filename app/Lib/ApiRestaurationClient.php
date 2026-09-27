@@ -303,14 +303,7 @@ class ApiRestaurationClient
                 $categoryNameIsTitle = $categoryNameIsTitleMapping[$feuille] ?? false;
 
                 if ($item['date'] === 'TRUE') {
-                    $nom = $categoryNameIsTitle ? $item['nom'].' : ' : $item['nom'] ?? '';
-                    $name = implode(' ', array_filter([
-                        $nom ?? '',
-                        $item['info1'] ?? '',
-                        $item['info2'] ?? '',
-                    ]));
-                    $name = preg_replace('/\s+/', ' ', $name);
-                    $name = preg_replace('/(\s*,)+/', ',', $name);
+                    $name = $this->buildDishName($item, $categoryNameIsTitle);
 
                     if ($item['accompagnement'] === 'TRUE') {
                         $this->log('Garniture récurrente de la catégorie '.$categorySlug.' : '.$name, 'info');
@@ -333,7 +326,8 @@ class ApiRestaurationClient
                     }
                 } else {
                     $dateUs = $item['dateUs'] ?? date('Ymd');
-                    if ($dateUs >= $today) {
+                    // The API publishes unnamed rows for dates whose menu is not settled yet
+                    if ($dateUs >= $today && trim($this->buildDishName($item, $categoryNameIsTitle)) !== '') {
                         $formattedDate = date('Y-m-d', strtotime($dateUs));
                         $dates[$formattedDate] = true;
                     }
@@ -408,18 +402,11 @@ class ApiRestaurationClient
                         ];
                     }
 
-                    $nom = $categoryNameIsTitle ? $item['nom'].' : ' : $item['nom'] ?? '';
-                    $name = implode(' ', array_filter([
-                        $nom ?? '',
-                        $item['info1'] ?? '',
-                        $item['info2'] ?? '',
-                    ]));
-                    $name = preg_replace('/\s+/', ' ', $name);
-                    $name = preg_replace('/(\s*,)+/', ',', $name);
+                    $name = $this->buildDishName($item, $categoryNameIsTitle);
 
                     $this->log('Ajout de plat standard type mains de '.$subCategorySlug.' pour la catégorie '.$categorySlug.' : '.$name, 'info');
 
-                    if (! empty($name)) {
+                    if (trim($name) !== '') {
                         $mappedMenu[$formattedDate]['dishes']['mains'][$categorySlug][$subCategorySlug][] = [
                             'name' => $name,
                             'tags' => $this->mapNutritionalInfo($item),
@@ -442,6 +429,25 @@ class ApiRestaurationClient
         ksort($mappedMenu);
 
         return $mappedMenu;
+    }
+
+    /**
+     * Build a dish name out of an API row
+     */
+    private function buildDishName(array $item, bool $categoryNameIsTitle): string
+    {
+        $nom = $item['nom'] ?? '';
+        if ($categoryNameIsTitle && trim($nom) !== '') {
+            $nom .= ' : ';
+        }
+        $name = implode(' ', array_filter([
+            $nom,
+            $item['info1'] ?? '',
+            $item['info2'] ?? '',
+        ]));
+        $name = preg_replace('/\s+/', ' ', $name);
+
+        return preg_replace('/(\s*,)+/', ',', $name);
     }
 
     /**
