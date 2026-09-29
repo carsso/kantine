@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 use Laravel\Mcp\Facades\Mcp;
 
 Mcp::web('/{tenantSlug}/mcp', KantineServer::class)
-    ->middleware(['tenant', 'throttle:api']);
+    ->middleware(['tenant', 'throttle:mcp']);
 
 // Replaces the 405 GET route registered by Mcp::web to send browsers to the docs.
 Route::get('/{tenantSlug}/mcp', [ApiDocsController::class, 'mcp'])

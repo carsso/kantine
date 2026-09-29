@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Information;
 use App\Models\Tenant;
+use App\Providers\RouteServiceProvider;
 use Illuminate\Testing\TestResponse;
 use Tests\Concerns\BuildsMenus;
 use Tests\TestCase;
@@ -248,5 +249,19 @@ class KantineMcpServerTest extends TestCase
         $this->get(route('mcp', ['tenantSlug' => $tenant->slug]), ['Accept' => 'text/event-stream'])
             ->assertStatus(405)
             ->assertHeader('Allow', 'POST');
+    }
+
+    public function test_the_mcp_server_and_the_api_have_separate_rate_limits(): void
+    {
+        $tenant = Tenant::factory()->create();
+
+        for ($i = 0; $i < RouteServiceProvider::API_REQUESTS_PER_MINUTE; $i++) {
+            $this->getJson(route('api.today', ['tenantSlug' => $tenant->slug]))->assertOk();
+        }
+        $this->getJson(route('api.today', ['tenantSlug' => $tenant->slug]))->assertTooManyRequests();
+
+        $this->mcp($tenant, 'tools/list')
+            ->assertOk()
+            ->assertHeader('X-RateLimit-Limit', RouteServiceProvider::MCP_REQUESTS_PER_MINUTE);
     }
 }

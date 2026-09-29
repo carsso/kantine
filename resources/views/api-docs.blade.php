@@ -103,6 +103,9 @@
         <div>
             <h3 class="text-lg mb-2">Adresse du serveur</h3>
             <div class="{{ $codeBlock }}">{{ $mcpUrl }}</div>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                Limite : {{ $mcpRequestsPerMinute }} requêtes par minute.
+            </p>
         </div>
 
         <div>

@@ -74,6 +74,7 @@ class ApiDocsController extends Controller
             'endpoints' => $endpoints,
             'tags' => Dish::getTagsDefinitions(),
             'requestsPerMinute' => RouteServiceProvider::API_REQUESTS_PER_MINUTE,
+            'mcpRequestsPerMinute' => RouteServiceProvider::MCP_REQUESTS_PER_MINUTE,
             'mcpTools' => collect(KantineServer::TOOLS)
                 ->map(fn (string $class): Tool => app($class))
                 ->map(fn (Tool $tool): array => ['name' => $tool->name(), 'title' => $tool->title()])
