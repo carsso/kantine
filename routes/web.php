@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ApiDocsController;
 use App\Http\Controllers\CategoryLinkController;
 use App\Http\Controllers\JobMonitorController;
 use App\Http\Controllers\MenuController;
@@ -69,6 +70,9 @@ Route::prefix('{tenantSlug}')->middleware('tenant')->group(function () {
 
     Route::get('/notifications/webex/{date}', [MenuController::class, 'webexMenu'])
         ->name('notifications.webex');
+
+    Route::get('/api', [ApiDocsController::class, 'show'])
+        ->name('api-docs');
 
     // admin route group with prefix
     Route::prefix('/admin')->middleware(['auth', 'verified', 'tenant-admin'])->group(function () {

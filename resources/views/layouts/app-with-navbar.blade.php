@@ -23,10 +23,9 @@
                     'target' => '_blank',
                 ],
                 [
-                    'name' => 'API',
-                    'route' => route('api.home', ['tenantSlug' => request()->tenant->slug]),
-                    'active' => request()->routeIs('api.*') || request()->routeIs('api'),
-                    'target' => '_blank',
+                    'name' => 'API / MCP',
+                    'route' => route('api-docs', ['tenantSlug' => request()->tenant->slug]),
+                    'active' => request()->routeIs('api-docs'),
                 ],
             ];
         } else {

@@ -19,13 +19,24 @@ class RouteServiceProvider extends ServiceProvider
      */
     public const HOME = '/account';
 
+    public const API_REQUESTS_PER_MINUTE = 60;
+
+    /**
+     * Higher than the API: claude.ai connectors share a few egress IPs and one question costs several calls.
+     */
+    public const MCP_REQUESTS_PER_MINUTE = 300;
+
     /**
      * Define your route model bindings, pattern filters, and other route configuration.
      */
     public function boot(): void
     {
         RateLimiter::for('api', function (Request $request) {
-            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
+            return Limit::perMinute(self::API_REQUESTS_PER_MINUTE)->by($request->user()?->id ?: $request->ip());
+        });
+
+        RateLimiter::for('mcp', function (Request $request) {
+            return Limit::perMinute(self::MCP_REQUESTS_PER_MINUTE)->by($request->ip());
         });
 
         $this->routes(function () {
