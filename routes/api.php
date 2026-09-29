@@ -35,6 +35,13 @@ Route::prefix('{tenantSlug}')->middleware('tenant')->group(function () {
     Route::get('/today', [ApiController::class, 'today'])
         ->name('api.today');
 
+    Route::get('/menus', [ApiController::class, 'menus'])
+        ->name('api.menus');
+    Route::get('/dishes', [ApiController::class, 'dishes'])
+        ->name('api.dishes');
+    Route::get('/events', [ApiController::class, 'events'])
+        ->name('api.events');
+
     Route::prefix('/admin')->middleware(['auth:sanctum', 'tenant-admin'])->group(function () {
         Route::get('/menus/{date}', [ApiAdminController::class, 'menu'])
             ->name('api.admin.menus.get');
