@@ -112,7 +112,25 @@ class ApiAdminController extends Controller
             ], 422);
         }
 
-        // If we get here, all categories and tags are valid
+        // Validate all allergens
+        $allowedAllergens = array_keys(Dish::getAllergensDefinitions());
+        $invalidAllergens = collect($menuData['dishes'])
+            ->flatten(3)
+            ->flatMap(fn ($dish) => is_array($dish['allergens'] ?? null) ? $dish['allergens'] : [])
+            ->diff($allowedAllergens)
+            ->unique()
+            ->values()
+            ->all();
+
+        if (! empty($invalidAllergens)) {
+            return response()->json([
+                'error' => 'Allergènes invalides',
+                'invalid_allergens' => $invalidAllergens,
+                'allowed_allergens' => $allowedAllergens,
+            ], 422);
+        }
+
+        // If we get here, all categories, tags and allergens are valid
         $dishIds = [];
         foreach ($menuData['dishes'] as $dishType => $rootCategories) {
             foreach ($rootCategories as $rootCategorySlug => $subCategories) {
@@ -127,6 +145,7 @@ class ApiAdminController extends Controller
                             'tags' => $dish['tags'] ?? [],
                         ]);
                         $createdDish->tags = $dish['tags'] ?? [];
+                        $createdDish->allergens = Dish::normalizeAllergens($dish['allergens'] ?? []);
                         $createdDish->save();
                         $dishIds[] = $createdDish->id;
                     }

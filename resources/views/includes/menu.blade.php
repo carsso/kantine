@@ -69,10 +69,14 @@
                                     <i class="fa-solid fa-burger-cheese"></i>
                                 @endif
                                 {{ $dish['name'] }}
-                                @if($dish['tags'])
-                                    <i class="text-gray-500 dark:text-gray-400 text-xs">
-                                        ({{ collect($dish['tags'])->map(fn($tag) => \App\Models\Dish::getTagShortName($tag))->join(', ') }})
-                                    </i>
+                                @php
+                                    $dishTags = \App\Models\Dish::getTagsLabel($dish['tags']);
+                                    $dishAllergens = \App\Models\Dish::getAllergensLabel($dish['allergens']);
+                                @endphp
+                                @if($dishTags || $dishAllergens)
+                                    <span class="text-gray-500 dark:text-gray-400 text-xs">
+                                        ({{ $dishTags }}@if($dishTags && $dishAllergens) - @endif<i>{{ $dishAllergens }}</i>)
+                                    </span>
                                 @endif
                             </div>
                         @endforeach

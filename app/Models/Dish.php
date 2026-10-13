@@ -21,6 +21,7 @@ class Dish extends Model
         'date',
         'name',
         'tags',
+        'allergens',
         'type',
         'dishes_category_id',
     ];
@@ -33,6 +34,7 @@ class Dish extends Model
     protected $casts = [
         'date_carbon' => 'date:Y-m-d',
         'tags' => 'array',
+        'allergens' => 'array',
     ];
 
     /**
@@ -141,6 +143,63 @@ class Dish extends Model
     public static function getTagColor($tag)
     {
         return self::getTagsDefinitions()[$tag]['color'] ?? '#000000';
+    }
+
+    /**
+     * The 14 allergens that must be declared in France (EU regulation 1169/2011, annex II).
+     *
+     * @return array<string, array{name: string, emoji: string}>
+     */
+    public static function getAllergensDefinitions(): array
+    {
+        return [
+            'gluten' => ['name' => 'Gluten', 'emoji' => '🌾'],
+            'crustaceans' => ['name' => 'Crustacés', 'emoji' => '🦐'],
+            'eggs' => ['name' => 'Œufs', 'emoji' => '🥚'],
+            'fish' => ['name' => 'Poisson', 'emoji' => '🐟'],
+            'peanuts' => ['name' => 'Arachides', 'emoji' => '🥜'],
+            'soy' => ['name' => 'Soja', 'emoji' => '🫘'],
+            'milk' => ['name' => 'Lait', 'emoji' => '🥛'],
+            'nuts' => ['name' => 'Fruits à coque', 'emoji' => '🌰'],
+            'celery' => ['name' => 'Céleri', 'emoji' => '🥬'],
+            'mustard' => ['name' => 'Moutarde', 'emoji' => '🟡'],
+            'sesame' => ['name' => 'Sésame', 'emoji' => '⚪'],
+            'sulphites' => ['name' => 'Sulfites', 'emoji' => '🍷'],
+            'lupin' => ['name' => 'Lupin', 'emoji' => '🌼'],
+            'molluscs' => ['name' => 'Mollusques', 'emoji' => '🦑'],
+        ];
+    }
+
+    public static function getAllergenName(string $allergen): string
+    {
+        return self::getAllergensDefinitions()[$allergen]['name'] ?? $allergen;
+    }
+
+    /**
+     * Known allergens of the list, deduplicated and in the regulatory order.
+     *
+     * @param  array<int, string>  $allergens
+     * @return array<int, string>
+     */
+    public static function normalizeAllergens(array $allergens): array
+    {
+        return array_values(array_intersect(array_keys(self::getAllergensDefinitions()), $allergens));
+    }
+
+    /**
+     * @param  array<int, string>|null  $tags
+     */
+    public static function getTagsLabel(?array $tags, bool $shortTagNames = true): string
+    {
+        return collect($tags ?? [])->map(fn ($tag) => $shortTagNames ? self::getTagShortName($tag) : self::getTagName($tag))->join(', ');
+    }
+
+    /**
+     * @param  array<int, string>|null  $allergens
+     */
+    public static function getAllergensLabel(?array $allergens): string
+    {
+        return $allergens ? 'Allergènes : '.collect($allergens)->map(fn ($allergen) => self::getAllergenName($allergen))->join(', ') : '';
     }
 
     public function getDateCarbonAttribute()

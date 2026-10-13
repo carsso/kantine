@@ -12,6 +12,12 @@
             type="hidden"
             :name="nameTags+'[]'"
             :value="reduce(inputDishesTags)[index]" />
+        <input
+            v-for="(dish, index) in inputDishesAllergens" :key="index"
+            :id="nameAllergens+'_'+index"
+            type="hidden"
+            :name="nameAllergens+'[]'"
+            :value="reduce(inputDishesAllergens)[index]" />
         <div
             v-for="(dish, index) in inputDishes" :key="index" class="flex items-center mb-1">
             <div
@@ -44,18 +50,33 @@
                         </v-select>
                     </div>
                 </div>
+                <div class="w-full flex items-center">
+                    <div class="border-l-1 border-gray-300 dark:border-gray-400 ml-0.5 px-2 text-xs text-gray-400 dark:text-gray-500">Allergènes</div>
+                    <div class="block w-full">
+                        <v-select
+                            v-model="inputDishesAllergens[index]"
+                            multiple
+                            class="admin-dishes-input-dish-tag block w-full border px-0.5 py-0.5 border-gray-100 shadow-xs rounded-md text-xs text-[10px] leading-none focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-400"
+                            :options="autocompleteDishesAllergens"
+                            label="label">
+                            <template v-slot:no-options>
+                                Aucune option trouvée
+                            </template>
+                        </v-select>
+                    </div>
+                </div>
             </div>
             <button
                 type="button"
                 v-if="!dish && index !== inputDishes.length && inputDishes.length !== 1"
-                @click="inputDishes.splice(index, 1)"
+                @click="removeDish(index)"
                 class="cursor-pointer text-xs ml-2 inline-flex items-center text-red-800 dark:text-red-800 p-1.5 border border-gray-200 dark:border-gray-500 leading-4 font-medium rounded-md shadow-xs text-green bg-white dark:bg-gray-700">
                 <i class="fas fa-trash-alt"></i>
             </button>
             <button
                 type="button"
                 v-if="dish"
-                @click="inputDishes.splice(index + 1, 0, '')"
+                @click="addDish(index + 1)"
                 class="cursor-pointer text-xs ml-2 inline-flex items-center text-gray-700 dark:text-gray-400 p-1.5 border border-gray-200 dark:border-gray-500 leading-4 font-medium rounded-md shadow-xs text-green bg-white dark:bg-gray-700">
                 <i class="fas fa-plus"></i>
             </button>
@@ -84,11 +105,19 @@ export default {
             type: String,
             required: true,
         },
+        nameAllergens: {
+            type: String,
+            required: true,
+        },
         dishes: {
             type: Array,
             required: true,
         },
         dishesTags: {
+            type: Array,
+            required: true,
+        },
+        dishesAllergens: {
             type: Array,
             required: true,
         },
@@ -98,6 +127,10 @@ export default {
         },
         autocompleteDishesTags: {
             type: Object,
+            required: true,
+        },
+        autocompleteDishesAllergens: {
+            type: Array,
             required: true,
         },
         placeholder: {
@@ -117,11 +150,17 @@ export default {
                 return filteredDishesTags.find(t => t.value === tag)
             });
         });
+        let inputDishesAllergens = this.dishesAllergens.map((allergens) => {
+            return allergens.map((allergen) => {
+                return this.autocompleteDishesAllergens.find(a => a.value === allergen)
+            }).filter(Boolean);
+        });
         return {
             filteredDishes: filteredDishes,
             filteredDishesTags: filteredDishesTags,
             inputDishes: inputDishes,
             inputDishesTags: inputDishesTags,
+            inputDishesAllergens: inputDishesAllergens,
         }
     },
 
@@ -131,6 +170,28 @@ export default {
         },
         searchTag: function (text) {
             this.filteredDishesTags = this.autocompleteDishesTags;
+        },
+        // Tags and allergens are matched to dishes by index, so they must move together
+        alignDishesAttributes: function () {
+            [this.inputDishesTags, this.inputDishesAllergens].forEach((list) => {
+                for (let i = 0; i < this.inputDishes.length; i++) {
+                    if (!list[i]) {
+                        list[i] = [];
+                    }
+                }
+            });
+        },
+        addDish: function (index) {
+            this.alignDishesAttributes();
+            this.inputDishes.splice(index, 0, '');
+            this.inputDishesTags.splice(index, 0, []);
+            this.inputDishesAllergens.splice(index, 0, []);
+        },
+        removeDish: function (index) {
+            this.alignDishesAttributes();
+            this.inputDishes.splice(index, 1);
+            this.inputDishesTags.splice(index, 1);
+            this.inputDishesAllergens.splice(index, 1);
         },
         reduce: function (input) {
             return input.map((tags) => {

@@ -217,6 +217,32 @@ class ApiAdminMenuTest extends TestCase
         $this->assertDatabaseCount('dishes', 0);
     }
 
+    public function test_it_stores_the_allergens_of_a_dish(): void
+    {
+        Event::fake([MenuUpdatedEvent::class]);
+        $this->actingAsTenantAdmin();
+
+        $this->postJson($this->menuUrl(), $this->payload([
+            ['name' => 'Poulet rôti', 'allergens' => ['milk', 'gluten']],
+        ]))->assertOk();
+
+        $this->assertSame(['gluten', 'milk'], Dish::where('name', 'Poulet rôti')->first()->allergens);
+    }
+
+    public function test_it_rejects_an_unknown_allergen(): void
+    {
+        $this->actingAsTenantAdmin();
+
+        $response = $this->postJson($this->menuUrl(), $this->payload([
+            ['name' => 'Poulet', 'allergens' => ['gluten', 'kiwi']],
+        ]));
+
+        $response->assertStatus(422);
+        $response->assertJsonPath('error', 'Allergènes invalides');
+        $response->assertJsonPath('invalid_allergens', ['kiwi']);
+        $this->assertDatabaseCount('dishes', 0);
+    }
+
     public function test_it_rejects_an_unknown_style(): void
     {
         $this->actingAsTenantAdmin();

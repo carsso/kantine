@@ -113,6 +113,32 @@ class AdminMenuFormTest extends TestCase
         $this->assertSame(['halal', 'france'], Dish::where('name', 'Poulet rôti')->first()->tags);
     }
 
+    public function test_it_stores_the_known_allergens_of_a_dish(): void
+    {
+        Event::fake([MenuUpdatedEvent::class]);
+        $this->actingAsTenantAdmin();
+
+        $payload = $this->formPayload(['Poulet rôti', 'Haricots verts']);
+        $payload['dishes_allergens'] = ['2026-03-02' => [$this->category->id => ['celery,inconnu,gluten', '']]];
+
+        $this->post(route('admin.menu.update', ['tenantSlug' => $this->tenant->slug]), $payload)
+            ->assertRedirect();
+
+        $this->assertSame(['gluten', 'celery'], Dish::where('name', 'Poulet rôti')->first()->allergens);
+        $this->assertSame([], Dish::where('name', 'Haricots verts')->first()->allergens);
+    }
+
+    public function test_the_menu_editor_offers_the_allergens(): void
+    {
+        $this->actingAsTenantAdmin();
+        $this->createDish($this->category, '2026-03-02', 'Poulet rôti', [], ['celery']);
+
+        $this->get(route('admin.menu', ['tenantSlug' => $this->tenant->slug, 'date' => '2026-03-02']))
+            ->assertOk()
+            ->assertSee('"value":"molluscs"', false)
+            ->assertSee(':dishes-allergens=\'[["celery"]]\'', false);
+    }
+
     public function test_it_removes_the_dishes_that_were_deleted_from_the_form(): void
     {
         Event::fake([MenuUpdatedEvent::class]);

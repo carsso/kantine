@@ -47,11 +47,12 @@ trait BuildsMenus
      *
      * @param  array<int, string>  $tags
      */
-    protected function createDish(DishCategory $category, string $date, string $name, array $tags = []): Dish
+    protected function createDish(DishCategory $category, string $date, string $name, array $tags = [], array $allergens = []): Dish
     {
         return Dish::factory()->inCategory($category)->on($date)->create([
             'name' => $name,
             'tags' => $tags,
+            'allergens' => $allergens,
         ]);
     }
 }

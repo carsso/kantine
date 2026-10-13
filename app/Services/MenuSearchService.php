@@ -204,6 +204,7 @@ class MenuSearchService
             ...($withDate ? ['date' => $dish->date, 'weekday' => Carbon::parse($dish->date)->dayName] : []),
             'name' => $dish->name,
             'tags' => $dish->tags ?? [],
+            'allergens' => $dish->allergens ?? [],
             'type' => $dish->category?->parent?->type,
             'category' => $dish->category?->parent?->name,
             'sub_category' => $dish->category?->name,

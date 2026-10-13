@@ -13,6 +13,27 @@ use Illuminate\Support\Facades\Log;
 
 class ApiRestaurationClient
 {
+    /**
+     * API allergen values mapped to our allergens, "Vide" meaning none
+     */
+    private const ALLERGENS_MAPPING = [
+        'Gluten' => 'gluten',
+        'Crustace' => 'crustaceans',
+        'Oeuf' => 'eggs',
+        'Poisson' => 'fish',
+        'Arachide' => 'peanuts',
+        'Soja' => 'soy',
+        'ProduitLaitier' => 'milk',
+        'FruitaCoque' => 'nuts',
+        'Celeri' => 'celery',
+        'Moutarde' => 'mustard',
+        'Sesame' => 'sesame',
+        'Sulfites' => 'sulphites',
+        'Lupin' => 'lupin',
+        'Mollusque' => 'molluscs',
+        'Vide' => null,
+    ];
+
     private Tenant $tenant;
 
     private string $baseUrl;
@@ -84,7 +105,7 @@ class ApiRestaurationClient
                             });
                             foreach ($apiDishes as $dishIdx => $apiDish) {
                                 $currentDish = $currentDishes[$dishIdx] ?? null;
-                                if (! $currentDish || $currentDish['name'] !== $apiDish['name'] || $currentDish['tags'] !== $apiDish['tags']) {
+                                if (! $currentDish || ! $this->isSameDish($currentDish, $apiDish)) {
                                     $apiDish['_inconsistency_from'] = 'API';
                                     $apiDish['_inconsistency_other'] = $currentDish;
                                     $currentMenus[$date]['dishes'][$dishType][$rootCategorySlug][$subCategorySlug][$dishIdx] = $apiDish;
@@ -116,7 +137,7 @@ class ApiRestaurationClient
                             });
                             foreach ($currentDishes as $dishIdx => $currentDish) {
                                 $apiDish = $apiDishes[$dishIdx] ?? null;
-                                if (! $apiDish || $apiDish['name'] !== $currentDish['name'] || $apiDish['tags'] !== $currentDish['tags']) {
+                                if (! $apiDish || ! $this->isSameDish($currentDish, $apiDish)) {
                                     $currentDish['_inconsistency_from'] = 'DB';
                                     $currentDish['_inconsistency_other'] = $apiDish;
                                     $currentMenus[$date]['dishes'][$dishType][$rootCategorySlug][$subCategorySlug][$dishIdx] = $currentDish;
@@ -215,7 +236,9 @@ class ApiRestaurationClient
 
                             // Tags are stored as JSON, which a where clause would flatten, so compare them in PHP
                             $createdDish = Dish::where($dishAttributes)->get()->firstWhere('tags', $tags)
-                                ?? Dish::create(array_merge($dishAttributes, ['tags' => $tags]));
+                                ?? new Dish(array_merge($dishAttributes, ['tags' => $tags]));
+                            $createdDish->allergens = $dish['allergens'] ?? [];
+                            $createdDish->save();
                             $dishIds[] = $createdDish->id;
                         }
                     }
@@ -313,6 +336,7 @@ class ApiRestaurationClient
                         $dailyAccompaniments[$categorySlug][] = [
                             'name' => $name,
                             'tags' => $this->mapNutritionalInfo($item),
+                            'allergens' => $this->mapAllergens($item),
                         ];
                     } else {
                         $this->log('Plat récurrent de la catégorie '.$categorySlug.' : '.$name, 'info');
@@ -322,6 +346,7 @@ class ApiRestaurationClient
                         $dailyDishes[$categorySlug][] = [
                             'name' => $name,
                             'tags' => $this->mapNutritionalInfo($item),
+                            'allergens' => $this->mapAllergens($item),
                         ];
                     }
                 } else {
@@ -410,6 +435,7 @@ class ApiRestaurationClient
                         $mappedMenu[$formattedDate]['dishes']['mains'][$categorySlug][$subCategorySlug][] = [
                             'name' => $name,
                             'tags' => $this->mapNutritionalInfo($item),
+                            'allergens' => $this->mapAllergens($item),
                         ];
                     }
                 }
@@ -419,7 +445,7 @@ class ApiRestaurationClient
             foreach ($mappedMenu[$formattedDate]['dishes'] as $dishType => $rootCategories) {
                 foreach ($rootCategories as $rootCategorySlug => $subCategories) {
                     foreach ($subCategories as $subCategorySlug => $dishes) {
-                        $mappedMenu[$formattedDate]['dishes'][$dishType][$rootCategorySlug][$subCategorySlug] = array_values(array_unique($dishes, SORT_REGULAR));
+                        $mappedMenu[$formattedDate]['dishes'][$dishType][$rootCategorySlug][$subCategorySlug] = $this->mergeRepeatedDishes($dishes);
                     }
                 }
             }
@@ -448,6 +474,56 @@ class ApiRestaurationClient
         $name = preg_replace('/\s+/', ' ', $name);
 
         return preg_replace('/(\s*,)+/', ',', $name);
+    }
+
+    /**
+     * Whether two dishes carry the same name, tags and allergens
+     */
+    private function isSameDish(array $dish, array $otherDish): bool
+    {
+        return $dish['name'] === $otherDish['name']
+            && $dish['tags'] === $otherDish['tags']
+            && ($dish['allergens'] ?? []) === ($otherDish['allergens'] ?? []);
+    }
+
+    /**
+     * Keep each dish once, with the allergens of all its repetitions
+     */
+    private function mergeRepeatedDishes(array $dishes): array
+    {
+        $mergedDishes = [];
+        foreach ($dishes as $dish) {
+            $key = json_encode([$dish['name'], $dish['tags'] ?? []]);
+            if (isset($mergedDishes[$key])) {
+                $mergedDishes[$key]['allergens'] = Dish::normalizeAllergens(array_merge($mergedDishes[$key]['allergens'] ?? [], $dish['allergens'] ?? []));
+            } else {
+                $mergedDishes[$key] = $dish;
+            }
+        }
+
+        return array_values($mergedDishes);
+    }
+
+    /**
+     * Map the allergen columns to our allergens
+     */
+    private function mapAllergens(array $item): array
+    {
+        $allergens = [];
+        foreach ($item as $field => $value) {
+            $value = is_string($value) ? trim($value) : '';
+            if (! str_starts_with($field, 'allergene') || $value === '') {
+                continue;
+            }
+            if (! array_key_exists($value, self::ALLERGENS_MAPPING)) {
+                $this->log('Allergène non mappé : '.$value, 'error');
+
+                continue;
+            }
+            $allergens[] = self::ALLERGENS_MAPPING[$value];
+        }
+
+        return Dish::normalizeAllergens(array_filter($allergens));
     }
 
     /**

@@ -85,6 +85,17 @@
         </div>
 
         <div>
+            <h3 class="text-lg mb-2">Allergènes des plats</h3>
+            <div class="flex flex-wrap gap-2">
+                @foreach ($allergens as $key => $allergen)
+                    <span class="rounded-full border border-gray-200 dark:border-gray-600 px-3 py-1 text-sm">
+                        {{ $allergen['emoji'] }} {{ $allergen['name'] }} <code class="font-mono text-gray-500 dark:text-gray-400">{{ $key }}</code>
+                    </span>
+                @endforeach
+            </div>
+        </div>
+
+        <div>
             <h3 class="text-lg mb-2">Exemple : les prochaines frites</h3>
             <div class="{{ $codeBlock }}">curl "{{ $exampleUrl }}"</div>
             <pre class="bg-gray-100 dark:bg-gray-800 px-3 py-2 rounded-md font-mono text-sm overflow-x-auto mt-2">{{ json_encode($exampleResponse, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) }}</pre>

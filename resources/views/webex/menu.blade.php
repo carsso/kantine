@@ -52,10 +52,14 @@
                                     🍔
                                 @endif
                                 {{ $dish['name'] }}
-                                @if($dish['tags'])
-                                    <i>
-                                        ({{ collect($dish['tags'])->map(fn($tag) => \App\Models\Dish::getTagName($tag))->join(', ') }})
-                                    </i>
+                                @php
+                                    $dishTags = \App\Models\Dish::getTagsLabel($dish['tags'], false);
+                                    $dishAllergens = \App\Models\Dish::getAllergensLabel($dish['allergens']);
+                                @endphp
+                                @if($dishTags || $dishAllergens)
+                                    <span>
+                                        ({{ $dishTags }}@if($dishTags && $dishAllergens) - @endif<i>{{ $dishAllergens }}</i>)
+                                    </span>
                                 @endif
                             </span><br />
                         @endforeach

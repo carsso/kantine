@@ -23,6 +23,8 @@ class ApiDocsPageTest extends TestCase
         $response->assertSee('Les menus de la cantine Lille');
         $response->assertSee(route('api.home', $slug));
         $response->assertSee("claude mcp add --transport http kantine-{$tenant->slug} {$mcpUrl}");
+        $response->assertSee('Allergènes des plats');
+        $response->assertSee('Fruits à coque');
     }
 
     public function test_the_page_documents_every_public_api_route(): void

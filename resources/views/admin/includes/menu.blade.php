@@ -83,8 +83,10 @@
                                 $dishesCollection = $menu['dishes'][$type][$rootCategory->name_slug][$category->name_slug] ?? null;
                                 $dishes = $dishesCollection ? $dishesCollection->pluck('name')->toArray() : [];
                                 $dishesTags = $dishesCollection ? $dishesCollection->pluck('tags')->toArray() : [];
+                                $dishesAllergens = $dishesCollection ? $dishesCollection->pluck('allergens')->map(fn ($allergens) => $allergens ?? [])->toArray() : [];
                                 $inputName = 'dishes['.$idx.']['.$category->id.']';
                                 $inputNameTags = 'dishes_tags['.$idx.']['.$category->id.']';
+                                $inputNameAllergens = 'dishes_allergens['.$idx.']['.$category->id.']';
                             @endphp
                             @if($dishes || !$category->hidden)
                                 <div class="ml-1">
@@ -101,11 +103,14 @@
                                     <admin-dishes-input
                                         name="{{ $inputName }}"
                                         name-tags="{{ $inputNameTags }}"
+                                        name-allergens="{{ $inputNameAllergens }}"
                                         placeholder="Entrez un nom..."
                                         :dishes='@json(old($inputName) ?? $dishes)'
                                         :dishes-tags='@json(old($inputNameTags) ?? $dishesTags)'
+                                        :dishes-allergens='@json(old($inputNameAllergens) ?? $dishesAllergens)'
                                         :autocomplete-dishes='@json($autocompleteDishes)'
-                                        :autocomplete-dishes-tags='@json($autocompleteDishesTags)'>
+                                        :autocomplete-dishes-tags='@json($autocompleteDishesTags)'
+                                        :autocomplete-dishes-allergens='@json($autocompleteDishesAllergens)'>
                                     </admin-dishes-input>
                                     @error($inputName)
                                         <div class="rounded-md bg-red-50 dark:bg-red-800 text-xs font-medium text-red-800 dark:text-red-50 p-2 mt-1">
@@ -113,6 +118,11 @@
                                         </div>
                                     @enderror
                                     @error($inputNameTags)
+                                        <div class="rounded-md bg-red-50 dark:bg-red-800 text-xs font-medium text-red-800 dark:text-red-50 p-2 mt-1">
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
+                                    @error($inputNameAllergens)
                                         <div class="rounded-md bg-red-50 dark:bg-red-800 text-xs font-medium text-red-800 dark:text-red-50 p-2 mt-1">
                                             {{ $message }}
                                         </div>

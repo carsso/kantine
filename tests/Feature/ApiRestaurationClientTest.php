@@ -149,6 +149,46 @@ class ApiRestaurationClientTest extends TestCase
         );
     }
 
+    public function test_it_maps_the_allergen_columns_to_the_regulatory_allergens(): void
+    {
+        $this->fakeApi([$this->apiItem([
+            'allergene1' => 'Celeri',
+            'allergene2' => 'ProduitLaitier',
+            'allergene3' => 'FruitaCoque',
+            'allergene4' => 'Gluten',
+            'allergene5' => '',
+        ])]);
+
+        $menus = $this->client()->getMenus();
+
+        $this->assertSame(['gluten', 'milk', 'nuts', 'celery'], $menus[$this->day]['dishes']['mains']['pole-chaud']['plats'][0]['allergens']);
+    }
+
+    public function test_it_maps_every_allergen_value_of_the_api(): void
+    {
+        $values = ['Gluten', 'Crustace', 'Oeuf', 'Poisson', 'Arachide', 'Soja', 'ProduitLaitier', 'FruitaCoque', 'Celeri', 'Moutarde', 'Sesame', 'Sulfites', 'Lupin', 'Mollusque'];
+        $this->fakeApi([$this->apiItem(collect($values)->mapWithKeys(fn ($value, $idx) => ['allergene'.($idx + 1) => $value])->all())]);
+
+        $menus = $this->client()->getMenus();
+
+        $this->assertSame(array_keys(Dish::getAllergensDefinitions()), $menus[$this->day]['dishes']['mains']['pole-chaud']['plats'][0]['allergens']);
+    }
+
+    public function test_it_ignores_the_empty_and_unknown_allergen_values(): void
+    {
+        $logs = [];
+        $this->fakeApi([$this->apiItem(['allergene1' => 'Vide', 'allergene2' => 'Kiwi'])]);
+
+        $client = new ApiRestaurationClient($this->tenant->fresh(), function ($message) use (&$logs) {
+            $logs[] = $message;
+        });
+        $menus = $client->getMenus();
+
+        $this->assertSame([], $menus[$this->day]['dishes']['mains']['pole-chaud']['plats'][0]['allergens']);
+        $this->assertContains('Allergène non mappé : Kiwi', $logs);
+        $this->assertNotContains('Allergène non mappé : Vide', $logs);
+    }
+
     public function test_it_detects_halal_from_the_dish_name(): void
     {
         $this->fakeApi([$this->apiItem(['nom' => 'Kebab', 'info1' => 'Hallal'])]);
@@ -480,6 +520,49 @@ class ApiRestaurationClientTest extends TestCase
         $this->assertArrayHasKey($this->day, $diff);
     }
 
+    public function test_compare_menus_flags_an_allergen_difference(): void
+    {
+        $this->createDish($this->plats, $this->day, 'Poulet rôti', [], ['celery']);
+
+        $diff = $this->client()->compareMenus([
+            $this->day => [
+                'dishes' => ['mains' => ['pole-chaud' => ['plats' => [['name' => 'Poulet rôti', 'tags' => [], 'allergens' => ['celery', 'milk']]]]]],
+            ],
+        ]);
+
+        $this->assertArrayHasKey($this->day, $diff);
+    }
+
+    public function test_update_menus_updates_the_allergens_of_an_existing_dish(): void
+    {
+        Event::fake([MenuUpdatedEvent::class]);
+        $dish = $this->createDish($this->plats, $this->day, 'Poulet rôti', [], ['celery']);
+
+        $this->client()->updateMenus([
+            $this->day => [
+                'dishes' => ['mains' => ['pole-chaud' => ['plats' => [['name' => 'Poulet rôti', 'tags' => [], 'allergens' => ['gluten', 'celery']]]]]],
+            ],
+        ]);
+
+        $this->assertSame(1, Dish::count());
+        $this->assertSame(['gluten', 'celery'], $dish->fresh()->allergens);
+    }
+
+    public function test_a_dish_repeated_by_the_api_keeps_the_allergens_of_every_row(): void
+    {
+        $this->fakeApi([
+            $this->apiItem(['allergene1' => 'Celeri']),
+            $this->apiItem(['allergene1' => 'Gluten']),
+        ]);
+
+        $menus = $this->client()->getMenus();
+
+        $this->assertSame(
+            [['name' => 'Poulet rôti', 'tags' => [], 'allergens' => ['gluten', 'celery']]],
+            $menus[$this->day]['dishes']['mains']['pole-chaud']['plats']
+        );
+    }
+
     public function test_compare_menus_refuses_an_empty_payload(): void
     {
         $this->expectExceptionMessage('No menus provided');
@@ -514,7 +597,7 @@ class ApiRestaurationClientTest extends TestCase
     {
         Event::fake([MenuUpdatedEvent::class]);
         $this->fakeApi([
-            $this->apiItem(['nom' => 'Poulet rôti', 'bio' => 'TRUE']),
+            $this->apiItem(['nom' => 'Poulet rôti', 'bio' => 'TRUE', 'allergene1' => 'Celeri']),
             $this->apiItem(['nom' => 'Haricots verts', 'accompagnement' => 'TRUE']),
         ]);
 
@@ -527,5 +610,6 @@ class ApiRestaurationClientTest extends TestCase
 
         $this->assertSame([], $client->compareMenus($menus));
         $this->assertSame(['organic'], Dish::where('name', 'Poulet rôti')->first()->tags);
+        $this->assertSame(['celery'], Dish::where('name', 'Poulet rôti')->first()->allergens);
     }
 }

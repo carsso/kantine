@@ -73,6 +73,7 @@ class ApiDocsController extends Controller
             'mcpUrl' => route('mcp', $slug),
             'endpoints' => $endpoints,
             'tags' => Dish::getTagsDefinitions(),
+            'allergens' => Dish::getAllergensDefinitions(),
             'requestsPerMinute' => RouteServiceProvider::API_REQUESTS_PER_MINUTE,
             'mcpRequestsPerMinute' => RouteServiceProvider::MCP_REQUESTS_PER_MINUTE,
             'mcpTools' => collect(KantineServer::TOOLS)

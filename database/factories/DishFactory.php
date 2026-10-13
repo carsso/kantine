@@ -27,6 +27,7 @@ class DishFactory extends Factory
             'date' => now()->format('Y-m-d'),
             'name' => fake()->words(3, true),
             'tags' => [],
+            'allergens' => [],
         ];
     }
 
