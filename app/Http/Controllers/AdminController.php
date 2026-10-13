@@ -72,6 +72,10 @@ class AdminController extends Controller
             ->map(function ($value, $key) {
                 return ['label' => $value['name_short'], 'value' => $key];
             })->values()->all();
+        $autocompleteDishesAllergens = collect(Dish::getAllergensDefinitions())
+            ->map(function ($value, $key) {
+                return ['label' => $value['name'], 'value' => $key];
+            })->values()->all();
         $categories = DishCategory::where('tenant_id', $tenant->id)
             ->whereNull('parent_id')
             ->with(['children' => function ($query) {
@@ -81,7 +85,7 @@ class AdminController extends Controller
             ->get()
             ->groupBy('type');
 
-        return view('admin.menu', ['tenant' => $tenant, 'menus' => $menus, 'categories' => $categories, 'weekMonday' => Carbon::parse($mondayTime), 'autocompleteDishes' => $autocompleteDishes, 'autocompleteDishesTags' => $autocompleteDishesTags, 'week' => $calendarWeekFirstDay, 'prevWeek' => $prevWeek, 'nextWeek' => $nextWeek]);
+        return view('admin.menu', ['tenant' => $tenant, 'menus' => $menus, 'categories' => $categories, 'weekMonday' => Carbon::parse($mondayTime), 'autocompleteDishes' => $autocompleteDishes, 'autocompleteDishesTags' => $autocompleteDishesTags, 'autocompleteDishesAllergens' => $autocompleteDishesAllergens, 'week' => $calendarWeekFirstDay, 'prevWeek' => $prevWeek, 'nextWeek' => $nextWeek]);
     }
 
     public function updateMenu(UpdateMenuFormRequest $request, DayService $dayService)
@@ -105,6 +109,8 @@ class AdminController extends Controller
                     foreach ($dishes as $idx => $dish) {
                         $tags = $validated['dishes_tags'][$date][$categoryId][$idx] ?? '';
                         $tags = $tags ? explode(',', $tags) : [];
+                        $allergens = $validated['dishes_allergens'][$date][$categoryId][$idx] ?? '';
+                        $allergens = Dish::normalizeAllergens($allergens ? explode(',', $allergens) : []);
                         $dish = Dish::firstOrCreate([
                             'date' => $date,
                             'dishes_category_id' => $categoryId,
@@ -113,6 +119,7 @@ class AdminController extends Controller
                             'tags' => $tags,
                         ]);
                         $dish->tags = $tags;
+                        $dish->allergens = $allergens;
                         $dish->save();
                         $dishIds[] = $dish->id;
                     }

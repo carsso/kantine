@@ -84,10 +84,14 @@
                                                                                     <i class="fa-thin {{ $rootCategory->icon }}"></i> {{ $rootCategory->name }} :
                                                                                 </span>
                                                                                 {{ $dish['name'] }}
-                                                                                @if($dish['tags'])
-                                                                                    <i class="font-extralight text-4xl">
-                                                                                        ({{ collect($dish['tags'])->map(fn($tag) => \App\Models\Dish::getTagShortName($tag))->join(', ') }})
-                                                                                    </i>
+                                                                                @php
+                                                                                    $dishTags = \App\Models\Dish::getTagsLabel($dish['tags']);
+                                                                                    $dishAllergens = \App\Models\Dish::getAllergensLabel($dish['allergens']);
+                                                                                @endphp
+                                                                                @if($dishTags || $dishAllergens)
+                                                                                    <span class="font-extralight text-4xl">
+                                                                                        ({{ $dishTags }}@if($dishTags && $dishAllergens) - @endif<i class="text-3xl">{{ $dishAllergens }}</i>)
+                                                                                    </span>
                                                                                 @endif
                                                                             </div>
                                                                         @endif
@@ -110,10 +114,14 @@
                                                                                     <i class="fa-solid fa-burger-cheese"></i>
                                                                                 @endif
                                                                                 {{ $dish['name'] }}
-                                                                                @if($dish['tags'])
-                                                                                    <i class="font-extralight text-4xl">
-                                                                                        ({{ collect($dish['tags'])->map(fn($tag) => \App\Models\Dish::getTagShortName($tag))->join(', ') }})
-                                                                                    </i>
+                                                                                @php
+                                                                                    $dishTags = \App\Models\Dish::getTagsLabel($dish['tags']);
+                                                                                    $dishAllergens = \App\Models\Dish::getAllergensLabel($dish['allergens']);
+                                                                                @endphp
+                                                                                @if($dishTags || $dishAllergens)
+                                                                                    <span class="font-extralight text-4xl">
+                                                                                        ({{ $dishTags }}@if($dishTags && $dishAllergens) - @endif<i class="text-3xl">{{ $dishAllergens }}</i>)
+                                                                                    </span>
                                                                                 @endif
                                                                             </div>
                                                                         @endforeach

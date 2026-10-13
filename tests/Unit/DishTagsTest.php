@@ -27,6 +27,31 @@ class DishTagsTest extends TestCase
         $this->assertSame('#A6D64D', Dish::getTagColor('vegetarian'));
     }
 
+    public function test_it_defines_the_14_regulatory_allergens(): void
+    {
+        $this->assertSame([
+            'gluten', 'crustaceans', 'eggs', 'fish', 'peanuts', 'soy', 'milk',
+            'nuts', 'celery', 'mustard', 'sesame', 'sulphites', 'lupin', 'molluscs',
+        ], array_keys(Dish::getAllergensDefinitions()));
+        $this->assertSame('Fruits à coque', Dish::getAllergenName('nuts'));
+        $this->assertSame('inconnu', Dish::getAllergenName('inconnu'));
+    }
+
+    public function test_normalizing_allergens_drops_unknown_ones_and_follows_the_regulatory_order(): void
+    {
+        $this->assertSame(['gluten', 'milk', 'celery'], Dish::normalizeAllergens(['celery', 'inconnu', 'milk', 'gluten', 'milk']));
+        $this->assertSame([], Dish::normalizeAllergens([]));
+    }
+
+    public function test_the_tags_and_allergens_labels_list_their_names(): void
+    {
+        $this->assertSame('Halal, Végé.', Dish::getTagsLabel(['halal', 'vegetarian']));
+        $this->assertSame('Végétarien', Dish::getTagsLabel(['vegetarian'], false));
+        $this->assertSame('', Dish::getTagsLabel(null));
+        $this->assertSame('Allergènes : Gluten, Lait', Dish::getAllergensLabel(['gluten', 'milk']));
+        $this->assertSame('', Dish::getAllergensLabel(null));
+    }
+
     public function test_an_unknown_tag_falls_back_to_neutral_values(): void
     {
         $this->assertSame('inconnu', Dish::getTagName('inconnu'));

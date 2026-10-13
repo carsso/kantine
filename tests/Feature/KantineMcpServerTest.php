@@ -91,7 +91,7 @@ class KantineMcpServerTest extends TestCase
     {
         $tenant = Tenant::factory()->create();
         [, $child] = $this->createCategoryTree($tenant);
-        $this->createDish($child, '2026-03-04', 'Poulet rôti', ['halal']);
+        $this->createDish($child, '2026-03-04', 'Poulet rôti', ['halal'], ['celery']);
         $this->createDish($child, '2026-03-05', 'Lasagnes');
 
         $content = $this->callTool($tenant, 'get-menus');
@@ -103,6 +103,7 @@ class KantineMcpServerTest extends TestCase
         $this->assertSame([[
             'name' => 'Poulet rôti',
             'tags' => ['halal'],
+            'allergens' => ['celery'],
             'type' => 'mains',
             'category' => 'Pole Chaud',
             'sub_category' => 'Plats',

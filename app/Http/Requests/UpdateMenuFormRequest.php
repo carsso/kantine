@@ -25,6 +25,10 @@ class UpdateMenuFormRequest extends FormRequest
             'dishes_tags.*' => 'nullable|array',
             'dishes_tags.*.*' => 'nullable|array',
             'dishes_tags.*.*.*' => 'nullable',
+            'dishes_allergens' => 'nullable|array',
+            'dishes_allergens.*' => 'nullable|array',
+            'dishes_allergens.*.*' => 'nullable|array',
+            'dishes_allergens.*.*.*' => 'nullable',
         ];
     }
 

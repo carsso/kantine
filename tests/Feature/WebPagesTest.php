@@ -32,24 +32,28 @@ class WebPagesTest extends TestCase
         $tenant = Tenant::factory()->create();
         [, $child] = $this->createCategoryTree($tenant);
         // 2026-03-02 is a Monday.
-        $this->createDish($child, '2026-03-02', 'Poulet rôti');
+        $this->createDish($child, '2026-03-02', 'Poulet rôti', ['halal'], ['gluten', 'celery']);
+        $this->createDish($child, '2026-03-02', 'Pain', [], ['gluten']);
 
         $response = $this->get(route('menus', ['tenantSlug' => $tenant->slug, 'date' => '2026-03-02']));
 
         $response->assertOk();
         $response->assertSee('Poulet rôti', false);
+        $response->assertSee('(Halal - <i>Allergènes : Gluten, Céleri</i>)', false);
+        $response->assertSee('(<i>Allergènes : Gluten</i>)', false);
     }
 
     public function test_the_dashboard_renders(): void
     {
         $tenant = Tenant::factory()->create();
         [, $child] = $this->createCategoryTree($tenant);
-        $this->createDish($child, '2026-03-02', 'Poulet rôti');
+        $this->createDish($child, '2026-03-02', 'Poulet rôti', ['halal'], ['gluten', 'celery']);
 
         $response = $this->get(route('dashboard', ['tenantSlug' => $tenant->slug, 'date' => '2026-03-02']));
 
         $response->assertOk();
         $response->assertSee('Poulet rôti', false);
+        $response->assertSee('(Halal - <i class="text-3xl">Allergènes : Gluten, Céleri</i>)', false);
     }
 
     public function test_the_notifications_page_renders(): void
@@ -66,10 +70,11 @@ class WebPagesTest extends TestCase
     {
         $tenant = Tenant::factory()->create();
         [, $child] = $this->createCategoryTree($tenant);
-        $this->createDish($child, '2026-03-02', 'Poulet rôti');
+        $this->createDish($child, '2026-03-02', 'Poulet rôti', ['halal', 'france'], ['gluten']);
 
         $this->get(route('notifications.webex', ['tenantSlug' => $tenant->slug, 'date' => '2026-03-02']))
-            ->assertOk();
+            ->assertOk()
+            ->assertSee('(Halal, Origine France - <i>Allergènes : Gluten</i>)', false);
     }
 
     public function test_the_tenant_home_renders_the_menu(): void
