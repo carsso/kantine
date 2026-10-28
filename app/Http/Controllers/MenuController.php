@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Lib\DashboardStyle;
 use App\Models\Dish;
 use App\Models\DishCategory;
 use App\Models\Tenant;
@@ -96,10 +97,10 @@ class MenuController extends Controller
             ->orderBy('sort_order')
             ->get()
             ->groupBy('type');
-        $style = $menu ? $request->query('style', $menu['information']['style'] ?? 'default') : 'default';
-        $particlesOptions = in_array($style, array_keys(config('tsparticles.config', []))) ? config('tsparticles.config.'.$style) : null;
+        ['style' => $style, 'reason' => $styleReason, 'date' => $styleReasonDate] = DashboardStyle::resolveWithReason($request->query('style', $menu['information']['style'] ?? null), $menu['information']['event_name'] ?? null, $day, $tenant->dashboard_style_mode, $tenant, burgersAndFriesDay: $menu['is_burgers_day'] && $menu['is_fries_day']);
+        $particlesOptions = $style ? config('tsparticles.config.'.$style) : null;
 
-        return view('dashboard', ['tenant' => $tenant, 'menu' => $menu, 'categories' => $categories, 'diff' => $diff, 'day' => $day, 'particlesOptions' => $particlesOptions, 'generationDate' => $generationDate]);
+        return view('dashboard', ['tenant' => $tenant, 'menu' => $menu, 'categories' => $categories, 'diff' => $diff, 'day' => $day, 'particlesOptions' => $particlesOptions, 'styleReason' => $styleReason, 'styleReasonDate' => $styleReasonDate, 'generationDate' => $generationDate]);
     }
 
     public function webexMenu(Request $request, DayService $dayService)

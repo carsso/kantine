@@ -33,8 +33,7 @@
                             @if($menu && $menu['information'] && $menu['information']['event_name'])
                                 <div class="flex items-center justify-center">
                                     <div class="bg-white rounded-lg px-8 py-5 mt-16 mb-5 mx-auto font-bold text-4xl border-t-4 border-[#147DE8] text-[#000E9C]">
-                                        <div>Événement</div>
-                                        <div class="mt-4">{{ $menu['information']['event_name'] }}</div>
+                                        <div>{{ $menu['information']['event_name'] }}</div>
                                     </div>
                                 </div>
                             @endif
@@ -154,8 +153,17 @@
                 </div>
             </div>
         </div>
-        <div class="fixed bottom-10 right-10 text-[#002f9c]">
-            {{ $generationDate->translatedFormat('j F Y à H:i:s') }}
+        @if($styleReason)
+            <div class="fixed bottom-10 right-10 text-right text-[#3d5fd9]">
+                @if($styleReasonDate)
+                    <div>{{ $styleReasonDate }} :</div>
+                @endif
+                <div>{{ $styleReason }}</div>
+            </div>
+        @endif
+        {{-- Next to the websocket state dot. --}}
+        <div class="fixed bottom-3 right-12 text-xs text-[#002f9c]">
+            {{ config('app.name') }} · {{ $generationDate->translatedFormat('j F Y à H:i:s') }}
         </div>
         <echo-state></echo-state>
         <page-refresher date="{{ $menu['date'] }}"></page-refresher>

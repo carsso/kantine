@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\DashboardStyleMode;
+use App\Events\DashboardRefreshEvent;
 use App\Events\MenuUpdatedEvent;
 use App\Http\Requests\UpdateMenuFormRequest;
+use App\Lib\DashboardStyle;
 use App\Libraries\WebexApi;
 use App\Models\Dish;
 use App\Models\DishCategory;
@@ -12,8 +15,10 @@ use App\Models\Tenant;
 use App\Services\DayService;
 use App\Services\WebexNotificationService;
 use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class AdminController extends Controller
@@ -160,6 +165,133 @@ class AdminController extends Controller
         }
 
         return $this->backWithError('Rien à mettre à jour');
+    }
+
+    public function themes(Request $request)
+    {
+        $tenant = $request->route('tenant');
+        $year = (int) ($request->route('year') ?? now()->year);
+        $calendar = DashboardStyle::calendar($year, $tenant);
+        $periods = collect($calendar)->map(function (array $period, int $index) use ($calendar) {
+            // Days of the period won by a period of higher priority (the calendar is ordered by priority).
+            $yields = [];
+            for ($day = $period['start']; $day->lte($period['end']); $day = $day->addDay()) {
+                $winner = DashboardStyle::periodOn($day, calendar: $calendar);
+                if ($winner && array_search($winner, $calendar) !== $index) {
+                    $yields[] = ['day' => $day, 'label' => $winner['label']];
+                }
+            }
+
+            return [...$period, 'yields' => $yields];
+        });
+
+        // Styles chosen and events announced in the menus, as the dashboard shows them.
+        $informations = $tenant->information()->whereBetween('date', [$year.'-01-01', $year.'-12-31'])->get()->keyBy('date');
+        $burgersAndFriesDays = Dish::with('category')->where('tenant_id', $tenant->id)->whereBetween('date', [$year.'-01-01', $year.'-12-31'])->get()
+            ->groupBy('date')
+            ->filter(fn ($dishes) => DayService::isBurgersDay($dishes) && DayService::isFriesDay($dishes));
+        $months = [];
+        foreach (range(1, 12) as $month) {
+            $firstDay = CarbonImmutable::create($year, $month, 1);
+            $days = [];
+            for ($day = $firstDay; $day->month === $month; $day = $day->addDay()) {
+                $information = $informations->get($day->format('Y-m-d'));
+                $days[] = [
+                    'date' => $day,
+                    'period' => DashboardStyle::periodOn($day, calendar: $calendar),
+                    'shown' => DashboardStyle::resolveWithReason($information?->style, $information?->event_name, $day, $tenant->dashboard_style_mode, $tenant, $calendar, $burgersAndFriesDays->has($day->format('Y-m-d'))),
+                ];
+            }
+            $months[] = ['name' => $firstDay->translatedFormat('F'), 'offset' => $firstDay->dayOfWeekIso - 1, 'days' => $days];
+        }
+
+        // Styles shown at least one day, in order of appearance, with what shows them and when.
+        $legend = collect($months)->pluck('days')->flatten(1)
+            ->filter(fn (array $day) => $day['shown']['style'])
+            ->groupBy(fn (array $day) => $day['shown']['style'])
+            ->map(fn ($days) => $days->map(fn (array $day) => match ($day['shown']['source']) {
+                'calendar' => ['label' => $day['period']['label'], 'when' => $day['period']['detail'] ?? DashboardStyle::formatRange($day['period']['start'], $day['period']['end'])],
+                'event', 'dishes' => ['label' => $day['shown']['reason'], 'when' => DashboardStyle::formatDate($day['date'])],
+                default => ['label' => 'Choisi dans le menu', 'when' => DashboardStyle::formatDate($day['date'])],
+            })->unique()->values());
+
+        return view('admin.themes', [
+            'tenant' => $tenant,
+            'year' => $year,
+            'months' => $months,
+            'legend' => $legend,
+            'periods' => $periods->sortBy('start')->values(),
+            'todayStyle' => DashboardStyle::fromCalendar(now(), $tenant),
+            'events' => $tenant->calendarEvents()->orderByDesc('starts_on')->get(),
+            'editedEvent' => $request->query('edit') ? $tenant->calendarEvents()->find($request->query('edit')) : null,
+        ]);
+    }
+
+    public function storeCalendarEvent(Request $request)
+    {
+        $tenant = $request->route('tenant');
+        $validated = $request->validate($this->calendarEventRules());
+
+        $event = $tenant->calendarEvents()->create($validated);
+        if (now()->startOfDay()->between($event->starts_on, $event->ends_on)) {
+            DashboardRefreshEvent::dispatch();
+        }
+
+        return $this->redirectWithSuccess('Événement « '.$event->label.' » ajouté au calendrier', redirect()->route('admin.themes', ['tenantSlug' => $tenant->slug, 'year' => $event->starts_on->year]));
+    }
+
+    public function updateCalendarEvent(Request $request)
+    {
+        $tenant = $request->route('tenant');
+        $event = $tenant->calendarEvents()->findOrFail($request->route('calendarEvent'));
+        $validated = $request->validate($this->calendarEventRules());
+
+        $wasToday = now()->startOfDay()->between($event->starts_on, $event->ends_on);
+        $event->update($validated);
+        if ($wasToday || now()->startOfDay()->between($event->starts_on, $event->ends_on)) {
+            DashboardRefreshEvent::dispatch();
+        }
+
+        return $this->redirectWithSuccess('Événement « '.$event->label.' » modifié', redirect()->route('admin.themes', ['tenantSlug' => $tenant->slug, 'year' => $event->starts_on->year]));
+    }
+
+    /**
+     * @return array<string, array<int, mixed>>
+     */
+    private function calendarEventRules(): array
+    {
+        return [
+            'label' => ['required', 'string', 'max:100'],
+            'style' => ['required', Rule::in(array_keys(config('tsparticles.config', [])))],
+            'starts_on' => ['required', 'date_format:Y-m-d'],
+            'ends_on' => ['required', 'date_format:Y-m-d', 'after_or_equal:starts_on'],
+        ];
+    }
+
+    public function destroyCalendarEvent(Request $request)
+    {
+        $tenant = $request->route('tenant');
+        $event = $tenant->calendarEvents()->findOrFail($request->route('calendarEvent'));
+        $event->delete();
+        if (now()->startOfDay()->between($event->starts_on, $event->ends_on)) {
+            DashboardRefreshEvent::dispatch();
+        }
+
+        return $this->redirectWithSuccess('Événement « '.$event->label.' » supprimé du calendrier', redirect()->back());
+    }
+
+    public function updateDashboardStyleMode(Request $request)
+    {
+        $tenant = $request->route('tenant');
+        $validated = $request->validate([
+            'dashboard_style_mode' => ['required', Rule::enum(DashboardStyleMode::class)],
+        ]);
+
+        $tenant->update($validated);
+        // Screens reload right away, the switch is meant for emergencies.
+        DashboardRefreshEvent::dispatch();
+
+        return $this->redirectWithSuccess('Styles du dashboard de '.$tenant->name.' : '.$tenant->dashboard_style_mode->label(), redirect()->back());
     }
 
     public function webex(Request $request)

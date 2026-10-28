@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\DashboardStyleMode;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -17,6 +18,7 @@ class Tenant extends Model
         'name',
         'slug',
         'is_active',
+        'dashboard_style_mode',
         'webex_bearer_token',
         'webex_bot_name',
         'meta',
@@ -24,6 +26,7 @@ class Tenant extends Model
 
     protected $hidden = [
         'webex_bearer_token',
+        'dashboard_style_mode',
         'id',
         'created_at',
         'updated_at',
@@ -32,6 +35,7 @@ class Tenant extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
+        'dashboard_style_mode' => DashboardStyleMode::class,
         'meta' => 'json',
     ];
 
@@ -55,5 +59,10 @@ class Tenant extends Model
     public function information(): HasMany
     {
         return $this->hasMany(Information::class);
+    }
+
+    public function calendarEvents(): HasMany
+    {
+        return $this->hasMany(CalendarEvent::class);
     }
 }

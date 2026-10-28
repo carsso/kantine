@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\MenuUpdatedEvent;
 use App\Http\Requests\UpdateMenuApiRequest;
+use App\Lib\DashboardStyle;
 use App\Models\Dish;
 use App\Models\DishCategory;
 use App\Models\Information;
@@ -43,7 +44,7 @@ class ApiAdminController extends Controller
 
         // Validate style if provided
         if (isset($menuData['information']['style']) && $menuData['information']['style'] !== '') {
-            $allowedStyles = array_keys(config('tsparticles.config', []));
+            $allowedStyles = [...array_keys(config('tsparticles.config', [])), DashboardStyle::NONE];
             if (! in_array($menuData['information']['style'], $allowedStyles)) {
                 return response()->json([
                     'error' => 'Style invalide',
