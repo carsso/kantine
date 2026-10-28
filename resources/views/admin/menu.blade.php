@@ -1,5 +1,9 @@
 @extends('layouts.app-with-navbar')
 
+@section('meta')
+<script type="application/json" id="particle-themes">@json(config('tsparticles.config', []))</script>
+@endsection
+
 @section('content')
 <div class="container-2xl 2xl:container-full mx-auto px-4 sm:px-6 lg:px-8">
     <h1 class="lg:hidden text-2xl text-center mb-4">
@@ -16,6 +20,16 @@
             <h1 class="hidden lg:block text-2xl text-center">
                 Menus de la semaine {{ $weekMonday->translatedFormat('W (Y)') }} - {{ $tenant->name }}
             </h1>
+            <p class="text-center text-xs text-gray-500">
+                <a href="{{ route('admin.themes', ['tenantSlug' => $tenant->slug]) }}" class="hover:text-indigo-600">
+                    <i class="fa-solid fa-calendar-star mr-1"></i>Calendrier des thèmes
+                </a>
+                @if($tenant->dashboard_style_mode !== \App\Enums\DashboardStyleMode::Automatic)
+                    <span class="ml-2 text-orange-600">
+                        <i class="fa-solid fa-triangle-exclamation mr-1"></i>{{ $tenant->dashboard_style_mode->label() }}
+                    </span>
+                @endif
+            </p>
         </div>
         <div class="flex-none w-48 text-right">
             <a href="{{ route('admin.menu', ['tenantSlug' => request()->tenant->slug, 'date' => $nextWeek]) }}" class="px-2 py-1 border border-transparent text-sm leading-4 font-medium rounded-md shadow-xs text-white bg-gray-600 hover:bg-gray-700 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">

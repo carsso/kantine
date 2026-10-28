@@ -87,5 +87,23 @@ Route::prefix('{tenantSlug}')->middleware('tenant')->group(function () {
 
         Route::post('/webex/notify', [AdminController::class, 'webexNotify'])
             ->name('admin.webex.notify');
+
+        Route::get('/themes/{year?}', [AdminController::class, 'themes'])
+            ->whereNumber('year')
+            ->name('admin.themes');
+
+        Route::post('/themes/mode', [AdminController::class, 'updateDashboardStyleMode'])
+            ->name('admin.themes.mode');
+
+        Route::post('/themes/events', [AdminController::class, 'storeCalendarEvent'])
+            ->name('admin.themes.events.store');
+
+        Route::put('/themes/events/{calendarEvent}', [AdminController::class, 'updateCalendarEvent'])
+            ->whereNumber('calendarEvent')
+            ->name('admin.themes.events.update');
+
+        Route::delete('/themes/events/{calendarEvent}', [AdminController::class, 'destroyCalendarEvent'])
+            ->whereNumber('calendarEvent')
+            ->name('admin.themes.events.destroy');
     });
 });

@@ -243,6 +243,19 @@ class ApiAdminMenuTest extends TestCase
         $this->assertDatabaseCount('dishes', 0);
     }
 
+    public function test_it_accepts_disabling_the_automatic_style(): void
+    {
+        Event::fake([MenuUpdatedEvent::class]);
+        $this->actingAsTenantAdmin();
+
+        $payload = $this->payload([['name' => 'Poulet']]);
+        $payload['information'] = ['style' => 'none'];
+
+        $this->postJson($this->menuUrl(), $payload)->assertOk();
+
+        $this->assertDatabaseHas('informations', ['tenant_id' => $this->tenant->id, 'date' => '2026-03-02', 'style' => 'none']);
+    }
+
     public function test_it_rejects_an_unknown_style(): void
     {
         $this->actingAsTenantAdmin();

@@ -1,5 +1,7 @@
 <?php
 
+use App\Lib\ParticleThemes;
+
 /*
  * Every style disables HDR: tsparticles v4 enables it by default and then emits
  * colors as color(display-p3 ...) with a 400/203 factor. The components exceed
@@ -20,6 +22,8 @@
 
 $particlesOptionsSnow = [
     'name' => 'Neige',
+    'category' => ParticleThemes::CATEGORY_SEASONS,
+    'keywords' => ['neige'],
     'hdr' => false,
     'particles' => [
         'number' => [
@@ -57,6 +61,8 @@ $particlesOptionsSnow = [
 ];
 $particlesOptionsFire = [
     'name' => 'Braises',
+    'category' => ParticleThemes::CATEGORY_DECORATIONS,
+    'keywords' => ['braise', 'feu de camp'],
     'hdr' => false,
     'fpsLimit' => 40,
     'particles' => [
@@ -92,6 +98,7 @@ $particlesOptionsFire = [
 
 $particlesOptionsLinks = [
     'name' => 'Liens',
+    'category' => ParticleThemes::CATEGORY_DECORATIONS,
     'hdr' => false,
     'particles' => [
         'number' => [
@@ -115,6 +122,7 @@ $particlesOptionsLinks = [
 ];
 $particlesOptionsTriangles = [
     'name' => 'Triangles',
+    'category' => ParticleThemes::CATEGORY_DECORATIONS,
     'hdr' => false,
     'particles' => [
         'number' => [
@@ -143,6 +151,7 @@ $particlesOptionsTriangles = [
 ];
 $particlesOptionsBalls = [
     'name' => 'Balles',
+    'category' => ParticleThemes::CATEGORY_DECORATIONS,
     'hdr' => false,
     'particles' => [
         'destroy' => [
@@ -215,6 +224,8 @@ $particlesOptionsBalls = [
 ];
 $particlesOptionsParty = [
     'name' => 'Confettis',
+    'category' => ParticleThemes::CATEGORY_FESTIVITIES,
+    'keywords' => ['fete', 'soiree', 'celebration', 'confetti'],
     'hdr' => false,
     'fpsLimit' => 120,
     'particles' => [
@@ -320,12 +331,13 @@ $particlesOptionsParty = [
 ];
 
 return [
-    'config' => [
+    'config' => ParticleThemes::sortedByCategory([
         'snow' => $particlesOptionsSnow,
         'fire' => $particlesOptionsFire,
         'links' => $particlesOptionsLinks,
         'triangles' => $particlesOptionsTriangles,
         'balls' => $particlesOptionsBalls,
         'party' => $particlesOptionsParty,
-    ],
+        ...ParticleThemes::all(),
+    ]),
 ];

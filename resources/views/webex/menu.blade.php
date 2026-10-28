@@ -6,7 +6,7 @@
             📢 {!! $menu['information']['information_html'] !!}<br />
         @endif
         @if($menu['information'] && $menu['information']['event_name'])
-            <strong>🎉 Événement {{ $menu['information']['event_name'] }} 🎉</strong><br />
+            <strong>🎉 {{ $menu['information']['event_name'] }} 🎉</strong><br />
         @endif
         @if($menu['is_fries_day'] && $menu['is_burgers_day'])
             <strong>🍔 🍟 Jour des Burgers et des Frites 🍟 🍔</strong><br />
@@ -110,7 +110,7 @@
 
         @if($menu['next_event'])
             <i>
-                <span>Prochain 🎉 Événement : </span>
+                <span>Prochain 🎉 : </span>
                 <span>{{ $menu['next_event']['event_name'] }}</span>
                 -
                 <span>{{ $menu['next_event']['date_carbon']->translatedFormat('l j F') }}</span>

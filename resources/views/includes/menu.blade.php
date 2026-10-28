@@ -9,7 +9,7 @@
     @if($menu['information'] && $menu['information']['event_name'])
         <div class="mt-2 font-semibold">
             <i class="fa-solid fa-party-horn text-[#FFD124]"></i>
-            Événement {{ $menu['information']['event_name'] }}
+            {{ $menu['information']['event_name'] }}
             <i class="fa-solid fa-party-horn text-[#FFD124]"></i>
         </div>
     @endif

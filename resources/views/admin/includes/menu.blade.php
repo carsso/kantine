@@ -19,24 +19,15 @@
         @enderror
     </div>
     <div class="mt-2">
-        <label for="style" class="block text-sm font-semibold">Style visuel :</label>
-        <div class="text-gray-500 text-xs">
-            @foreach(array_keys(config('tsparticles.config', [])) as $style)
-                @if(!$loop->first) - @endif
-                <a href="{{ route('dashboard', ['tenantSlug' => request()->tenant->slug, 'date' => $menu['date_carbon']->format('Y-m-d'), 'style' => $style]) }}" target="_blank" class="hover:text-indigo-500">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    {{ config('tsparticles.config.'.$style.'.name', $style) }}
-                </a>
-            @endforeach
-        </div>
-        <select id="style[{{ $idx }}]" name="style[{{ $idx }}]" class="block w-full px-1 py-1 border border-gray-200 shadow-xs rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-400">
-            <option value=""></option>
-            @foreach(array_keys(config('tsparticles.config', [])) as $style)
-                <option value="{{ $style }}" @if($style == ($menu['information']['style'] ?? '')) selected @endif>
-                    {{ config('tsparticles.config.'.$style.'.name', $style) }}
-                </option>
-            @endforeach
-        </select>
+        <label for="style[{{ $idx }}]" class="block text-sm font-semibold">Style visuel :</label>
+        <style-picker
+            name="style[{{ $idx }}]"
+            value="{{ $menu['information']['style'] ?? '' }}"
+            preview-url="{{ route('dashboard', ['tenantSlug' => request()->tenant->slug, 'date' => $menu['date_carbon']->format('Y-m-d')]) }}"
+            calendar-style="{{ \App\Lib\DashboardStyle::fromCalendar($menu['date_carbon'], request()->tenant) }}"
+            event-input="event_name[{{ $idx }}]"
+            mode="{{ request()->tenant->dashboard_style_mode->value }}">
+        </style-picker>
         @error('style')
             <div class="rounded-md bg-red-50 dark:bg-red-800 text-xs font-medium text-red-800 dark:text-red-50 p-2 mt-1">
                 {{ $message }}
@@ -44,7 +35,7 @@
         @enderror
     </div>
     <div class="mt-2">
-        <label for="event_name" class="block font-semibold">Événement :</label>
+        <label for="event_name" class="block font-semibold">Événement / animation :</label>
         <input id="event_name[{{ $idx }}]" type="text" name="event_name[{{ $idx }}]" value="{{ $menu['information']['event_name'] ?? '' }}" class="block w-full px-2 py-0.5 border border-gray-200 shadow-xs rounded-md text-sm focus:z-10 focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-400">
         @error('event_name')
             <div class="rounded-md bg-red-50 dark:bg-red-800 text-xs font-medium text-red-800 dark:text-red-50 p-2 mt-1">

@@ -35,6 +35,12 @@
                                         <i class="fa-solid fa-utensils mr-2"></i>
                                         Modification du menu
                                     </a>
+
+                                    <a href="{{ route('admin.themes', ['tenantSlug' => $tenant->slug]) }}"
+                                    class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                                        <i class="fa-solid fa-calendar-star mr-2"></i>
+                                        Calendrier des thèmes
+                                    </a>
                                 
                                     @if($tenant->webex_bearer_token)
                                         <a href="{{ route('admin.webex', ['tenantSlug' => $tenant->slug]) }}"

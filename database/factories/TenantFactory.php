@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\DashboardStyleMode;
 use App\Models\Tenant;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -22,6 +23,7 @@ class TenantFactory extends Factory
         return [
             'name' => fake()->unique()->city(),
             'is_active' => true,
+            'dashboard_style_mode' => DashboardStyleMode::Automatic,
             'webex_bearer_token' => null,
             'webex_bot_name' => null,
             'meta' => [],

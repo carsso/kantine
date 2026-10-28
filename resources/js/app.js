@@ -96,6 +96,8 @@ window.EchoMixin = {
 app.use(GlobalComponents);
 app.use(Particles, {
     init: async engine => {
+        // Themes draw Font Awesome glyphs on the canvas, which never triggers the webfont download by itself.
+        await document.fonts.load('900 16px "Font Awesome 7 Pro"');
         await loadFull(engine);
     },
 });

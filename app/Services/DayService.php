@@ -6,6 +6,7 @@ use App\Models\Dish;
 use App\Models\Information;
 use App\Models\Tenant;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 
 class DayService
 {
@@ -56,20 +57,8 @@ class DayService
             'information' => ($information && ($information->event_name || $information->information || $information->style)) ? $information : null,
             'tenant' => $tenant,
         ];
-        $result['is_fries_day'] = $dishes->contains(function ($dish) {
-            if (isset($dish->category->meta['ignore_special_day']) && $dish->category->meta['ignore_special_day']) {
-                return false;
-            }
-
-            return str_contains(strtolower($dish->name), 'frites');
-        });
-        $result['is_burgers_day'] = $dishes->contains(function ($dish) {
-            if (isset($dish->category->meta['ignore_special_day']) && $dish->category->meta['ignore_special_day']) {
-                return false;
-            }
-
-            return str_contains(strtolower($dish->name), 'burger');
-        });
+        $result['is_fries_day'] = self::isFriesDay($dishes);
+        $result['is_burgers_day'] = self::isBurgersDay($dishes);
         $result['is_antioxidants_day'] = $dishes->contains(function ($dish) {
             if (isset($dish->category->meta['ignore_special_day']) && $dish->category->meta['ignore_special_day']) {
                 return false;
@@ -118,5 +107,26 @@ class DayService
             ->first();
 
         return $result;
+    }
+
+    /**
+     * @param  Collection<int, Dish>  $dishes
+     */
+    public static function isFriesDay(Collection $dishes): bool
+    {
+        return $dishes->contains(fn (Dish $dish): bool => self::countsForSpecialDay($dish) && str_contains(strtolower($dish->name), 'frites'));
+    }
+
+    /**
+     * @param  Collection<int, Dish>  $dishes
+     */
+    public static function isBurgersDay(Collection $dishes): bool
+    {
+        return $dishes->contains(fn (Dish $dish): bool => self::countsForSpecialDay($dish) && str_contains(strtolower($dish->name), 'burger'));
+    }
+
+    private static function countsForSpecialDay(Dish $dish): bool
+    {
+        return ! ($dish->category->meta['ignore_special_day'] ?? false);
     }
 }
