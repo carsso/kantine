@@ -153,6 +153,16 @@ class AdminThemesTest extends TestCase
         Event::assertDispatched(DashboardRefreshEvent::class);
     }
 
+    public function test_the_calendar_links_open_dashboard_previews(): void
+    {
+        $this->actingAsTenantAdmin();
+
+        $this->get(route('admin.themes', ['tenantSlug' => $this->tenant->slug, 'year' => 2026]))
+            ->assertOk()
+            ->assertSee(e(route('dashboard', ['tenantSlug' => $this->tenant->slug, 'date' => '2026-02-02', 'preview' => 1])), false)
+            ->assertSee(e(route('dashboard', ['tenantSlug' => $this->tenant->slug, 'date' => '2026-02-02', 'style' => 'crepes', 'preview' => 1])), false);
+    }
+
     public function test_the_mode_switch_is_only_on_the_calendar_page(): void
     {
         $this->tenant->update(['dashboard_style_mode' => DashboardStyleMode::Disabled]);

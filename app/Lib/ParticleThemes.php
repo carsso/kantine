@@ -6,15 +6,16 @@ namespace App\Lib;
  * Dashboard themes (tsparticles options), built from reusable layers and behaviours.
  *
  * Every layer is a particle group, so behaviours never leak from one layer to
- * another. Icons are Font Awesome Pro solid glyphs drawn through the text shape.
+ * another. Icons are Font Awesome Pro solid SVGs drawn through the image shape, which
+ * caches a bitmap per particle: the text shape rasterized every glyph on every frame and
+ * froze the weakest screens. They are referenced as "icon:<name>" and listed with their
+ * size in resources/js/particles/icons.json, which Vite also reads to bundle the SVGs.
  * Static opacity goes through paint.fill.opacity (see config/tsparticles.php);
  * animated opacity has to use particles.opacity and ends up squared, which only
  * makes the fade deeper.
  */
 class ParticleThemes
 {
-    private const FONT_AWESOME_FAMILY = 'Font Awesome 7 Pro';
-
     /**
      * Above this radius a particle is big enough to blur the menu text behind it.
      */
@@ -27,6 +28,14 @@ class ParticleThemes
     private const BACKGROUND_OPACITY = ['min' => 0.3, 'max' => 0.5];
 
     private const SMALL_PARTICLE_OPACITY = ['min' => 0.6, 'max' => 1];
+
+    /**
+     * Rendering caps every theme shares: the dashboards run on weak screens, 30 fps is
+     * plenty and a canvas at the device pixel ratio only multiplies the pixels to paint.
+     *
+     * @var array{fpsLimit: int, detectRetina: bool}
+     */
+    public const SCREEN_LIMITS = ['fpsLimit' => 30, 'detectRetina' => false];
 
     public const CATEGORY_FESTIVITIES = 'Fêtes';
 
@@ -61,186 +70,7 @@ class ParticleThemes
         self::CATEGORY_DECORATIONS,
     ];
 
-    /**
-     * Font Awesome codepoints, from node_modules/@fortawesome/fontawesome-pro/css/all.css.
-     */
-    private const ICONS = [
-        'acorn' => "\u{f6ae}",
-        'anchor' => "\u{f13d}",
-        'apple-whole' => "\u{f5d1}",
-        'avocado' => "\u{e0aa}",
-        'backpack' => "\u{f5d4}",
-        'bacon' => "\u{f7e5}",
-        'baguette' => "\u{e3d8}",
-        'balloon' => "\u{e2e3}",
-        'ban-smoking' => "\u{f54d}",
-        'banana' => "\u{e2e5}",
-        'bat' => "\u{f6b5}",
-        'beer-mug' => "\u{e0b3}",
-        'bell' => "\u{f0f3}",
-        'bicycle' => "\u{f206}",
-        'bird' => "\u{e469}",
-        'blueberries' => "\u{e2e8}",
-        'book' => "\u{f02d}",
-        'bowl-chopsticks-noodles' => "\u{e2ea}",
-        'bowl-food' => "\u{e4c6}",
-        'bowl-hot' => "\u{f823}",
-        'bowl-rice' => "\u{e2eb}",
-        'brackets-curly' => "\u{f7ea}",
-        'bread-slice' => "\u{f7ec}",
-        'bug' => "\u{f188}",
-        'burger' => "\u{f805}",
-        'burrito' => "\u{f7ed}",
-        'bus' => "\u{f207}",
-        'butter' => "\u{e3e4}",
-        'butterfly' => "\u{e811}",
-        'cake-candles' => "\u{f1fd}",
-        'campfire' => "\u{f6ba}",
-        'candle-holder' => "\u{f6bc}",
-        'candy' => "\u{e3e7}",
-        'candy-cane' => "\u{f786}",
-        'carrot' => "\u{f787}",
-        'chart-line-up' => "\u{e0e5}",
-        'cheese' => "\u{f7ef}",
-        'cheese-swiss' => "\u{f7f0}",
-        'cherries' => "\u{e0ec}",
-        'chopsticks' => "\u{e3f7}",
-        'clover' => "\u{e139}",
-        'coconut' => "\u{e2f6}",
-        'code' => "\u{f121}",
-        'coffee-bean' => "\u{e13e}",
-        'coins' => "\u{f51e}",
-        'cookie' => "\u{f563}",
-        'corn' => "\u{f6c7}",
-        'croissant' => "\u{f7f6}",
-        'crown' => "\u{f521}",
-        'cube' => "\u{f1b2}",
-        'cup-straw' => "\u{e363}",
-        'dragon' => "\u{f6d5}",
-        'droplet' => "\u{f043}",
-        'drum' => "\u{f569}",
-        'drumstick-bite' => "\u{f6d7}",
-        'duck' => "\u{f6d8}",
-        'dumbbell' => "\u{f44b}",
-        'earth-europe' => "\u{f7a2}",
-        'egg' => "\u{f7fb}",
-        'egg-fried' => "\u{f7fc}",
-        'elephant' => "\u{f6da}",
-        'fire-flame-simple' => "\u{f46a}",
-        'fish' => "\u{f578}",
-        'flag-checkered' => "\u{f11e}",
-        'flower' => "\u{f7ff}",
-        'flower-daffodil' => "\u{f800}",
-        'flower-tulip' => "\u{f801}",
-        'fondue-pot' => "\u{e40d}",
-        'football' => "\u{f44e}",
-        'french-fries' => "\u{f803}",
-        'futbol' => "\u{f1e3}",
-        'garlic' => "\u{e40e}",
-        'ghost' => "\u{f6e2}",
-        'gift' => "\u{f06b}",
-        'gingerbread-man' => "\u{f79d}",
-        'glass-water' => "\u{e4f4}",
-        'grapes' => "\u{e306}",
-        'guitar' => "\u{f7a6}",
-        'hand-holding-heart' => "\u{f4be}",
-        'handshake' => "\u{f2b5}",
-        'handshake-angle' => "\u{f4c4}",
-        'hat-chef' => "\u{f86b}",
-        'heart' => "\u{f004}",
-        'heart-pulse' => "\u{f21e}",
-        'hotdog' => "\u{f80f}",
-        'house-chimney' => "\u{e3af}",
-        'house-heart' => "\u{f4c9}",
-        'ice-cream' => "\u{f810}",
-        'jack-o-lantern' => "\u{f30e}",
-        'key' => "\u{f084}",
-        'leaf' => "\u{f06c}",
-        'leaf-maple' => "\u{f6f6}",
-        'leaf-oak' => "\u{f6f7}",
-        'lemon' => "\u{f094}",
-        'lightbulb' => "\u{f0eb}",
-        'lighthouse' => "\u{e612}",
-        'lock' => "\u{f023}",
-        'lungs' => "\u{f604}",
-        'mango' => "\u{e30f}",
-        'masks-theater' => "\u{f630}",
-        'meat' => "\u{f814}",
-        'medal' => "\u{f5a2}",
-        'microphone' => "\u{f130}",
-        'mountain' => "\u{f6fc}",
-        'mountain-sun' => "\u{e52f}",
-        'mug-hot' => "\u{f7b6}",
-        'mug-saucer' => "\u{f0f4}",
-        'mushroom' => "\u{e425}",
-        'music' => "\u{f001}",
-        'music-note' => "\u{f8cf}",
-        'mustache' => "\u{e5bc}",
-        'olive' => "\u{e316}",
-        'onion' => "\u{e427}",
-        'ornament' => "\u{f7b8}",
-        'pancakes' => "\u{e42d}",
-        'paper-plane' => "\u{f1d8}",
-        'peach' => "\u{e20b}",
-        'pear' => "\u{e20c}",
-        'pencil' => "\u{f303}",
-        'people-group' => "\u{e533}",
-        'pepper-hot' => "\u{f816}",
-        'person-biking' => "\u{f84a}",
-        'person-running' => "\u{f70c}",
-        'person-swimming' => "\u{f5c4}",
-        'pineapple' => "\u{e31f}",
-        'pizza' => "\u{f817}",
-        'popcorn' => "\u{f819}",
-        'potato' => "\u{e440}",
-        'presentation-screen' => "\u{f685}",
-        'pretzel' => "\u{e441}",
-        'rabbit' => "\u{f708}",
-        'racquet' => "\u{f45a}",
-        'rainbow' => "\u{f75b}",
-        'recycle' => "\u{f1b8}",
-        'ribbon' => "\u{f4d6}",
-        'ruler' => "\u{f545}",
-        'sailboat' => "\u{e445}",
-        'salad' => "\u{f81e}",
-        'sandwich' => "\u{f81f}",
-        'sausage' => "\u{f820}",
-        'saxophone' => "\u{f8dc}",
-        'scooter' => "\u{e7c3}",
-        'seedling' => "\u{f4d8}",
-        'shield-halved' => "\u{f3ed}",
-        'shirt' => "\u{f553}",
-        'shrimp' => "\u{e448}",
-        'snowflake' => "\u{f2dc}",
-        'sparkle' => "\u{e5d6}",
-        'spider' => "\u{f717}",
-        'star' => "\u{f005}",
-        'steak' => "\u{f824}",
-        'strawberry' => "\u{e32b}",
-        'sun' => "\u{f185}",
-        'sun-bright' => "\u{e28f}",
-        'sushi' => "\u{e48a}",
-        'taco' => "\u{f826}",
-        'tag' => "\u{f02b}",
-        'tennis-ball' => "\u{f45e}",
-        'terminal' => "\u{f120}",
-        'ticket' => "\u{f145}",
-        'tomato' => "\u{e330}",
-        'tree' => "\u{f1bb}",
-        'tree-christmas' => "\u{f7db}",
-        'tree-palm' => "\u{f82b}",
-        'trophy' => "\u{f091}",
-        'umbrella' => "\u{f0e9}",
-        'umbrella-beach' => "\u{f5ca}",
-        'universal-access' => "\u{f29a}",
-        'utensils' => "\u{f2e7}",
-        'venus' => "\u{f221}",
-        'volcano' => "\u{f770}",
-        'volleyball' => "\u{f45f}",
-        'waffle' => "\u{e466}",
-        'watermelon-slice' => "\u{e337}",
-        'wheat' => "\u{f72d}",
-    ];
+    private const ICONS_FILE = __DIR__.'/../../resources/js/particles/icons.json';
 
     /**
      * Words of the event name that suggest a theme, without accents. Keywords of 3 letters
@@ -1033,7 +863,8 @@ class ParticleThemes
     }
 
     /**
-     * Neurons linked together, with signals firing along the links.
+     * Neurons linked together, with signals firing along the links. Twinkles are drawn per
+     * frame, so their frequencies are doubled to keep the 60 fps pace at SCREEN_LIMITS' 30 fps.
      *
      * @return array<string, mixed>
      */
@@ -1043,6 +874,7 @@ class ParticleThemes
             'name' => 'Intelligence artificielle',
             'category' => self::CATEGORY_COMPANY,
             'hdr' => false,
+            ...self::SCREEN_LIMITS,
             'particles' => [
                 'number' => [
                     'value' => 120,
@@ -1067,13 +899,13 @@ class ParticleThemes
                 'twinkle' => [
                     'particles' => [
                         'enable' => true,
-                        'frequency' => 0.05,
+                        'frequency' => 0.1,
                         'opacity' => 1,
                         'fillColor' => '#A6D64D',
                     ],
                     'links' => [
                         'enable' => true,
-                        'frequency' => 0.01,
+                        'frequency' => 0.02,
                         'opacity' => 1,
                         'color' => '#A6D64D',
                     ],
@@ -1101,7 +933,7 @@ class ParticleThemes
             'name' => $name,
             'category' => $category,
             'hdr' => false,
-            'fpsLimit' => 60,
+            ...self::SCREEN_LIMITS,
             'particles' => [
                 // Groups are created first, so the base itself spawns nothing.
                 'number' => ['value' => array_sum(array_map(fn (array $layer): int => $layer['number']['value'], $layers))],
@@ -1123,7 +955,7 @@ class ParticleThemes
         $maxSize = is_array($size) ? $size['max'] : $size;
         $opacity = $maxSize <= self::SMALL_PARTICLE_MAX_SIZE ? self::SMALL_PARTICLE_OPACITY : self::BACKGROUND_OPACITY;
 
-        return array_replace_recursive([
+        $layer = array_replace_recursive([
             'number' => ['value' => $count],
             'shape' => $shape,
             'paint' => [
@@ -1134,6 +966,59 @@ class ParticleThemes
             'size' => ['value' => $size],
             'move' => ['enable' => true, 'speed' => 1, 'outModes' => 'out'],
         ], ...$behaviours);
+
+        if ($shape['type'] === 'image') {
+            $layer['opacity'] = self::imageOpacity($layer['paint']['fill']['opacity'], $layer['opacity'] ?? null);
+        }
+
+        return $layer;
+    }
+
+    /**
+     * The image shape ignores the paint opacities: tsparticles 4.3.2 bakes particles.opacity
+     * into the SVG color, then draws with it again as globalAlpha, so the drawn opacity is its
+     * square. A static opacity becomes the square root of the paint one. An animated one starts
+     * at its max (see fading()) and is scaled so its brightest frame matches the paint max.
+     *
+     * @param  float|array{min: float, max: float}  $paintOpacity
+     * @param  array<string, mixed>|null  $opacity
+     * @return array<string, mixed>
+     */
+    private static function imageOpacity(float|array $paintOpacity, ?array $opacity): array
+    {
+        if ($opacity === null) {
+            return ['value' => self::scaleOpacity($paintOpacity, fn (float $value): float => sqrt($value))];
+        }
+
+        $factor = sqrt(is_array($paintOpacity) ? $paintOpacity['max'] : $paintOpacity);
+
+        return [...$opacity, 'value' => self::scaleOpacity($opacity['value'], fn (float $value): float => $value * $factor)];
+    }
+
+    /**
+     * @param  float|array{min: float, max: float}  $opacity
+     * @param  callable(float): float  $scale
+     * @return float|array{min: float, max: float}
+     */
+    private static function scaleOpacity(float|array $opacity, callable $scale): float|array
+    {
+        if (is_array($opacity)) {
+            return ['min' => round($scale($opacity['min']), 3), 'max' => round($scale($opacity['max']), 3)];
+        }
+
+        return round($scale($opacity), 3);
+    }
+
+    /**
+     * Solid Font Awesome Pro icons the themes may draw, with their SVG width and height.
+     *
+     * @return array<string, array{int, int}>
+     */
+    public static function icons(): array
+    {
+        static $icons;
+
+        return $icons ??= json_decode(file_get_contents(self::ICONS_FILE), true, flags: JSON_THROW_ON_ERROR);
     }
 
     /**
@@ -1141,7 +1026,18 @@ class ParticleThemes
      */
     private static function glyphs(string ...$icons): array
     {
-        return self::characters(array_map(fn (string $icon): string => self::ICONS[$icon], $icons), self::FONT_AWESOME_FAMILY, '900');
+        foreach ($icons as $icon) {
+            if (! array_key_exists($icon, self::icons())) {
+                throw new \InvalidArgumentException("Unknown icon {$icon}");
+            }
+        }
+
+        return [
+            'type' => 'image',
+            'options' => [
+                'image' => array_map(fn (string $icon): array => ['src' => 'icon:'.$icon, 'replaceColor' => true], $icons),
+            ],
+        ];
     }
 
     /**
@@ -1286,11 +1182,13 @@ class ParticleThemes
     }
 
     /**
+     * Starts at the max: image shapes bake the starting opacity into their color (see imageOpacity()).
+     *
      * @return array<string, mixed>
      */
     private static function fading(float $speed, float $max = 1): array
     {
-        return ['opacity' => ['value' => ['min' => 0.35, 'max' => $max], 'animation' => ['enable' => true, 'speed' => $speed, 'sync' => false]]];
+        return ['opacity' => ['value' => ['min' => 0.35, 'max' => $max], 'animation' => ['enable' => true, 'speed' => $speed, 'sync' => false, 'startValue' => 'max']]];
     }
 
     /**

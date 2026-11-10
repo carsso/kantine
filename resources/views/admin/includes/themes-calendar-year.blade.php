@@ -46,7 +46,7 @@
                             $title .= ' (à la place de : '.$period['label'].')';
                         }
                     @endphp
-                    <a href="{{ route('dashboard', ['tenantSlug' => $tenant->slug, 'date' => $day['date']->format('Y-m-d')]) }}" target="_blank"
+                    <a href="{{ route('dashboard', ['tenantSlug' => $tenant->slug, 'date' => $day['date']->format('Y-m-d'), 'preview' => 1]) }}" target="_blank"
                        title="{{ $title }}"
                        class="relative block py-1 rounded hover:ring-2 hover:ring-indigo-400 @if($style || $fromMenu) text-gray-900 @endif @if($day['date']->isWeekend() || $holiday) opacity-50 @endif @if($holiday) italic underline decoration-2 decoration-red-500 @endif @if($day['date']->isToday()) ring-2 ring-indigo-600 font-bold @endif"
                        @if($style) style="background-color: {{ $colorOf($style) }}" @elseif($fromMenu) style="{{ $noStyleBackground }}" @endif>

@@ -18,6 +18,8 @@ use App\Lib\ParticleThemes;
  * is opacity^2 and everything looks washed out. Keeping particles.opacity at 1
  * (1^2 = 1) and putting the value on paint.fill.opacity renders correctly today
  * and will keep doing so once the upstream bug is fixed.
+ *
+ * Every style spreads ParticleThemes::SCREEN_LIMITS: the screens are weak, see there.
  */
 
 $particlesOptionsSnow = [
@@ -25,6 +27,7 @@ $particlesOptionsSnow = [
     'category' => ParticleThemes::CATEGORY_SEASONS,
     'keywords' => ['neige'],
     'hdr' => false,
+    ...ParticleThemes::SCREEN_LIMITS,
     'particles' => [
         'number' => [
             'value' => 100,
@@ -64,7 +67,7 @@ $particlesOptionsFire = [
     'category' => ParticleThemes::CATEGORY_DECORATIONS,
     'keywords' => ['braise', 'feu de camp'],
     'hdr' => false,
-    'fpsLimit' => 40,
+    ...ParticleThemes::SCREEN_LIMITS,
     'particles' => [
         'number' => [
             'value' => 200,
@@ -100,6 +103,7 @@ $particlesOptionsLinks = [
     'name' => 'Liens',
     'category' => ParticleThemes::CATEGORY_DECORATIONS,
     'hdr' => false,
+    ...ParticleThemes::SCREEN_LIMITS,
     'particles' => [
         'number' => [
             'value' => 100,
@@ -124,6 +128,7 @@ $particlesOptionsTriangles = [
     'name' => 'Triangles',
     'category' => ParticleThemes::CATEGORY_DECORATIONS,
     'hdr' => false,
+    ...ParticleThemes::SCREEN_LIMITS,
     'particles' => [
         'number' => [
             'value' => 100,
@@ -153,6 +158,7 @@ $particlesOptionsBalls = [
     'name' => 'Balles',
     'category' => ParticleThemes::CATEGORY_DECORATIONS,
     'hdr' => false,
+    ...ParticleThemes::SCREEN_LIMITS,
     'particles' => [
         'destroy' => [
             'mode' => 'split',
@@ -227,7 +233,7 @@ $particlesOptionsParty = [
     'category' => ParticleThemes::CATEGORY_FESTIVITIES,
     'keywords' => ['fete', 'soiree', 'celebration', 'confetti'],
     'hdr' => false,
-    'fpsLimit' => 120,
+    ...ParticleThemes::SCREEN_LIMITS,
     'particles' => [
         'number' => [
             'value' => 0,
