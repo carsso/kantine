@@ -11,10 +11,7 @@
     <body id="app" class="font-['Source_Sans_3'] bg-[#000E9C] text-white h-screen w-screen">
         @if($particlesOptions)
             <div>
-                <vue-particles
-                    id="tsparticles"
-                    :options='@json($particlesOptions)'>
-                </vue-particles>
+                <dashboard-particles :options='@json($particlesOptions)' :preview='@json($isPreview)'></dashboard-particles>
             </div>
         @endif
         <div id="dashboard-container" class="w-screen h-screen overflow-hidden flex items-center justify-center">

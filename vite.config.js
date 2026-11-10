@@ -3,6 +3,7 @@ import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue';
 import commonjs from 'vite-plugin-commonjs';
 import path from 'path';
+import particleIcons from './resources/js/particles/vite-icons.js';
 
 export default defineConfig({
     plugins: [
@@ -25,6 +26,7 @@ export default defineConfig({
             },
         }),
         commonjs(),
+        particleIcons(),
     ],
     resolve: {
         alias: {

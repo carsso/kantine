@@ -9,6 +9,8 @@
 </template>
 
 <script>
+import { resolveParticleIcons } from '../particles/icons';
+
 export default {
 
     name: "ThemePreview",
@@ -41,7 +43,7 @@ export default {
         previewOptions() {
             // Drawn at dashboard size then scaled down, so densities and sizes match the real screen.
             return {
-                ...this.options,
+                ...resolveParticleIcons(this.options),
                 fullScreen: { enable: false },
                 detectRetina: false,
                 fpsLimit: 30,

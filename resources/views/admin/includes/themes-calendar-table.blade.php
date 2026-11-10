@@ -26,7 +26,7 @@
                     @endforeach
                 </td>
                 <td class="py-1 text-right">
-                    <a href="{{ route('dashboard', ['tenantSlug' => $tenant->slug, 'date' => $period['start']->format('Y-m-d'), 'style' => $period['style']]) }}" target="_blank" class="text-gray-500 hover:text-indigo-600" title="Aperçu">
+                    <a href="{{ route('dashboard', ['tenantSlug' => $tenant->slug, 'date' => $period['start']->format('Y-m-d'), 'style' => $period['style'], 'preview' => 1]) }}" target="_blank" class="text-gray-500 hover:text-indigo-600" title="Aperçu">
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </a>
                 </td>

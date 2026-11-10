@@ -100,7 +100,7 @@ class MenuController extends Controller
         ['style' => $style, 'reason' => $styleReason, 'date' => $styleReasonDate] = DashboardStyle::resolveWithReason($request->query('style', $menu['information']['style'] ?? null), $menu['information']['event_name'] ?? null, $day, $tenant->dashboard_style_mode, $tenant, burgersAndFriesDay: $menu['is_burgers_day'] && $menu['is_fries_day']);
         $particlesOptions = $style ? config('tsparticles.config.'.$style) : null;
 
-        return view('dashboard', ['tenant' => $tenant, 'menu' => $menu, 'categories' => $categories, 'diff' => $diff, 'day' => $day, 'particlesOptions' => $particlesOptions, 'styleReason' => $styleReason, 'styleReasonDate' => $styleReasonDate, 'generationDate' => $generationDate]);
+        return view('dashboard', ['tenant' => $tenant, 'menu' => $menu, 'categories' => $categories, 'diff' => $diff, 'day' => $day, 'particlesOptions' => $particlesOptions, 'styleReason' => $styleReason, 'styleReasonDate' => $styleReasonDate, 'generationDate' => $generationDate, 'isPreview' => $request->boolean('preview')]);
     }
 
     public function webexMenu(Request $request, DayService $dayService)

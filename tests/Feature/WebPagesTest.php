@@ -88,8 +88,10 @@ class WebPagesTest extends TestCase
             $response = $this->get(route('dashboard', ['tenantSlug' => $tenant->slug, 'date' => '2026-03-02', 'style' => $style]));
 
             $this->assertContains($options['category'] ?? null, ParticleThemes::CATEGORIES, "Style {$style} has no known category");
+            $this->assertLessThanOrEqual(30, $options['fpsLimit'], "Style {$style} runs too fast for the screens");
+            $this->assertFalse($options['detectRetina'], "Style {$style} paints at the device pixel ratio");
             $response->assertOk();
-            $response->assertSee('<vue-particles', false);
+            $response->assertSee('<dashboard-particles', false);
             $response->assertSee(substr(json_encode($options['name'], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT), 1, -1), false);
         }
     }
@@ -128,6 +130,17 @@ class WebPagesTest extends TestCase
             ->assertSee('Jour des Burgers et des Frites');
     }
 
+    public function test_admin_previews_turn_off_the_particles_watchdog(): void
+    {
+        $tenant = Tenant::factory()->create();
+        [, $child] = $this->createCategoryTree($tenant);
+        $this->createDish($child, '2026-03-02', 'Poulet rôti');
+        $parameters = ['tenantSlug' => $tenant->slug, 'date' => '2026-03-02', 'style' => 'snow'];
+
+        $this->get(route('dashboard', $parameters))->assertOk()->assertSee(":preview='false'", false);
+        $this->get(route('dashboard', [...$parameters, 'preview' => 1]))->assertOk()->assertSee(":preview='true'", false);
+    }
+
     public function test_a_burger_without_fries_shows_no_style(): void
     {
         $tenant = Tenant::factory()->create();
@@ -136,7 +149,7 @@ class WebPagesTest extends TestCase
 
         $this->get(route('dashboard', ['tenantSlug' => $tenant->slug, 'date' => '2026-10-12']))
             ->assertOk()
-            ->assertDontSee('<vue-particles', false);
+            ->assertDontSee('<dashboard-particles', false);
     }
 
     public function test_the_dashboard_picks_the_style_of_an_added_event(): void
@@ -158,7 +171,7 @@ class WebPagesTest extends TestCase
 
         $this->get(route('dashboard', ['tenantSlug' => $tenant->slug, 'date' => '2026-10-29']))
             ->assertOk()
-            ->assertDontSee('<vue-particles', false);
+            ->assertDontSee('<dashboard-particles', false);
     }
 
     public function test_the_tenant_can_switch_off_every_style(): void
@@ -170,7 +183,7 @@ class WebPagesTest extends TestCase
 
         $this->get(route('dashboard', ['tenantSlug' => $tenant->slug, 'date' => '2026-10-29']))
             ->assertOk()
-            ->assertDontSee('<vue-particles', false);
+            ->assertDontSee('<dashboard-particles', false);
     }
 
     public function test_the_dashboard_ignores_an_unknown_style(): void
@@ -181,7 +194,7 @@ class WebPagesTest extends TestCase
 
         $this->get(route('dashboard', ['tenantSlug' => $tenant->slug, 'date' => '2026-03-02', 'style' => 'disco']))
             ->assertOk()
-            ->assertDontSee('<vue-particles', false);
+            ->assertDontSee('<dashboard-particles', false);
     }
 
     public function test_the_notifications_page_renders(): void

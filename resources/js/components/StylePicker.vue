@@ -303,6 +303,7 @@ export default {
         dashboardUrl(key) {
             const url = new URL(this.previewUrl);
             url.searchParams.set('style', key);
+            url.searchParams.set('preview', '1');
             return url.toString();
         },
 

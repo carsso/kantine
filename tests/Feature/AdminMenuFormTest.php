@@ -149,7 +149,8 @@ class AdminMenuFormTest extends TestCase
             ->assertSee('"halloween":{"name":"Halloween","category":"F\u00eates"', false)
             ->assertSee('<style-picker', false)
             ->assertSee('name="style[2026-03-02]"', false)
-            ->assertSee('preview-url="'.route('dashboard', ['tenantSlug' => $this->tenant->slug, 'date' => '2026-03-02']).'"', false);
+            ->assertSee('preview-url="'.route('dashboard', ['tenantSlug' => $this->tenant->slug, 'date' => '2026-03-02']).'"', false)
+            ->assertSee('href="'.e(route('dashboard', ['tenantSlug' => $this->tenant->slug, 'date' => '2026-03-02', 'preview' => 1])).'"', false);
     }
 
     public function test_it_removes_the_dishes_that_were_deleted_from_the_form(): void

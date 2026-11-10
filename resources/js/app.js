@@ -4,6 +4,7 @@ import './bootstrap';
 import.meta.glob(["../images/**", "../fonts/**"]);
 import Particles from "@tsparticles/vue3";
 import { loadFull } from "tsparticles";
+import { loadResolutionPlugin } from "./particles/resolution";
 import Echo from 'laravel-echo';
 import Pusher from 'pusher-js';
 
@@ -96,8 +97,7 @@ window.EchoMixin = {
 app.use(GlobalComponents);
 app.use(Particles, {
     init: async engine => {
-        // Themes draw Font Awesome glyphs on the canvas, which never triggers the webfont download by itself.
-        await document.fonts.load('900 16px "Font Awesome 7 Pro"');
+        await loadResolutionPlugin(engine);
         await loadFull(engine);
     },
 });
