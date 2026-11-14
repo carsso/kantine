@@ -7,8 +7,10 @@ use App\Lib\ApiRestaurationClient;
 use App\Models\Dish;
 use App\Models\DishCategory;
 use App\Models\Tenant;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Sleep;
 use Tests\Concerns\BuildsMenus;
 use Tests\TestCase;
 
@@ -357,6 +359,46 @@ class ApiRestaurationClientTest extends TestCase
 
         $this->expectExceptionMessage('Erreur lors de la récupération du menu');
         $this->client()->getMenus();
+    }
+
+    public function test_it_retries_when_the_connection_fails(): void
+    {
+        Sleep::fake();
+        Http::fake([self::API_URL => Http::sequence()
+            ->pushFailedConnection()
+            ->pushFailedConnection()
+            ->push([$this->apiItem(['nom' => 'Poulet rôti'])]),
+        ]);
+
+        $menus = $this->client()->getMenus();
+
+        $this->assertSame('Poulet rôti', $menus[$this->day]['dishes']['mains']['pole-chaud']['plats'][0]['name']);
+        Http::assertSentCount(3);
+    }
+
+    public function test_it_gives_up_after_repeated_connection_failures(): void
+    {
+        Sleep::fake();
+        Http::fake([self::API_URL => Http::failedConnection()]);
+
+        try {
+            $this->client()->getMenus();
+            $this->fail('A ConnectionException was expected');
+        } catch (ConnectionException) {
+            Http::assertSentCount(3);
+        }
+    }
+
+    public function test_it_does_not_retry_an_error_response(): void
+    {
+        Http::fake([self::API_URL => Http::response('boom', 500)]);
+
+        try {
+            $this->client()->getMenus();
+        } catch (\Exception) {
+        }
+
+        Http::assertSentCount(1);
     }
 
     public function test_it_forwards_its_logs_to_the_callback(): void

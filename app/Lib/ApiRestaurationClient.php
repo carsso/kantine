@@ -7,6 +7,7 @@ use App\Models\Dish;
 use App\Models\DishCategory;
 use App\Models\Tenant;
 use App\Services\DayService;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -271,7 +272,9 @@ class ApiRestaurationClient
     public function getMenus(): ?array
     {
         try {
+            // The storage endpoint sometimes refuses connections for a moment
             $response = Http::withHeaders($this->headers)
+                ->retry(3, 1000, fn (\Throwable $e): bool => $e instanceof ConnectionException, throw: false)
                 ->get($this->baseUrl);
 
             if ($response->successful()) {
