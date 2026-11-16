@@ -30,6 +30,16 @@ class ParticleThemesTest extends TestCase
         }
     }
 
+    public function test_twinkles_are_too_rare_to_strobe(): void
+    {
+        foreach (ParticleThemes::all() as $key => $theme) {
+            $twinkle = $theme['particles']['twinkle'] ?? [];
+
+            $this->assertLessThanOrEqual(0.01, $twinkle['particles']['frequency'] ?? 0, "Theme {$key} makes its particles strobe");
+            $this->assertLessThanOrEqual(0.002, $twinkle['links']['frequency'] ?? 0, "Theme {$key} makes its links strobe");
+        }
+    }
+
     public function test_big_particles_stay_in_the_background(): void
     {
         foreach (ParticleThemes::all() as $key => $theme) {

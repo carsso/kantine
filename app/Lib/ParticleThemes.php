@@ -863,8 +863,8 @@ class ParticleThemes
     }
 
     /**
-     * Neurons linked together, with signals firing along the links. Twinkles are drawn per
-     * frame, so their frequencies are doubled to keep the 60 fps pace at SCREEN_LIMITS' 30 fps.
+     * Neurons linked together, with signals firing along the links. A twinkle is a one-frame
+     * flash rolled per element and per frame: keep frequencies tiny or the screen strobes.
      *
      * @return array<string, mixed>
      */
@@ -899,13 +899,13 @@ class ParticleThemes
                 'twinkle' => [
                     'particles' => [
                         'enable' => true,
-                        'frequency' => 0.1,
+                        'frequency' => 0.01,
                         'opacity' => 1,
                         'fillColor' => '#A6D64D',
                     ],
                     'links' => [
                         'enable' => true,
-                        'frequency' => 0.02,
+                        'frequency' => 0.002,
                         'opacity' => 1,
                         'color' => '#A6D64D',
                     ],
