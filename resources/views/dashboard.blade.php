@@ -8,9 +8,10 @@
 @endsection
 
 @section('body')
-    <body id="app" class="font-['Source_Sans_3'] bg-[#000E9C] text-white h-screen w-screen">
+    <body id="app" class="font-['Source_Sans_3'] bg-[#000E9C] text-white h-screen w-screen overflow-hidden">
         @if($particlesOptions)
-            <div>
+            {{-- Out of the flow: tsparticles inserts its canvas in the page and only makes it fixed once the icons are downloaded. --}}
+            <div id="dashboard-particles" class="fixed inset-0 pointer-events-none">
                 <dashboard-particles :options='@json($particlesOptions)' :preview='@json($isPreview)'></dashboard-particles>
             </div>
         @endif

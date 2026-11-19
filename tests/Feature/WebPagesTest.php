@@ -91,6 +91,7 @@ class WebPagesTest extends TestCase
             $this->assertLessThanOrEqual(30, $options['fpsLimit'], "Style {$style} runs too fast for the screens");
             $this->assertFalse($options['detectRetina'], "Style {$style} paints at the device pixel ratio");
             $response->assertOk();
+            $response->assertSee('<div id="dashboard-particles" class="fixed inset-0 pointer-events-none">', false);
             $response->assertSee('<dashboard-particles', false);
             $response->assertSee(substr(json_encode($options['name'], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT), 1, -1), false);
         }
