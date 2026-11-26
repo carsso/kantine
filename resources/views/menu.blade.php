@@ -45,5 +45,13 @@
             </p>
         </div>
     @endif
+    @if(isset($tenant->meta['link_url']))
+        <div class="text-center mb-6">
+            <a class="underline hover:text-indigo-600" target="_blank" href="{{ route('menus.link', ['tenantSlug' => $tenant->slug]) }}">
+                <i class="fa-solid fa-external-link"></i>
+                {{ $tenant->meta['link_name'] ?? 'Lien' }}
+            </a>
+        </div>
+    @endif
 </div>
 @endsection

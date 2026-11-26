@@ -54,6 +54,16 @@ class TenantFactory extends Factory
     }
 
     /**
+     * Give the tenant the private link shown under the menus.
+     */
+    public function withLink(string $url, string $name = 'Réserver un sandwich'): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'meta' => array_merge($attributes['meta'] ?? [], ['link_url' => $url, 'link_name' => $name]),
+        ]);
+    }
+
+    /**
      * Indicate that the tenant can send Webex notifications.
      */
     public function withWebex(): static
