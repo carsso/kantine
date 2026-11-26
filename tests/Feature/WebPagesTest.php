@@ -219,6 +219,36 @@ class WebPagesTest extends TestCase
             ->assertSee('(Halal, Origine France - <i>Allergènes : Gluten</i>)', false);
     }
 
+    public function test_the_menu_page_and_the_webex_message_show_the_tenant_link(): void
+    {
+        $tenant = Tenant::factory()->withLink('https://example.test/secret', 'Commander un plateau')->create();
+        [, $child] = $this->createCategoryTree($tenant);
+        $this->createDish($child, '2026-03-02', 'Poulet rôti');
+        $linkUrl = route('menus.link', ['tenantSlug' => $tenant->slug]);
+
+        foreach (['menus', 'notifications.webex'] as $routeName) {
+            $this->get(route($routeName, ['tenantSlug' => $tenant->slug, 'date' => '2026-03-02']))
+                ->assertOk()
+                ->assertSee($linkUrl, false)
+                ->assertSee('Commander un plateau')
+                ->assertDontSee('https://example.test/secret', false);
+        }
+    }
+
+    public function test_the_menu_page_and_the_webex_message_hide_the_link_when_the_tenant_has_none(): void
+    {
+        $tenant = Tenant::factory()->create();
+        [, $child] = $this->createCategoryTree($tenant);
+        $this->createDish($child, '2026-03-02', 'Poulet rôti');
+        $linkUrl = route('menus.link', ['tenantSlug' => $tenant->slug]);
+
+        foreach (['menus', 'notifications.webex'] as $routeName) {
+            $this->get(route($routeName, ['tenantSlug' => $tenant->slug, 'date' => '2026-03-02']))
+                ->assertOk()
+                ->assertDontSee($linkUrl, false);
+        }
+    }
+
     public function test_the_tenant_home_renders_the_menu(): void
     {
         $tenant = Tenant::factory()->create();

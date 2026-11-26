@@ -83,6 +83,11 @@
             @endforeach
         @endforeach
 
+        @if(isset($tenant->meta['link_url']))
+            <br />
+            <a target="_blank" href="{{ route('menus.link', ['tenantSlug' => $tenant->slug]) }}">↗ {{ $tenant->meta['link_name'] ?? 'Lien' }}</a><br />
+        @endif
+
         <br />
 
         @if($menu['next_fries_day'] && $menu['next_fries_day']['is_burgers_day'])

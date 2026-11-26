@@ -6,6 +6,7 @@ use App\Http\Controllers\ApiDocsController;
 use App\Http\Controllers\CategoryLinkController;
 use App\Http\Controllers\JobMonitorController;
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\MenuLinkController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -63,6 +64,9 @@ Route::prefix('{tenantSlug}')->middleware('tenant')->group(function () {
     Route::middleware(['restrict.ip'])->group(function () {
         Route::get('/menus/{date?}/categories/{type}/{parentSlug}/{childSlug}/lien', [CategoryLinkController::class, 'redirect'])
             ->name('menus.categories.link');
+
+        Route::get('/lien', [MenuLinkController::class, 'redirect'])
+            ->name('menus.link');
     });
 
     Route::get('/notifications/{date?}', [MenuController::class, 'notifications'])
