@@ -8,13 +8,19 @@
             <p>
                 Recevez le menu chaque matin dans votre espace Webex.
             </p>
-            <p>
-                @if($tenant->webex_bot_name)
-                    Invitez le bot dans votre espace : <i class="text-gray-400">{{ $tenant->webex_bot_name }}</i>
-                @else
+            @if($tenant->webex_bot_name)
+                <p class="mt-4">
+                    Rejoignez l'espace <b>Kantine</b> dans l'équipe Webex de votre Valley.
+                </p>
+                <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                    Pour un autre espace d'au moins 10 personnes, invitez le bot : <i class="text-gray-400">{{ $tenant->webex_bot_name }}</i>.
+                    Il ne reste pas dans les espaces plus petits.
+                </p>
+            @else
+                <p>
                     <i>Le bot Webex n'est pas activé pour cette cantine actuellement.</i>
-                @endif
-            </p>
+                </p>
+            @endif
             <div class="m-auto lg:w-2/3">
                 <div class="bg-gray-800 text-white rounded-lg shadow-sm m-8 p-8 text-left text-sm mt-6">
                     <div class="text-gray-400 text-xs mb-1">

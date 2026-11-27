@@ -208,6 +208,16 @@ class WebPagesTest extends TestCase
             ->assertOk();
     }
 
+    public function test_the_notifications_page_points_to_the_kantine_space_before_the_bot(): void
+    {
+        config(['services.webex.bearer_token' => 'webex-token']);
+        $tenant = Tenant::factory()->withWebex()->create();
+
+        $this->get(route('notifications', ['tenantSlug' => $tenant->slug, 'date' => '2026-03-02']))
+            ->assertOk()
+            ->assertSeeInOrder(["l'espace <b>Kantine</b> dans l'équipe Webex de votre Valley", 'au moins 10 personnes', 'bot@webex.bot'], false);
+    }
+
     public function test_the_webex_preview_renders(): void
     {
         $tenant = Tenant::factory()->create();
