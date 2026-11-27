@@ -160,7 +160,7 @@
             </div>
         @endif
         {{-- Next to the websocket state dot. --}}
-        <div class="fixed bottom-3 right-12 text-xs text-[#002f9c]">
+        <div class="fixed bottom-3 right-12 text-xs text-[#3d5fd9]">
             {{ config('app.name') }} · {{ $generationDate->translatedFormat('j F Y à H:i:s') }}
         </div>
         <echo-state></echo-state>
