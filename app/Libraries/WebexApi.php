@@ -53,10 +53,20 @@ class WebexApi
         });
     }
 
-    public function getRooms($type = 'group')
+    public function delete($path, $headers = [])
     {
-        if (! empty($type)) {
-            return $this->get('v1/rooms?type='.$type);
+        return $this->executeWithRetry(function () use ($path, $headers) {
+            $json = $this->client->getJson($this->client->delete($path, $headers));
+
+            return json_decode($json, true);
+        });
+    }
+
+    public function getRooms($type = 'group', ?int $max = null)
+    {
+        $query = array_filter(['type' => $type, 'max' => $max]);
+        if (! empty($query)) {
+            return $this->get('v1/rooms?'.http_build_query($query));
         }
 
         return $this->get('v1/rooms');
@@ -70,6 +80,11 @@ class WebexApi
     public function getRoomMemberships($roomId)
     {
         return $this->get('v1/memberships?roomId='.$roomId.'&max=1000');
+    }
+
+    public function deleteMembership($membershipId)
+    {
+        return $this->delete('v1/memberships/'.$membershipId);
     }
 
     public function getPerson($personId)
